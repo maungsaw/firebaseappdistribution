@@ -1,5 +1,7 @@
 import 'package:device_safety_info/device_safety_info.dart';
-import 'package:firebaseappdistribution/src/src.dart';
+import 'package:firebaseappdistribution/core/core.dart';
+import 'package:firebaseappdistribution/presentation/presentation.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,8 +15,43 @@ Future<void> main() async {
       runApp(const CompromisedDeviceApp());
       return;
     }
+  } else {
+    final options = FirebaseOptions(
+      apiKey: "AIzaSyDqdwGdHUkghv8Iaydq0uG4IcGF0cYuWw",
+      appId: "1:432071418438:android:588d784d19c971b92a204",
+      messagingSenderId: "432071418438",
+      projectId: "paypass-97314",
+    );
+
+    final instance = NotificationService.instance;
+
+    // 2. NOW CALL INITIALIZE (Firebase is guaranteed to be ready now)
+    await instance.initialize(
+      options: options,
+      onNavigate: (data) {
+        debugPrint('Received notification data: $data');
+        final screen = data['screen'];
+        if (kDebugMode) {
+          debugPrint('Navigating to screen: $screen with data: $data');
+        }
+      },
+      onPermissionResult: (status) {
+        if (kDebugMode) {
+          debugPrint('Notification permission status: $status');
+        }
+      },
+      backgroundMsgCallback: (data) async {
+        debugPrint(
+          'Handling background message with data: ${data.data}, messageId: ${data.messageId}',
+        );
+        // Handle background message
+      },
+    );
+    final fcmToken = await instance.getToken();
+    debugPrint('FCM Token: $fcmToken');
+
+    runApp(const MyApp());
   }
-  runApp(const MyApp());
 }
 
 class CompromisedDeviceApp extends StatelessWidget {
@@ -67,7 +104,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: const CounterScreen(),
+        home: const DocumentVaultView(),
       ),
     );
   }
