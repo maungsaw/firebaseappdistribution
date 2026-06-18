@@ -1,0 +1,56 @@
+name: Flutter Android CI
+
+# Triggers the workflow on push or pull request to the main/master branch
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Build Android App
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Java Environment (Required for Android builds)
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # Highly recommended distribution
+          java-version: '17'      # Match your project's Gradle Java version
+
+      # 3. Set up Flutter Environment
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'       # Can change to 'beta' or 'master' if needed
+          cache: true             # Caches your Flutter SDK to speed up future runs
+
+      # 4. Get Flutter Dependencies
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 5. Run Linter / Code Analysis (Optional but recommended)
+      - name: Analyze code
+        run: flutter analyze
+
+      # 6. Run Unit Tests (Optional but recommended)
+      - name: Run tests
+        run: flutter test
+
+      # 7. Build Release APK
+      # Change 'apk' to 'appbundle' if you want an .aab for Google Play Store
+      - name: Build Debug/Release APK
+        run: flutter build apk --debug # Swap to `--release` once keystore is configured
+
+      # 8. Upload the built file so you can download it from GitHub
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-android-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
