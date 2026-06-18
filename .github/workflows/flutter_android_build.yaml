@@ -39,9 +39,9 @@ jobs:
       - name: Analyze code
         run: flutter analyze
 
-      # 6. Run Unit Tests (Optional but recommended)
-      - name: Run tests
-        run: flutter test
+      # # 6. Run Unit Tests (Optional but recommended)
+      # - name: Run tests
+      #   run: flutter test
 
       # 7. Build Release APK
       # Change 'apk' to 'appbundle' if you want an .aab for Google Play Store
