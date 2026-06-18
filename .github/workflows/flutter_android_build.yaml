@@ -55,12 +55,11 @@ jobs:
           name: flutter-android-apk
           path: build/app/outputs/flutter-apk/app-debug.apk
       # 🚀 UPLOAD TO FIREBASE APP DISTRIBUTION STEP
-      # 1:432071418438:android:588d784d19c971b92a2047
       - name: Upload artifact to Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIALS }}
           groups: testers # 🔴 Replace with your Firebase Tester Group alias (Optional)
-          file: build/app/outputs/flutter-apk/app-release.apk
+          file: build/app/outputs/flutter-apk/app-debug.apk
           releaseNotes: "Automated CI build: ${{ github.event.head_commit.message }}"
