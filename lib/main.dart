@@ -1,4 +1,3 @@
-import 'package:device_safety_info/device_safety_info.dart';
 import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 

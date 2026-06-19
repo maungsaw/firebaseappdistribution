@@ -1,8 +1,6 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
-import 'package:firebaseappdistribution/core/core.dart'; // Contains your EncryptionService
 
 class SecurePdfViewer extends StatelessWidget {
   final Uint8List decryptedBytes;
