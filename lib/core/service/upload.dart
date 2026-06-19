@@ -7,7 +7,7 @@ class DocumentStorageService {
   final EncryptionService _encryptionService = EncryptionService();
 
   /// 1. Saves a document securely into the isolated application sandbox
-  Future<String> saveDocumentSecurely(File rawDownloadedFile) async {
+  Future<String> setDocumentSecurely(File rawDownloadedFile) async {
     // Determine the unique, isolated application documents directory
     final Directory directory = await getApplicationDocumentsDirectory();
     final String originalName = rawDownloadedFile.path.split('/').last;
@@ -25,7 +25,7 @@ class DocumentStorageService {
   }
 
   /// 2. Accesses a secure document natively inside RAM memory (Zero-Disk-Footprint)
-  Future<Uint8List> accessSecureDocument(String secureFilePath) async {
+  Future<Uint8List> getSecureDocument(String secureFilePath) async {
     final File encryptedFile = File(secureFilePath);
 
     if (!await encryptedFile.exists()) {

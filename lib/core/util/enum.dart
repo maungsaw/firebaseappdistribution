@@ -1,0 +1,1 @@
+enum RouteName { home, calculator }

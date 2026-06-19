@@ -1,0 +1,13 @@
+import 'const.dart';
+import 'enum.dart';
+
+extension RouteNameExtension on RouteName {
+  String get path {
+    switch (this) {
+      case RouteName.home:
+        return AppRoutes.home;
+      case RouteName.calculator:
+        return AppRoutes.calculator;
+    }
+  }
+}

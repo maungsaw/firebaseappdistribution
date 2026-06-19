@@ -8,43 +8,58 @@ class CounterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Counter App')),
-      body: Center(
-        child: BlocBuilder<CounterBloc, CounterState>(
-          builder: (context, state) {
-            return Text(
-              '${state.count} => ${state.clickedButton}',
-              style: const TextStyle(
-                fontSize: 28.0,
-                fontWeight: FontWeight.bold,
-              ),
-            );
-          },
-          buildWhen: (previous, current) {
-            debugPrint(
-              'buildWhen called: previous=${previous.count}, current=${current.count}',
-            );
-            final result = previous.count != current.count;
-            return result;
-          },
-        ),
-      ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () =>
-                context.read<CounterBloc>().add(CounterIncrementPressed()),
-            child: const Icon(Icons.add),
-          ),
-          const SizedBox(height: 8),
-          FloatingActionButton(
-            onPressed: () =>
-                context.read<CounterBloc>().add(CounterDecrementPressed()),
-            child: const Icon(Icons.remove),
-          ),
-        ],
+    return Center(
+      child: BlocBuilder<CounterBloc, CounterState>(
+        builder: (context, state) {
+          return Container(
+            padding: .all(6),
+            margin: .all(8),
+            decoration: BoxDecoration(
+              borderRadius: .all(Radius.circular(10)),
+              color: Colors.lightBlue.withAlpha(60),
+            ),
+            child: Row(
+              crossAxisAlignment: .center,
+              mainAxisAlignment: .spaceAround,
+              children: [
+                CircleAvatar(
+                  radius: 35,
+                  backgroundColor: Colors.lightGreen,
+                  child: IconButton(
+                    onPressed: () => context.read<CounterBloc>().add(
+                      CounterIncrementPressed(),
+                    ),
+                    icon: Icon(Icons.add, size: 40, color: Colors.white),
+                  ),
+                ),
+                Text(
+                  '${state.count}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 100.0,
+                  ),
+                ),
+                CircleAvatar(
+                  radius: 35,
+                  backgroundColor: Colors.redAccent,
+                  child: IconButton(
+                    onPressed: () => context.read<CounterBloc>().add(
+                      CounterDecrementPressed(),
+                    ),
+                    icon: Icon(Icons.remove, size: 40, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+        buildWhen: (previous, current) {
+          debugPrint(
+            'buildWhen called: previous=${previous.count}, current=${current.count}',
+          );
+          final result = previous.count != current.count;
+          return result;
+        },
       ),
     );
   }

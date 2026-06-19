@@ -116,7 +116,7 @@ class NotificationService {
         debugPrint('Notification tapped with payload: ${response.payload}');
         _backgroundMsgCallback(
           RemoteMessage(
-            data: {'screen': response.payload ?? ''},
+            data: {'screen': response.data},
             messageId: response.payload ?? '',
           ),
         );

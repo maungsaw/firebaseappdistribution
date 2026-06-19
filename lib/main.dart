@@ -8,50 +8,50 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (kDebugMode) {
-    bool isDeviceSecure = await DeviceSafetyInfo.isRealDevice;
-    debugPrint('Device is secure: $isDeviceSecure');
-    if (!isDeviceSecure) {
-      runApp(const CompromisedDeviceApp());
-      return;
-    }
-  } else {
-    final options = FirebaseOptions(
-      apiKey: "AIzaSyDqdwGdHUkghv8Iaydq0uG4IcGF0cYuWw",
-      appId: "1:432071418438:android:588d784d19c971b92a204",
-      messagingSenderId: "432071418438",
-      projectId: "paypass-97314",
-    );
+  // if (!kDebugMode) {
+  //   bool isDeviceSecure = await DeviceSafetyInfo.isRealDevice;
+  //   debugPrint('Device is secure: $isDeviceSecure');
+  //   if (!isDeviceSecure) {
+  //     runApp(const CompromisedDeviceApp());
+  //     return;
+  //   }
+  // } else {
+  final options = FirebaseOptions(
+    apiKey: "AIzaSyDqdwGdHUkghv8Iaydq0uG4IcGF0cYuWw",
+    appId: "1:432071418438:android:588d784d19c971b92a204",
+    messagingSenderId: "432071418438",
+    projectId: "paypass-97314",
+  );
 
-    final instance = NotificationService.instance;
+  final instance = NotificationService.instance;
 
-    // 2. NOW CALL INITIALIZE (Firebase is guaranteed to be ready now)
-    await instance.initialize(
-      options: options,
-      onNavigate: (data) {
-        debugPrint('Received notification data: $data');
-        final screen = data['screen'];
-        if (kDebugMode) {
-          debugPrint('Navigating to screen: $screen with data: $data');
-        }
-      },
-      onPermissionResult: (status) {
-        if (kDebugMode) {
-          debugPrint('Notification permission status: $status');
-        }
-      },
-      backgroundMsgCallback: (data) async {
-        debugPrint(
-          'Handling background message with data: ${data.data}, messageId: ${data.messageId}',
-        );
-        // Handle background message
-      },
-    );
-    final fcmToken = await instance.getToken();
-    debugPrint('FCM Token: $fcmToken');
+  // 2. NOW CALL INITIALIZE (Firebase is guaranteed to be ready now)
+  await instance.initialize(
+    options: options,
+    onNavigate: (data) {
+      debugPrint('Received notification data: $data');
+      final screen = data['screen'];
+      if (kDebugMode) {
+        debugPrint('Navigating to screen: $screen with data: $data');
+      }
+    },
+    onPermissionResult: (status) {
+      if (kDebugMode) {
+        debugPrint('Notification permission status: $status');
+      }
+    },
+    backgroundMsgCallback: (data) async {
+      debugPrint(
+        'Handling background message with data: ${data.data}, messageId: ${data.messageId}',
+      );
+      // Handle background message
+    },
+  );
+  final fcmToken = await instance.getToken();
+  debugPrint('FCM Token: $fcmToken');
 
-    runApp(const MyApp());
-  }
+  runApp(const MyApp());
+  // }R
 }
 
 class CompromisedDeviceApp extends StatelessWidget {
@@ -97,14 +97,18 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => CounterBloc(),
-      child: MaterialApp(
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => BottomAppbarBloc()),
+        BlocProvider(create: (context) => CounterBloc()),
+        BlocProvider(create: (context) => FilePickerBloc()),
+      ],
+      child: MaterialApp.router(
         title: 'Flutter Demo',
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
-        home: const DocumentVaultView(),
+        routerConfig: AppRouter.router,
       ),
     );
   }
