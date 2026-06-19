@@ -15,6 +15,8 @@ Future<void> main() async {
   //     return;
   //   }
   // } else {
+
+  SystemNavigator.hideBottom();
   final options = FirebaseOptions(
     apiKey: "AIzaSyDqdwGdHUkghv8Iaydq0uG4IcGF0cYuWw",
     appId: "1:432071418438:android:588d784d19c971b92a204",
