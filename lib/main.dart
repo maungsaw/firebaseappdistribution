@@ -28,8 +28,10 @@ Future<void> main() async {
   await instance.initialize(
     options: options,
     onNavigate: (data) {
-      debugPrint('Received notification data: $data');
       final screen = data['screen'];
+      if (screen == RouteName.calculator.path) {
+        AppRouter.router.push(RouteName.calculator.path);
+      }
       if (kDebugMode) {
         debugPrint('Navigating to screen: $screen with data: $data');
       }

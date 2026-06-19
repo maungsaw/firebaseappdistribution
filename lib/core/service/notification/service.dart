@@ -113,7 +113,6 @@ class NotificationService {
     await _local.initialize(
       settings: initSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {
-        debugPrint('Notification tapped with payload: ${response.payload}');
         _backgroundMsgCallback(
           RemoteMessage(
             data: {'screen': response.data},
