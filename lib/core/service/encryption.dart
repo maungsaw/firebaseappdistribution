@@ -81,4 +81,14 @@ class EncryptionService {
 
     return Uint8List.fromList(decryptedBytes);
   }
+
+  Future<String> getDatabaseKey() async {
+    String? key = await _secureStorage.read(key: 'db_secret_key');
+    if (key == null) {
+      key = DateTime.now().millisecondsSinceEpoch
+          .toString(); // အသစ် Generate လုပ်ခြင်း
+      await _secureStorage.write(key: 'db_secret_key', value: key);
+    }
+    return key;
+  }
 }

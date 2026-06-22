@@ -1,4 +1,4 @@
-abstract class FilePickerEvent {}
+sealed class FilePickerEvent {}
 
 class FileSelectedEvent extends FilePickerEvent {}
 

@@ -1,4 +1,4 @@
-abstract class CounterState {
+sealed class CounterState {
   final int count;
   final String clickedButton;
   CounterState(this.count, {this.clickedButton = ''});

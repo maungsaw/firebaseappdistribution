@@ -1,15 +1,13 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:file_selector/file_selector.dart';
 import 'package:firebaseappdistribution/core/core.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'event.dart';
 import 'state.dart';
 
 class FilePickerBloc extends Bloc<FilePickerEvent, FilePickerState> {
-  final DocumentStorageService _storageService = DocumentStorageService();
+  final _storageService = FileStorageService();
 
   FilePickerBloc() : super(FilePickerInitial()) {
     // FIXED: Added 'async' here and 'await' before the method call

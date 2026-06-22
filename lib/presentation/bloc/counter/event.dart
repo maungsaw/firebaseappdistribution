@@ -1,5 +1,5 @@
 // counter_event.dart
-abstract class CounterEvent {}
+sealed class CounterEvent {}
 
 class CounterIncrementPressed extends CounterEvent {}
 

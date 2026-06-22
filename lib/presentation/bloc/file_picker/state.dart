@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-abstract class FilePickerState {
+sealed class FilePickerState {
   final String filePath;
   final String statusMessage;
   final bool isLoading;

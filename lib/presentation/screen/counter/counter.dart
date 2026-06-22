@@ -54,9 +54,6 @@ class CounterScreen extends StatelessWidget {
           );
         },
         buildWhen: (previous, current) {
-          debugPrint(
-            'buildWhen called: previous=${previous.count}, current=${current.count}',
-          );
           final result = previous.count != current.count;
           return result;
         },

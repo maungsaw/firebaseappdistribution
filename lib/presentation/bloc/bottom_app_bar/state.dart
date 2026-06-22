@@ -1,4 +1,4 @@
-abstract class BottomAppbarState {
+sealed class BottomAppbarState {
   int currentIndex;
 
   BottomAppbarState({this.currentIndex = 0});

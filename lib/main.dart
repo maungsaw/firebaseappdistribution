@@ -1,22 +1,32 @@
+import 'dart:isolate';
+
 import 'package:firebaseappdistribution/core/core.dart';
+import 'package:firebaseappdistribution/presentation/bloc/policy/bloc.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'domain/domain.dart';
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // if (!kDebugMode) {
-  //   bool isDeviceSecure = await DeviceSafetyInfo.isRealDevice;
-  //   debugPrint('Device is secure: $isDeviceSecure');
-  //   if (!isDeviceSecure) {
-  //     runApp(const CompromisedDeviceApp());
-  //     return;
-  //   }
-  // } else {
+  runApp(const MyApp());
 
-  SystemNavigator.hideBottom();
+  await _startBackgroundTasks();
+}
+
+Future<String> _startBackgroundTasks() async {
+  // Database နှင့် File System အလုပ်များကို Main Thread မှ ခွဲထုတ်ထားပါ
+  // UI ကို အရင်တည်ငြိမ်စေရန်
+  await FileStorageService.createFolders();
+  await DatabaseManager.instance.getPolicyCount();
+  await _initFirebaseServices();
+  return 'Success';
+}
+
+Future<void> _initFirebaseServices() async {
   final options = FirebaseOptions(
     apiKey: "AIzaSyDqdwGdHUkghv8Iaydq0uG4IcGF0cYuWw",
     appId: "1:432071418438:android:588d784d19c971b92a204",
@@ -25,36 +35,23 @@ Future<void> main() async {
   );
 
   final instance = NotificationService.instance;
-
-  // 2. NOW CALL INITIALIZE (Firebase is guaranteed to be ready now)
   await instance.initialize(
     options: options,
-    onNavigate: (data) {
-      final screen = data['screen'];
-      if (screen == RouteName.calculator.path) {
-        AppRouter.router.push(RouteName.calculator.path);
-      }
-      if (kDebugMode) {
-        debugPrint('Navigating to screen: $screen with data: $data');
-      }
-    },
-    onPermissionResult: (status) {
-      if (kDebugMode) {
-        debugPrint('Notification permission status: $status');
-      }
-    },
-    backgroundMsgCallback: (data) async {
-      debugPrint(
-        'Handling background message with data: ${data.data}, messageId: ${data.messageId}',
-      );
-      // Handle background message
-    },
+    onNavigate: (data) => _handleNavigation(data),
+    onPermissionResult: (status) => debugPrint('Permission: $status'),
+    backgroundMsgCallback: (data) async =>
+        debugPrint('Background msg: ${data.messageId}'),
   );
+
   final fcmToken = await instance.getToken();
   debugPrint('FCM Token: $fcmToken');
+}
 
-  runApp(const MyApp());
-  // }R
+void _handleNavigation(Map<String, dynamic> data) {
+  final screen = data['screen'];
+  if (screen == RouteName.calculator.path) {
+    AppRouter.router.push(RouteName.calculator.path);
+  }
 }
 
 class CompromisedDeviceApp extends StatelessWidget {
@@ -105,6 +102,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => BottomAppbarBloc()),
         BlocProvider(create: (context) => CounterBloc()),
         BlocProvider(create: (context) => FilePickerBloc()),
+        BlocProvider(create: (context) => PolicyBloc()),
       ],
       child: MaterialApp.router(
         title: 'Flutter Demo',

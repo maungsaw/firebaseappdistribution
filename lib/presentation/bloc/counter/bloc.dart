@@ -11,7 +11,7 @@ class CounterBloc extends Bloc<CounterEvent, CounterState> {
     });
 
     // Handle the decrement event
-    on<CounterDecrementPressed>((event, emit) {
+    on<CounterDecrementPressed>((event, emit) async {
       if (state.count > 0) {
         emit(CounterUpdated(state.count - 1, clickedButton: 'decrement'));
       }
