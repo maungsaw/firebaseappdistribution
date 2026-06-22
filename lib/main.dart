@@ -1,10 +1,6 @@
-import 'dart:isolate';
-
 import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/presentation/bloc/policy/bloc.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,7 +17,7 @@ Future<String> _startBackgroundTasks() async {
   // Database နှင့် File System အလုပ်များကို Main Thread မှ ခွဲထုတ်ထားပါ
   // UI ကို အရင်တည်ငြိမ်စေရန်
   await FileStorageService.createFolders();
-  await DatabaseManager.instance.getPolicyCount();
+  await DatabaseManager.instance.database;
   await _initFirebaseServices();
   return 'Success';
 }
