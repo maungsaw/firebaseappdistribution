@@ -50,4 +50,13 @@ class DatabaseManager {
     final result = await db.rawQuery("SELECT COUNT(*) FROM policies");
     return Sqflite.firstIntValue(result) ?? 0;
   }
+
+  Future<int> addPolicy(String no, String status) async {
+    final db = await database;
+    final result = await db.insert('policies', {
+      'policy_no': no,
+      'status': status,
+    });
+    return result;
+  }
 }

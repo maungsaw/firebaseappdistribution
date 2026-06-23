@@ -1,9 +1,8 @@
 import 'package:firebaseappdistribution/core/core.dart';
-import 'package:firebaseappdistribution/presentation/bloc/policy/bloc.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'data/data.dart';
 import 'domain/domain.dart';
 
 Future<void> main() async {
@@ -93,19 +92,32 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
+    return MultiRepositoryProvider(
       providers: [
-        BlocProvider(create: (context) => BottomAppbarBloc()),
-        BlocProvider(create: (context) => CounterBloc()),
-        BlocProvider(create: (context) => FilePickerBloc()),
-        BlocProvider(create: (context) => PolicyBloc()),
-      ],
-      child: MaterialApp.router(
-        title: 'Flutter Demo',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        RepositoryProvider<PolicyRepositoryImpl>(
+          create: (context) => PolicyRepository(),
+          dispose: (value) => false,
+          lazy: true,
         ),
-        routerConfig: AppRouter.router,
+      ],
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (context) => BottomAppbarBloc()),
+          BlocProvider(create: (context) => CounterBloc()),
+          BlocProvider(create: (context) => FilePickerBloc()),
+          BlocProvider(
+            create: (context) => PolicyBloc(
+              policyRepository: context.read<PolicyRepositoryImpl>(),
+            ),
+          ),
+        ],
+        child: MaterialApp.router(
+          title: 'Flutter Demo',
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          ),
+          routerConfig: AppRouter.router,
+        ),
       ),
     );
   }

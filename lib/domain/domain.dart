@@ -1,1 +1,2 @@
-export 'orm/orm.dart';
+export 'irepository/irepository.dart';
+export 'repository/repository.dart';

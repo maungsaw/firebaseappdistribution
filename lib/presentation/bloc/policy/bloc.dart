@@ -1,30 +1,42 @@
 import 'package:firebaseappdistribution/domain/domain.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'event.dart';
 import 'state.dart';
 
 class PolicyBloc extends Bloc<PolicyEvent, PolicyState> {
-  PolicyBloc() : super(InitialPolicyState()) {
-    on((SuccessPolicyEvent event, emit) async => await fetch(event, emit));
-    add(SuccessPolicyEvent());
+  // Inject the repository via the constructor
+  final PolicyRepositoryImpl policyRepository;
+
+  PolicyBloc({required this.policyRepository}) : super(InitialPolicyState()) {
+    // Corrected syntax for event handlers
+    on<SuccessPolicyEvent>(_onFetchPolicy);
+    on<NewPolicyEvent>(_onCreatePolicy);
   }
-  Future<void> fetch(
+
+  Future<void> _onFetchPolicy(
     SuccessPolicyEvent event,
     Emitter<PolicyState> emit,
   ) async {
     try {
       emit(LoadingPolicyState());
-      final count = await DatabaseManager.instance.getPolicyCount();
-      debugPrint("Hello -> $count");
+      final count = await policyRepository.getAll();
       emit(SuccessPolicyState(count));
-    } catch (cryptoError) {
-      emit(
-        ErrorPolicyState(
-          'Cryptographic processing failed. Ensure the file is valid and try again.',
-        ),
-      );
+    } catch (e) {
+      emit(ErrorPolicyState('Failed to fetch policies: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onCreatePolicy(
+    NewPolicyEvent event,
+    Emitter<PolicyState> emit,
+  ) async {
+    try {
+      emit(LoadingPolicyState());
+      // Assuming createPolicy accepts the parameters from the event
+      final count = await policyRepository.createPolicy(event.no, event.status);
+      emit(SuccessPolicyState(count));
+    } catch (e) {
+      emit(ErrorPolicyState('Failed to create policy: ${e.toString()}'));
     }
   }
 }

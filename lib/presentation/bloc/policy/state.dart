@@ -1,23 +1,23 @@
-sealed class PolicyState<T> {
-  final T? data;
+sealed class PolicyState {
+  final int? data;
   final bool loading;
   final String message;
 
   PolicyState({this.data, this.message = "Init", this.loading = true});
 }
 
-class InitialPolicyState<T> extends PolicyState<T> {
+class InitialPolicyState extends PolicyState {
   InitialPolicyState({super.loading = false});
 }
 
-class LoadingPolicyState<T> extends PolicyState<T> {
+class LoadingPolicyState extends PolicyState {
   LoadingPolicyState({super.loading = true});
 }
 
-class ErrorPolicyState<T> extends PolicyState<T> {
+class ErrorPolicyState extends PolicyState {
   ErrorPolicyState(String errorMessage) : super(message: errorMessage);
 }
 
-class SuccessPolicyState<T> extends PolicyState<T> {
-  SuccessPolicyState(T d) : super(data: d, loading: false);
+class SuccessPolicyState extends PolicyState {
+  SuccessPolicyState(int d) : super(data: d, loading: false);
 }
