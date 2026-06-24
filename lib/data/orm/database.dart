@@ -1,11 +1,13 @@
+import 'package:flutter/rendering.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 import 'package:path/path.dart';
 
-class DatabaseManager {
-  // 1. Private constructor for Singleton
-  DatabaseManager._privateConstructor();
-  static final DatabaseManager instance = DatabaseManager._privateConstructor();
+import '../model/model.dart';
 
+class DatabaseManager {
+  static final DatabaseManager _instance = DatabaseManager._internal();
+  factory DatabaseManager() => _instance;
+  DatabaseManager._internal();
   static Database? _database;
 
   static const _dbName = "secure_insurance_v3.db";
@@ -51,12 +53,45 @@ class DatabaseManager {
     return Sqflite.firstIntValue(result) ?? 0;
   }
 
-  Future<int> addPolicy(String no, String status) async {
+  Future<List<PolicyModel>> getPolicys() async {
+    try {
+      final db = await database;
+      final result = await db.rawQuery("SELECT * FROM policies");
+      if (result.isEmpty) return [];
+      return result.map((e) => PolicyModel.fromMap(e)).toList();
+    } on Exception catch (_, e) {
+      debugPrint("ORM ERROR -> $e");
+      return [];
+    }
+  }
+
+  Future<int> addPolicy(PolicyModel data) async {
     final db = await database;
-    final result = await db.insert('policies', {
-      'policy_no': no,
-      'status': status,
-    });
+    final result = await db.insert('policies', data.toMap());
+    return result;
+  }
+
+  Future<int> updatePolicy(PolicyModel data) async {
+    try {
+      final db = await database;
+      final result = await db.update(
+        'policies',
+        data.toMap(),
+        where: 'id = ?',
+        whereArgs: [data.id],
+      );
+      return result;
+    } catch (e) {
+      debugPrint("Update Policy ORM Error -> $e");
+      return -1;
+    }
+  }
+
+  Future<int> removePolicy(int id) async {
+    final db = await database;
+    final result = await db.rawDelete('DELETE FROM policies WHERE id = ?', [
+      id,
+    ]);
     return result;
   }
 }

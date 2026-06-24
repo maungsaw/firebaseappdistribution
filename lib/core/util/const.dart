@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 abstract class AppRoutes {
   static const String home = '/';
   static const String calculator = '/calculator';
+  static const String policy = '/policy';
 }
 
 abstract class RootNavigation {

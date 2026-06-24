@@ -1,22 +1,17 @@
-import 'package:firebaseappdistribution/core/core.dart';
-import 'package:firebaseappdistribution/presentation/presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'data/data.dart';
 import 'domain/domain.dart';
+import 'core/core.dart';
+import 'presentation/presentation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
-
   await _startBackgroundTasks();
 }
 
 Future<String> _startBackgroundTasks() async {
-  // Database နှင့် File System အလုပ်များကို Main Thread မှ ခွဲထုတ်ထားပါ
-  // UI ကို အရင်တည်ငြိမ်စေရန်
   await FileStorageService.createFolders();
-  await DatabaseManager.instance.database;
   await _initFirebaseServices();
   return 'Success';
 }

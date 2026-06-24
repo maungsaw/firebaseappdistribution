@@ -1,4 +1,8 @@
+import 'package:firebaseappdistribution/data/data.dart';
+
 abstract class PolicyRepositoryImpl {
-  Future<int> createPolicy(String no, String status);
-  Future<int> getAll();
+  Future<int> createPolicy(PolicyModel data);
+  Future<int> removePolicy(int id);
+  Future<int> updatePolicy(PolicyModel data);
+  Future<List<PolicyModel>> getAll();
 }

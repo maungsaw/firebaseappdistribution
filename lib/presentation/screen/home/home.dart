@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
           // Return the screen widget based on the index
           if (index == 1) return const DocumentScreen();
           if (index == 2) return const ProfileScreen();
-          return const CounterScreen();
+          return const PolicyScreen();
         },
       ),
       bottomNavigationBar: Padding(

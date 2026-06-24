@@ -8,6 +8,8 @@ extension RouteNameExtension on RouteName {
         return AppRoutes.home;
       case RouteName.calculator:
         return AppRoutes.calculator;
+      case RouteName.policy:
+        return AppRoutes.policy;
     }
   }
 }

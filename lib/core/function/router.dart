@@ -1,3 +1,4 @@
+import 'package:firebaseappdistribution/data/data.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,33 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return HomeScreen();
         },
+      ),
+      GoRoute(
+        path: AppRoutes.policy,
+        name: AppRoutes.policy,
+        builder: (BuildContext context, GoRouterState state) {
+          return PolicyScreen();
+        },
+        routes: [
+          GoRoute(
+            path: 'detail',
+            builder: (BuildContext context, GoRouterState state) {
+              return PolicyDetailScreen(policy: state.extra as PolicyModel);
+            },
+          ),
+          GoRoute(
+            path: 'edit',
+            builder: (BuildContext context, GoRouterState state) {
+              return EditPolicyScreen(policy: state.extra as PolicyModel);
+            },
+          ),
+          GoRoute(
+            path: 'create',
+            builder: (BuildContext context, GoRouterState state) {
+              return CreatePolicyScreen();
+            },
+          ),
+        ],
       ),
       GoRoute(
         path: AppRoutes.calculator,
