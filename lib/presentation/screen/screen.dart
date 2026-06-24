@@ -1,4 +1,3 @@
-export "counter/counter.dart";
 export "home/home.dart";
 export "global_widget.dart";
 export 'calculator/calculator.dart';

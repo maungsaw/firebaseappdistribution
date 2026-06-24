@@ -1,5 +1,6 @@
-import 'package:firebaseappdistribution/core/core.dart';
-import 'package:firebaseappdistribution/data/data.dart';
+import 'package:firebaseappdistribution/core/core.dart'
+    show FormType, PolicyStatus;
+import 'package:firebaseappdistribution/data/data.dart' show PolicyModel;
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

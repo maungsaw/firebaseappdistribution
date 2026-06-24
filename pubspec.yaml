@@ -49,6 +49,8 @@ dependencies:
   go_router: ^17.3.0
   path: ^1.9.1
   sqflite_sqlcipher: ^3.4.0
+  sqflite_common: ^2.5.11
+  dio: ^5.9.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

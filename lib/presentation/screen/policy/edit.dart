@@ -1,5 +1,5 @@
-import 'package:firebaseappdistribution/core/core.dart';
-import 'package:firebaseappdistribution/data/model/model.dart';
+import 'package:firebaseappdistribution/core/core.dart' show FormType;
+import 'package:firebaseappdistribution/data/data.dart' show PolicyModel;
 import './form.dart';
 import 'package:flutter/material.dart';
 

@@ -1,6 +1,5 @@
-import 'package:firebaseappdistribution/core/core.dart';
-
-import './form.dart';
+import 'package:firebaseappdistribution/core/core.dart' show FormType;
+import 'form.dart';
 import 'package:flutter/material.dart';
 
 class CreatePolicyScreen extends StatelessWidget {

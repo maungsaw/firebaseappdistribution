@@ -1,4 +1,4 @@
-import 'package:firebaseappdistribution/data/data.dart';
+import 'package:firebaseappdistribution/data/data.dart' show PolicyModel;
 
 abstract class PolicyRepositoryImpl {
   Future<int> createPolicy(PolicyModel data);
