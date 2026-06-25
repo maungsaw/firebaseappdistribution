@@ -54,7 +54,11 @@ class PolicyBloc extends Bloc<PolicyEvent, PolicyState> {
   ) async {
     try {
       emit(LoadingPolicyState());
-      final policy = PolicyModel(no: event.no, status: event.status);
+      final policy = PolicyModel(
+        no: event.no,
+        status: event.status,
+        filePath: event.filePath,
+      );
       final count = await policyRepository.createPolicy(policy);
 
       if (count > -1) {

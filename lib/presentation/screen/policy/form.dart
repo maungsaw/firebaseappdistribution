@@ -9,7 +9,6 @@ import 'package:go_router/go_router.dart';
 class PolicyForm extends StatefulWidget {
   final FormType type;
   final PolicyModel? data;
-
   const PolicyForm({super.key, required this.type, this.data});
 
   @override
@@ -19,12 +18,16 @@ class PolicyForm extends StatefulWidget {
 class _PolicyFormState extends State<PolicyForm> {
   final _formKey = GlobalKey<FormState>();
   final _policyNoController = TextEditingController();
+  String filePath = '';
 
   @override
   void initState() {
     super.initState();
     if (widget.type != FormType.create && widget.data != null) {
       _policyNoController.text = widget.data!.no;
+      setState(() {
+        filePath = widget.data!.filePath;
+      });
     }
   }
 
@@ -46,12 +49,18 @@ class _PolicyFormState extends State<PolicyForm> {
 
     if (widget.type == FormType.create) {
       context.read<PolicyBloc>().add(
-        NewPolicyEvent(policyNo, PolicyStatus.draft.label),
+        NewPolicyEvent(policyNo, PolicyStatus.draft.label, filePath),
       );
     } else if (widget.type == FormType.edit && widget.data != null) {
       final updatedPolicy = widget.data!.copyWith(no: policyNo);
       context.read<PolicyBloc>().add(UpdatePolicyEvent(updatedPolicy));
     }
+  }
+
+  void pickFile(String path) {
+    setState(() {
+      filePath = path;
+    });
   }
 
   @override
@@ -62,6 +71,7 @@ class _PolicyFormState extends State<PolicyForm> {
           context.pop();
         }
       },
+
       child: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -85,6 +95,13 @@ class _PolicyFormState extends State<PolicyForm> {
                 Text('Status: ${widget.data?.status ?? 'N/A'}'),
                 const SizedBox(height: 20),
               ],
+
+              filePath.isEmpty
+                  ? FilePickerView(onPickDocument: (path) => pickFile(path))
+                  : ListTile(
+                      leading: Icon(Icons.picture_as_pdf),
+                      title: Text('${_policyNoController.text.trim()}.pdf'),
+                    ),
               OutlinedButton(
                 onPressed: _handleAction,
                 child: Text(widget.type == FormType.detail ? 'Back' : 'Save'),

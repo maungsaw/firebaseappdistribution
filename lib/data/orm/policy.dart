@@ -12,7 +12,7 @@ abstract class PolicyORM implements DatabaseManager {
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             policy_no TEXT NOT NULL,
             status TEXT,
-            expiry_date TEXT
+            file_path TEXT
           );
         ''');
   }

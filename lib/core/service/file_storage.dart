@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 import 'encryption.dart'; // လမ်းကြောင်းများ ပေါင်းစပ်ရန်အတွက် path package ကို သုံးပါ
 
 class FileStorageService {
-  // Folder များကို App ရဲ့ Document Directory ထဲတွင် ဆောက်ပါ
-  final encryptionService = EncryptionService();
   static Future<void> createFolders() async {
     final appDir = await getApplicationDocumentsDirectory();
 
@@ -36,7 +36,7 @@ class FileStorageService {
     return p.join(folderPath, fileName);
   }
 
-  Future<String> setDocumentSecurely(File rawDownloadedFile) async {
+  static Future<String> setDocumentSecurely(File rawDownloadedFile) async {
     // 1. FileStorageService မှတစ်ဆင့် 'docs' folder path ကို ရယူခြင်း
     final String docDir = await FileStorageService.getPath('doc');
 
@@ -45,7 +45,7 @@ class FileStorageService {
     final String secureFilePath = p.join(docDir, 'vault_$originalName.enc');
 
     // 3. Encrypt လုပ်ပြီး သိမ်းဆည်းခြင်း
-    await encryptionService.encryptFile(rawDownloadedFile, secureFilePath);
+    await EncryptionService.encryptFile(rawDownloadedFile, secureFilePath);
 
     // 4. CRITICAL: Raw file ကို ချက်ချင်းဖျက်ပစ်ခြင်း
     if (await rawDownloadedFile.exists()) {
@@ -55,7 +55,7 @@ class FileStorageService {
     return secureFilePath;
   }
 
-  Future<Uint8List> getSecureDocument(String secureFilePath) async {
+  static Future<Uint8List> getSecureDocument(String secureFilePath) async {
     final File encryptedFile = File(secureFilePath);
 
     if (!await encryptedFile.exists()) {
@@ -63,10 +63,31 @@ class FileStorageService {
     }
 
     // Decrypt လုပ်ပြီး Memory ထဲသို့ Byte အနေနဲ့ ပြန်ပို့ပေးခြင်း
-    final Uint8List cleanBytes = await encryptionService.decryptFile(
+    final Uint8List cleanBytes = await EncryptionService.decryptFile(
       encryptedFile,
     );
 
     return cleanBytes;
+  }
+
+  static Future<File?> pickFile() async {
+    try {
+      const XTypeGroup typeGroup = XTypeGroup(
+        label: 'All Documents',
+        extensions: <String>['pdf', 'doc', 'docx', 'txt', 'png', 'jpg', 'jpeg'],
+      );
+
+      final XFile? result = await openFile(
+        acceptedTypeGroups: <XTypeGroup>[typeGroup],
+      );
+
+      if (result != null) {
+        return File(result.path);
+      }
+    } catch (e) {
+      // Caught gracefully; UI handles errors through state mutations
+      debugPrint("Pick error -> e");
+    }
+    return null;
   }
 }

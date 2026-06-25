@@ -7,7 +7,8 @@ class SuccessPolicyEvent extends PolicyEvent {}
 class NewPolicyEvent extends PolicyEvent {
   final String no;
   final String status;
-  NewPolicyEvent(this.no, this.status);
+  final String filePath;
+  NewPolicyEvent(this.no, this.status, this.filePath);
 }
 
 class UpdatePolicyEvent extends PolicyEvent {

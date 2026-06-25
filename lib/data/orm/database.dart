@@ -34,7 +34,9 @@ class DatabaseManager {
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
-          await db.execute('ALTER TABLE policies ADD COLUMN expiry_date TEXT;');
+          await db.execute(
+            'ALTER TABLE ${PolicyORM.table} ADD COLUMN file_path TEXT;',
+          );
         }
       },
     );

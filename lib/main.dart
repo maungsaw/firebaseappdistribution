@@ -1,10 +1,11 @@
 import 'injection.dart';
 import 'package:flutter/material.dart';
-import 'core/core.dart';
+import 'core/core.dart' show AppRouter, FileStorageService;
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(AppDependencies(child: MyApp()));
+  await FileStorageService.createFolders();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,6 +13,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(routerConfig: AppRouter.router);
+    return AppDependencies(
+      child: MaterialApp.router(routerConfig: AppRouter.router),
+    );
   }
 }

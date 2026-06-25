@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'data/data.dart';
 import 'domain/domain.dart';
+import 'core/core.dart';
 import 'presentation/presentation.dart';
 
 class AppDependencies extends StatelessWidget {
@@ -15,9 +16,11 @@ class AppDependencies extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
-        RepositoryProvider<Dio>(create: (_) => DioClient.instance),
+        RepositoryProvider<Dio>(
+          create: (_) => NetworkClient.getClient(ClientServiceType.protected),
+        ),
         RepositoryProvider<WeatherServiceImp>(
-          create: (ctx) => WeatherService(dio: ctx.read<Dio>()),
+          create: (ctx) => WeatherService(),
         ),
         RepositoryProvider<WeatherRepositoryImpl>(
           create: (ctx) =>

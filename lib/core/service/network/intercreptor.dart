@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../cache.dart';
 
 class DioInterceptor extends Interceptor {
   final Dio dio;
-  final _storage = const FlutterSecureStorage();
 
   DioInterceptor({required this.dio});
 
@@ -14,7 +14,7 @@ class DioInterceptor extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     // 1. Get the token from secure storage
-    final token = await _storage.read(key: 'access_token');
+    final token = await LocalCacheService.read('access_token');
 
     // 2. Add the token to the header if it exists
     if (token != null) {
@@ -40,7 +40,7 @@ class DioInterceptor extends Interceptor {
     if (err.response?.statusCode == 401 &&
         err.requestOptions.path != '/auth/refresh') {
       try {
-        final refreshToken = await _storage.read(key: 'refresh_token');
+        final refreshToken = await LocalCacheService.read('refresh_token');
 
         // Use a separate Dio instance for refreshing to avoid recursive interceptors
         final refreshDio = Dio(BaseOptions(baseUrl: dio.options.baseUrl));
@@ -51,7 +51,7 @@ class DioInterceptor extends Interceptor {
         );
 
         final newAccessToken = response.data['accessToken'];
-        await _storage.write(key: 'access_token', value: newAccessToken);
+        await LocalCacheService.write('access_token', newAccessToken);
 
         // Update original request headers and retry
         final options = err.requestOptions;
@@ -61,7 +61,7 @@ class DioInterceptor extends Interceptor {
         return handler.resolve(retryResponse);
       } catch (e) {
         // Refresh failed: Logout user
-        await _storage.deleteAll();
+        await LocalCacheService.clearAll();
         return handler.reject(err);
       }
     }

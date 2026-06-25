@@ -10,7 +10,7 @@ abstract class RootNavigation {
   static final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
   static final navigationIcons = [
     Icons.home_max,
-    Icons.file_open,
+    Icons.integration_instructions_sharp,
     Icons.person,
   ];
 }

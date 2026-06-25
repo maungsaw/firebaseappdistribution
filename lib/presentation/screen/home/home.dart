@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
         selector: (state) => state.currentIndex,
         builder: (context, index) {
           // Return the screen widget based on the index
-          if (index == 1) return const DocumentScreen();
+          if (index == 1) return const ProductScreen();
           if (index == 2) return const ProfileScreen();
           return const PolicyScreen();
         },
@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(width: 15), // Spacing between nav and edit button
             FloatingActionButton(
               onPressed: () => context.push(RouteName.calculator.path),
-              backgroundColor: Colors.black45,
+              backgroundColor: Colors.grey[800],
               child: const Icon(
                 Icons.calculate,
                 color: Colors.lightBlue,

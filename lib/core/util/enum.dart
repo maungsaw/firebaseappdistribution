@@ -10,3 +10,5 @@ enum PolicyStatus {
 }
 
 enum FormType { create, edit, detail }
+
+enum ClientServiceType { public, protected }
