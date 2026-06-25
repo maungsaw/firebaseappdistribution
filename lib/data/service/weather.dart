@@ -9,10 +9,10 @@ class WeatherService extends BaseNetworkService<WeatherResponse>
 
   @override
   Future<WeatherResponse?> fetchAll(WeatherParam param) async =>
-      await getByParam(param.toMap());
+      await super.getByParam(param.toMap());
 
   @override
-  Future<void> fetch() async => await getById('');
+  Future<void> fetch() async => await super.getById('');
 
   @override
   WeatherResponse fromJson(Map<String, dynamic> json) =>
