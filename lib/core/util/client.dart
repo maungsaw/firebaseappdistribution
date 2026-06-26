@@ -1,9 +1,9 @@
 abstract class ApiClient {
-  static String baseUrl = 'https://api.open-meteo.com';
-  static String clientVersion = '/v1';
+  static String baseUrl = 'http://10.10.1.63:5221';
+  static String clientVersion = '/api';
   static String prefix = '';
 }
 
 abstract class ClientEndPoint {
-  static String weather = '/forecast';
+  static String weather = '/test';
 }

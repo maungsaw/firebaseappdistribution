@@ -1,6 +1,7 @@
+import 'package:firebaseappdistribution/core/service/service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:worker_manager/worker_manager.dart';
-import 'package:workmanager/workmanager.dart';
 
 class ProductScreen extends StatefulWidget {
   const ProductScreen({super.key});
@@ -46,38 +47,35 @@ class _ProductScreenState extends State<ProductScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Background Summation")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Sum result: $_currentSum",
-              style: const TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 20),
-            _isRunning
-                ? ElevatedButton(
-                    onPressed: _cancelTask,
-                    child: const Text("Cancel"),
-                  )
-                : ElevatedButton(
-                    onPressed: _startTask,
-                    child: const Text("Start Sum to 100k"),
-                  ),
+    return WithForegroundTask(
+      child: Scaffold(
+        appBar: AppBar(title: const Text("Background Summation")),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Sum result: $_currentSum",
+                style: const TextStyle(fontSize: 24),
+              ),
+              const SizedBox(height: 20),
+              _isRunning
+                  ? ElevatedButton(
+                      onPressed: _cancelTask,
+                      child: const Text("Cancel"),
+                    )
+                  : ElevatedButton(
+                      onPressed: _startTask,
+                      child: const Text("Start Sum to 100k"),
+                    ),
 
-            ElevatedButton(
-              onPressed: () {
-                Workmanager().registerPeriodicTask(
-                  "1", // Unique name for this task
-                  "syncData",
-                  initialDelay: Duration(seconds: 5), // Minimum is 15 minutes
-                );
-              },
-              child: Text("Run Background"),
-            ),
-          ],
+              ElevatedButton(
+                onPressed: () async =>
+                    await LocalCacheService.write('sync_enabled', 'true'),
+                child: Text("Start Sync Service"),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -52,7 +52,8 @@ dependencies:
   sqflite_common: ^2.5.11
   dio: ^5.9.2
   worker_manager: ^7.2.9
-  workmanager: ^0.9.0+3
+  flutter_foreground_task: ^9.2.2
+  syncfusion_flutter_calendar: ^33.2.15
 dev_dependencies:
   flutter_test:
     sdk: flutter
