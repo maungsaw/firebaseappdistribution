@@ -29,7 +29,7 @@ class GlobalSnackbar {
     _show(
       context: context,
       message: message,
-      backgroundColor: Colors.accents[700],
+      backgroundColor: Colors.greenAccent,
       icon: Icons.check_circle_outline,
     );
   }

@@ -16,7 +16,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppDependencies(
-      child: MaterialApp.router(routerConfig: AppRouter.router),
+      child: MaterialApp.router(
+        routerConfig: AppRouter.router,
+        theme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+            brightness: Brightness.light,
+          ),
+        ),
+        // Optional but highly recommended: Auto Dark Mode
+        darkTheme: ThemeData(
+          useMaterial3: true,
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: Colors.blue,
+            brightness: Brightness.dark,
+          ),
+        ),
+        themeMode: ThemeMode.system,
+      ),
     );
   }
 }

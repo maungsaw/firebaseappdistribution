@@ -24,9 +24,7 @@ class PolicyScreen extends StatelessWidget {
     return BlocConsumer<PolicyBloc, PolicyState>(
       // Use listenWhen to control when the listener should run
       listenWhen: (previous, current) => previous != current,
-      listener: (context, state) {
-        debugPrint("Listener - Current State: $state");
-      },
+      listener: (context, state) {},
       buildWhen: (previous, current) => previous != current,
       builder: (context, state) {
         if (state is LoadingPolicyState) return GlobalWidget.loadingView();

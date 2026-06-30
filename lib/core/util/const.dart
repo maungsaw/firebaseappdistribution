@@ -4,6 +4,8 @@ abstract class AppRoutes {
   static const String home = '/';
   static const String calculator = '/calculator';
   static const String policy = '/policy';
+  static const String premiumTerm = '/premium-term';
+  static const String premiumPolicy = '/premium-policy';
 }
 
 abstract class RootNavigation {

@@ -6,12 +6,14 @@ typedef OnFilePicked = void Function(String path);
 
 class FilePickerView extends StatelessWidget {
   final List<String> extensions;
+  final String label;
   final OnFilePicked onPickDocument;
 
   const FilePickerView({
     super.key,
     required this.onPickDocument,
     required this.extensions,
+    required this.label,
   });
 
   @override
@@ -32,7 +34,7 @@ class FilePickerView extends StatelessWidget {
             );
           },
           icon: const Icon(Icons.upload_file),
-          label: const Text('Pick a File'),
+          label: Text(label),
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             shape: RoundedRectangleBorder(

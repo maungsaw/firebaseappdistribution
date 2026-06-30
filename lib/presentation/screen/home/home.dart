@@ -1,5 +1,6 @@
 import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
+import 'package:firebaseappdistribution/presentation/screen/setting/index.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +17,7 @@ class HomeScreen extends StatelessWidget {
         builder: (context, index) {
           // Return the screen widget based on the index
           if (index == 1) return const ProductScreen();
-          if (index == 2) return const ProfileScreen();
+          if (index == 2) return const SettingScreen();
           return const PolicyScreen();
         },
       ),

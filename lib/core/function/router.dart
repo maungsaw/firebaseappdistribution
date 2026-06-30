@@ -22,6 +22,68 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: AppRoutes.premiumPolicy,
+        name: AppRoutes.premiumPolicy,
+        builder: (BuildContext context, GoRouterState state) {
+          return PremiumPolicyScreen();
+        },
+        routes: [
+          GoRoute(
+            path: 'detail',
+            builder: (BuildContext context, GoRouterState state) {
+              return PremiumPolicyDetailScreen(
+                data: state.extra as PremiumPolicyModel,
+              );
+            },
+          ),
+          GoRoute(
+            path: 'edit',
+            builder: (BuildContext context, GoRouterState state) {
+              return EditPremiumPolicyScreen(
+                data: state.extra as PremiumPolicyModel,
+              );
+            },
+          ),
+          GoRoute(
+            path: 'create',
+            builder: (BuildContext context, GoRouterState state) {
+              return CreatePremiumPolicyScreen();
+            },
+          ),
+        ],
+      ),
+      GoRoute(
+        path: AppRoutes.premiumTerm,
+        name: AppRoutes.premiumTerm,
+        builder: (BuildContext context, GoRouterState state) {
+          return PremiumTermScreen();
+        },
+        routes: [
+          GoRoute(
+            path: 'detail',
+            builder: (BuildContext context, GoRouterState state) {
+              return PremiumTermDetailScreen(
+                data: state.extra as PremiumTermModel,
+              );
+            },
+          ),
+          GoRoute(
+            path: 'edit',
+            builder: (BuildContext context, GoRouterState state) {
+              return EditPremiumTermScreen(
+                data: state.extra as PremiumTermModel,
+              );
+            },
+          ),
+          GoRoute(
+            path: 'create',
+            builder: (BuildContext context, GoRouterState state) {
+              return CreatePremiumTermScreen();
+            },
+          ),
+        ],
+      ),
+      GoRoute(
         path: AppRoutes.policy,
         name: AppRoutes.policy,
         builder: (BuildContext context, GoRouterState state) {

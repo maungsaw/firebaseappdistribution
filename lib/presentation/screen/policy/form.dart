@@ -100,6 +100,7 @@ class _PolicyFormState extends State<PolicyForm> {
                   ? FilePickerView(
                       onPickDocument: (path) => pickFile(path),
                       extensions: ['pdf'],
+                      label: 'Upload Doc',
                     )
                   : ListTile(
                       leading: Icon(Icons.picture_as_pdf),

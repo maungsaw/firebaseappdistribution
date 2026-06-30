@@ -10,6 +10,10 @@ extension RouteNameExtension on RouteName {
         return AppRoutes.calculator;
       case RouteName.policy:
         return AppRoutes.policy;
+      case RouteName.premiumTerm:
+        return AppRoutes.premiumTerm;
+      case RouteName.premiumPolicy:
+        return AppRoutes.premiumPolicy;
     }
   }
 }

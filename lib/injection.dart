@@ -29,6 +29,12 @@ class AppDependencies extends StatelessWidget {
         RepositoryProvider<PolicyRepositoryImpl>(
           create: (_) => PolicyRepository(),
         ),
+        RepositoryProvider<PremiumRateRepositoryImpl>(
+          create: (_) => PremiumRateRepository(),
+        ),
+        RepositoryProvider<PremiumTermRepositoryImpl>(
+          create: (_) => PremiumTermRepository(),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -41,6 +47,16 @@ class AppDependencies extends StatelessWidget {
           BlocProvider(
             create: (ctx) => WeatherBloc(
               weatherRepository: ctx.read<WeatherRepositoryImpl>(),
+            ),
+          ),
+          BlocProvider(
+            create: (ctx) => PremiumRateBloc(
+              repository: ctx.read<PremiumRateRepositoryImpl>(),
+            ),
+          ),
+          BlocProvider(
+            create: (ctx) => PremiumTermBloc(
+              repository: ctx.read<PremiumTermRepositoryImpl>(),
             ),
           ),
         ],
