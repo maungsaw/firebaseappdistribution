@@ -97,7 +97,10 @@ class _PolicyFormState extends State<PolicyForm> {
               ],
 
               filePath.isEmpty
-                  ? FilePickerView(onPickDocument: (path) => pickFile(path))
+                  ? FilePickerView(
+                      onPickDocument: (path) => pickFile(path),
+                      extensions: ['pdf'],
+                    )
                   : ListTile(
                       leading: Icon(Icons.picture_as_pdf),
                       title: Text('${_policyNoController.text.trim()}.pdf'),

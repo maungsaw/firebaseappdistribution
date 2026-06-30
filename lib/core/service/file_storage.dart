@@ -70,11 +70,11 @@ class FileStorageService {
     return cleanBytes;
   }
 
-  static Future<File?> pickFile() async {
+  static Future<File?> pickFile(List<String> extensions) async {
     try {
-      const XTypeGroup typeGroup = XTypeGroup(
+      XTypeGroup typeGroup = XTypeGroup(
         label: 'All Documents',
-        extensions: <String>['pdf', 'doc', 'docx', 'txt', 'png', 'jpg', 'jpeg'],
+        extensions: extensions,
       );
 
       final XFile? result = await openFile(

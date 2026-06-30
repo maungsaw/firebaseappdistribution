@@ -5,9 +5,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 typedef OnFilePicked = void Function(String path);
 
 class FilePickerView extends StatelessWidget {
+  final List<String> extensions;
   final OnFilePicked onPickDocument;
 
-  const FilePickerView({super.key, required this.onPickDocument});
+  const FilePickerView({
+    super.key,
+    required this.onPickDocument,
+    required this.extensions,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,21 +24,19 @@ class FilePickerView extends StatelessWidget {
       },
       builder: (context, state) {
         if (state is FilePickerLoading) return GlobalWidget.loadingView();
-        return Center(
-          child: ElevatedButton.icon(
-            onPressed: () {
-              // Trigger your BLoC event to start picking the file
-              context.read<FilePickerBloc>().add(FileSelectedEvent());
-            },
-            icon: const Icon(Icons.upload_file),
-            label: const Text('Pick a Document'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueGrey[900],
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+        return OutlinedButton.icon(
+          onPressed: () {
+            // Trigger your BLoC event to start picking the file
+            context.read<FilePickerBloc>().add(
+              FileSelectedEvent(extensions: extensions),
+            );
+          },
+          icon: const Icon(Icons.upload_file),
+          label: const Text('Pick a File'),
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         );
