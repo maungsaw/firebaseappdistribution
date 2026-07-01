@@ -32,6 +32,9 @@ class AppDependencies extends StatelessWidget {
         RepositoryProvider<PremiumRateRepositoryImpl>(
           create: (_) => PremiumRateRepository(),
         ),
+        RepositoryProvider<PremiumPolicyRepositoryImpl>(
+          create: (_) => PremiumPolicyRepository(),
+        ),
         RepositoryProvider<PremiumTermRepositoryImpl>(
           create: (_) => PremiumTermRepository(),
         ),
@@ -57,6 +60,11 @@ class AppDependencies extends StatelessWidget {
           BlocProvider(
             create: (ctx) => PremiumTermBloc(
               repository: ctx.read<PremiumTermRepositoryImpl>(),
+            ),
+          ),
+          BlocProvider(
+            create: (ctx) => PremiumPolicyBloc(
+              repository: ctx.read<PremiumPolicyRepositoryImpl>(),
             ),
           ),
         ],

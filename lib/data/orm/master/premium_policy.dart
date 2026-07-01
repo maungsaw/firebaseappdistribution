@@ -10,7 +10,7 @@ abstract class PremiumPolicyORM implements DatabaseManager {
     await db.execute('''
           CREATE TABLE $table (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            lable TEXT NOT NULL,
+            label TEXT NOT NULL,
             value double NOT NULL
           );
         ''');

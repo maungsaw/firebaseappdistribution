@@ -45,11 +45,19 @@ class _PremiumTermFormState extends State<PremiumTermForm> {
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       // Pass the text values back up cleanly to your BLoC or Parent widget
-      final premiumTerm = PremiumTermModel(
-        id: widget.data!.id,
-        label: _labelController.text,
-        value: int.parse(_valueController.text),
-      );
+      late PremiumTermModel premiumTerm;
+      if (widget.formType == 'create') {
+        premiumTerm = PremiumTermModel(
+          label: _labelController.text,
+          value: int.parse(_valueController.text),
+        );
+      } else if (widget.formType == 'edit') {
+        premiumTerm = PremiumTermModel(
+          id: widget.data!.id,
+          label: _labelController.text,
+          value: int.parse(_valueController.text),
+        );
+      }
       widget.onSave(premiumTerm);
     }
   }

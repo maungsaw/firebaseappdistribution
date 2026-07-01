@@ -11,6 +11,13 @@ abstract class PolicyORM implements DatabaseManager {
           CREATE TABLE $table (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             policy_no TEXT NOT NULL,
+            birthday TEXT NOT NULL,
+            name TEXT NOT NULL,
+            age int NOT NULL,
+            sum_assured DOUBLE NOT NULL,
+            term_id INT NOT NULL,
+            policy_id INT NOT NULL,
+            premium_amount DOUBLE NOT NULL,
             status TEXT,
             file_path TEXT
           );

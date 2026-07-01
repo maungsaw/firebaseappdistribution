@@ -7,6 +7,19 @@ class PremiumPolicyDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('Premium Policy Detail')));
+    return Scaffold(
+      appBar: AppBar(title: Text('Premium Policy Detail')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Label: ${data?.label}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 8),
+            Text('Value: ${data?.value}', style: TextStyle(fontSize: 18)),
+          ],
+        ),
+      ),
+    );
   }
 }

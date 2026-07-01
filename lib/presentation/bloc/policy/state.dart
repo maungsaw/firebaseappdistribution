@@ -29,3 +29,9 @@ class ErrorPolicyState extends PolicyState {
 class FetchPolicyState extends PolicyState {
   FetchPolicyState(List<PolicyModel> d) : super(data: d, loading: false);
 }
+
+class PremiumOptionsLoadedState extends PolicyState {
+  final List<PremiumTermModel> terms;
+  final List<PremiumPolicyModel> policies;
+  PremiumOptionsLoadedState({required this.terms, required this.policies});
+}

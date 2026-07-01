@@ -70,7 +70,7 @@ class SettingScreen extends StatelessWidget {
 
           // --- DYNAMIC MENU SECTION ---
           DynamicMasterSectionCard(
-            sectionTitle: 'Master Configurations',
+            sectionTitle: 'Master',
             options: [
               MasterMenuOption(
                 title: 'Premium Term',
@@ -84,9 +84,19 @@ class SettingScreen extends StatelessWidget {
                 onTap: () => context.push(RouteName.premiumPolicy.path),
               ),
               MasterMenuOption(
-                title: 'Tax Configurations',
+                title: 'Tax',
                 leadingIcon: Icons.receipt_long_rounded,
                 onTap: () => debugPrint('Go to Tax'),
+              ),
+              MasterMenuOption(
+                title: 'AddOn',
+                leadingIcon: Icons.assignment_add,
+                onTap: () => debugPrint('Go to AddOn'),
+              ),
+              MasterMenuOption(
+                title: 'Surrender Value',
+                leadingIcon: Icons.money_off,
+                onTap: () => debugPrint('Go to AddOn'),
               ),
             ],
           ),

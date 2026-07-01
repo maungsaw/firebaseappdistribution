@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-class ReorderablePremiumList extends StatelessWidget {
+class GlobalReorderableList extends StatelessWidget {
   final List<dynamic> items;
   final Function(int oldIndex, int newIndex) onReorder;
   final Function(dynamic item) onEdit;
+  final Function(dynamic item) onView;
   final Function(dynamic item) onDelete;
+  final IconData? leadingIcon;
 
-  const ReorderablePremiumList({
+  const GlobalReorderableList({
     super.key,
     required this.items,
     required this.onReorder,
     required this.onEdit,
     required this.onDelete,
+    required this.onView,
+    this.leadingIcon,
   });
 
   @override
@@ -20,7 +24,7 @@ class ReorderablePremiumList extends StatelessWidget {
     if (items.isEmpty) {
       return const Center(
         child: Text(
-          'No premium terms found. Tap + to add one.',
+          'No items found. Tap + to add one.',
           style: TextStyle(color: Colors.grey),
         ),
       );
@@ -101,12 +105,13 @@ class ReorderablePremiumList extends StatelessWidget {
               ),
             ),
             child: ListTile(
+              onTap: () => onView(item),
               contentPadding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 4,
               ),
-              leading: const Icon(
-                Icons.access_time_rounded,
+              leading: Icon(
+                leadingIcon ?? Icons.label_outline_rounded,
                 color: Colors.grey,
               ),
               title: Text(

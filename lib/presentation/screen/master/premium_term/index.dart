@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import 'recorderable.dart';
-
 class PremiumTermScreen extends StatelessWidget {
   const PremiumTermScreen({super.key});
 
@@ -18,12 +16,8 @@ class PremiumTermScreen extends StatelessWidget {
         listenWhen: (previous, current) => previous != current,
         buildWhen: (previous, current) => previous != current,
         listener: (context, PremiumTermState state) {
-          debugPrint("State here -> $state");
           if (state is FailurePremiumTermState) {
             return GlobalSnackbar.showError(context, state.errorMessage);
-          }
-          if (state is InitialPremiumTermState) {
-            context.read<PremiumTermBloc>().add(FetchedPremiumTermEvent());
           }
         },
         builder: (context, state) {
@@ -35,8 +29,9 @@ class PremiumTermScreen extends StatelessWidget {
             return GlobalWidget.loadingView();
           }
           if (state is SuccessPremiumTermState) {
-            return ReorderablePremiumList(
+            return GlobalReorderableList(
               items: state.data,
+              leadingIcon: Icons.access_time_rounded,
               onReorder: (oldIndex, newIndex) {
                 if (newIndex > oldIndex) newIndex -= 1;
 
@@ -55,6 +50,10 @@ class PremiumTermScreen extends StatelessWidget {
               },
               onEdit: (item) => context.push(
                 '${RouteName.premiumTerm.path}/edit',
+                extra: item,
+              ),
+              onView: (item) => context.push(
+                '${RouteName.premiumTerm.path}/detail',
                 extra: item,
               ),
             );

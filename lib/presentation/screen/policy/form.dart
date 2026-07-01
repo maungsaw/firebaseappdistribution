@@ -1,6 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:firebaseappdistribution/core/core.dart'
     show FormType, PolicyStatus;
-import 'package:firebaseappdistribution/data/data.dart' show PolicyModel;
+import 'package:firebaseappdistribution/data/data.dart'
+    show PolicyModel, PremiumTermModel, PremiumPolicyModel;
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,24 +20,112 @@ class PolicyForm extends StatefulWidget {
 
 class _PolicyFormState extends State<PolicyForm> {
   final _formKey = GlobalKey<FormState>();
+
   final _policyNoController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _ageController = TextEditingController();
+  final _sumAssuredController = TextEditingController();
+  final _premiumAmountController = TextEditingController();
+
   String filePath = '';
+  DateTime? _selectedBirthday;
+  String _selectedStatus = PolicyStatus.draft.label;
+
+  // Custom tracking for boundary validation
+  String? _ageValidationError;
+
+  List<PremiumTermModel> _availableTerms = [];
+  List<PremiumPolicyModel> _availablePolicies = [];
+
+  int? _selectedTermId;
+  int? _selectedPolicyId;
 
   @override
   void initState() {
     super.initState();
     if (widget.type != FormType.create && widget.data != null) {
-      _policyNoController.text = widget.data!.no;
-      setState(() {
-        filePath = widget.data!.filePath;
-      });
+      final data = widget.data!;
+      _policyNoController.text = data.no;
+      _nameController.text = data.name;
+      _ageController.text = data.age.toString();
+      _sumAssuredController.text = data.sumAssured.toString();
+      _premiumAmountController.text = data.premiumAmount.toString();
+
+      filePath = data.filePath;
+      _selectedBirthday = data.birthday;
+      _selectedStatus = data.status;
+      _selectedTermId = data.termId;
+      _selectedPolicyId = data.policyId;
+
+      // Perform initial boundary check for editing flow
+      _validateAgeBounds(data.age);
     }
   }
 
   @override
   void dispose() {
     _policyNoController.dispose();
+    _nameController.dispose();
+    _ageController.dispose();
+    _sumAssuredController.dispose();
+    _premiumAmountController.dispose();
     super.dispose();
+  }
+
+  // --- Core Validation Matrix for Min/Max Age Constraints ---
+  bool _validateAgeBounds(int age) {
+    if (age < 5 || age > 60) {
+      setState(() {
+        _ageValidationError =
+            'Age must be between 5 and 60 years old (Selected: $age)';
+        _availableTerms = [];
+        _availablePolicies = [];
+        _selectedTermId = null;
+        _selectedPolicyId = null;
+      });
+      return false;
+    }
+
+    setState(() {
+      _ageValidationError = null;
+    });
+    return true;
+  }
+
+  void _calculateAgeAndFetchOptions(DateTime birthday) {
+    final today = DateTime.now();
+    int age = today.year - birthday.year;
+
+    if (today.month < birthday.month ||
+        (today.month == birthday.month && today.day < birthday.day)) {
+      age--;
+    }
+
+    setState(() {
+      _selectedBirthday = birthday;
+      _ageController.text = age.toString();
+    });
+
+    // Only hit the database via Bloc if age is completely valid
+    if (_validateAgeBounds(age)) {
+      context.read<PolicyBloc>().add(LoadPremiumOptionsEvent(age));
+    }
+  }
+
+  Future<void> _selectBirthday(BuildContext context) async {
+    if (widget.type == FormType.detail) return;
+
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate:
+          _selectedBirthday ??
+          DateTime(2015), // Sensible default within 5-60 bound
+      firstDate: DateTime(DateTime.now().year - 65),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      _calculateAgeAndFetchOptions(picked);
+    }
   }
 
   void _handleAction() {
@@ -45,33 +136,89 @@ class _PolicyFormState extends State<PolicyForm> {
 
     if (!_formKey.currentState!.validate()) return;
 
+    // Explicit safety block checking
+    if (_selectedBirthday == null || _ageValidationError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            _ageValidationError ?? 'Please select a valid birthday',
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (_selectedTermId == null || _selectedPolicyId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Please select an eligible Premium Term and Policy option',
+          ),
+        ),
+      );
+      return;
+    }
+
     final policyNo = _policyNoController.text.trim();
+    final name = _nameController.text.trim();
+    final age = int.parse(_ageController.text);
+    final sumAssured = double.tryParse(_sumAssuredController.text) ?? 100.0;
+    final premiumAmount = double.tryParse(_premiumAmountController.text) ?? 1.0;
 
     if (widget.type == FormType.create) {
-      context.read<PolicyBloc>().add(
-        NewPolicyEvent(policyNo, PolicyStatus.draft.label, filePath),
+      final policyModel = PolicyModel(
+        no: policyNo,
+        status: PolicyStatus.draft.label,
+        filePath: filePath,
+        birthday: _selectedBirthday!,
+        age: age,
+        name: name,
+        sumAssured: sumAssured,
+        premiumAmount: premiumAmount,
+        termId: _selectedTermId!,
+        policyId: _selectedPolicyId!,
       );
+      context.read<PolicyBloc>().add(NewPolicyEvent(policyModel));
     } else if (widget.type == FormType.edit && widget.data != null) {
-      final updatedPolicy = widget.data!.copyWith(no: policyNo);
+      final updatedPolicy = widget.data!.copyWith(
+        no: policyNo,
+        name: name,
+        age: age,
+        sumAssured: sumAssured,
+        premiumAmount: premiumAmount,
+        termId: _selectedTermId,
+        policyId: _selectedPolicyId,
+        birthday: _selectedBirthday,
+        filePath: filePath,
+        status: _selectedStatus,
+      );
       context.read<PolicyBloc>().add(UpdatePolicyEvent(updatedPolicy));
     }
   }
 
-  void pickFile(String path) {
-    setState(() {
-      filePath = path;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
+    final isReadOnly = widget.type == FormType.detail;
+
     return BlocListener<PolicyBloc, PolicyState>(
       listener: (context, state) {
         if (state is SuccessPolicyState) {
           context.pop();
         }
-      },
+        if (state is PremiumOptionsLoadedState && _ageValidationError == null) {
+          setState(() {
+            _availableTerms = state.terms;
+            _availablePolicies = state.policies;
 
+            if (!_availableTerms.any((t) => t.id == _selectedTermId)) {
+              _selectedTermId = null;
+            }
+            if (!_availablePolicies.any((p) => p.id == _selectedPolicyId)) {
+              _selectedPolicyId = null;
+            }
+          });
+        }
+      },
       child: Form(
         key: _formKey,
         child: SingleChildScrollView(
@@ -79,36 +226,230 @@ class _PolicyFormState extends State<PolicyForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextFormField(
+              GlobalFormField(
                 controller: _policyNoController,
-                readOnly: widget.type == FormType.detail,
-                decoration: const InputDecoration(
-                  labelText: 'Policy Number',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => (value == null || value.isEmpty)
-                    ? 'Please enter a policy number'
-                    : null,
+                labelText: 'Policy Number',
+                hintText: 'Enter client name',
+                isReadOnly: isReadOnly,
+                validator: (value) =>
+                    (value == null || value.isEmpty) ? 'Required' : null,
               ),
+              const SizedBox(height: 16),
+              GlobalFormField(
+                controller: _nameController,
+                labelText: 'Client Name',
+                hintText: 'Enter client name',
+                isReadOnly: isReadOnly,
+                validator: (value) =>
+                    (value == null || value.isEmpty) ? 'Required' : null,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: GlobalFormField(
+                      controller: _sumAssuredController,
+                      labelText: 'Sum Assured',
+                      hintText: 'Enter sum assured',
+                      keyboardType: TextInputType.number,
+                      isReadOnly: isReadOnly,
+                      validator: (value) =>
+                          (value == null || value.isEmpty) ? 'Required' : null,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: GlobalFormField(
+                      controller: _premiumAmountController,
+                      labelText: 'Premium Amount',
+                      hintText: 'Enter premium amount',
+                      keyboardType: TextInputType.number,
+                      isReadOnly: isReadOnly,
+                      validator: (value) =>
+                          (value == null || value.isEmpty) ? 'Required' : null,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () => _selectBirthday(context),
+                      child: InputDecorator(
+                        decoration: const InputDecoration(
+                          labelText: 'Birthday',
+                          border: OutlineInputBorder(),
+                        ),
+                        child: Text(
+                          _selectedBirthday == null
+                              ? 'Select Date'
+                              : "${_selectedBirthday!.toLocal()}".split(' ')[0],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _ageController,
+                      readOnly: true,
+                      decoration: InputDecoration(
+                        labelText: 'Age (Auto)',
+                        border: const OutlineInputBorder(),
+                        errorText: _ageValidationError != null
+                            ? 'Invalid'
+                            : null,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              // Custom validation feedback message context
+              if (_ageValidationError != null) ...[
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0, left: 4.0),
+                  child: Text(
+                    _ageValidationError!,
+                    style: const TextStyle(
+                      color: Colors.red,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ],
+              const SizedBox(height: 24),
+
+              // --- Dynamic Radio Choices for Terms and Policies ---
+              if (_selectedBirthday != null && _ageValidationError == null) ...[
+                const Text(
+                  'Select Premium Term',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                BlocConsumer<PremiumTermBloc, PremiumTermState>(
+                  listener: (context, state) => debugPrint('$state'),
+                  builder: (context, state) {
+                    if (state is InitialPremiumTermState) {
+                      context.watch<PremiumTermBloc>().add(
+                        FetchedPremiumTermEvent(),
+                      );
+                      return GlobalWidget.loadingView();
+                    }
+                    if (state is SuccessPremiumTermState) {
+                      return Column(
+                        children: state.data
+                            .map(
+                              (policy) => RadioListTile<int>(
+                                title: Text(policy.label),
+                                value: policy.id!,
+                                groupValue: _selectedTermId,
+                                onChanged: isReadOnly
+                                    ? null
+                                    : (val) =>
+                                          setState(() => _selectedTermId = val),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    }
+                    return Text(state.message);
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                const Text(
+                  'Select Premium Policy',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                BlocConsumer<PremiumPolicyBloc, PremiumPolicyState>(
+                  listener: (context, state) => debugPrint('$state'),
+                  builder: (context, state) {
+                    if (state is InitialPremiumPolicyState) {
+                      context.watch<PremiumPolicyBloc>().add(
+                        FetchedPremiumPolicyEvent(),
+                      );
+                      return GlobalWidget.loadingView();
+                    }
+                    if (state is SuccessPremiumPolicyState) {
+                      return Column(
+                        children: state.premiumPolicys
+                            .map(
+                              (policy) => RadioListTile<int>(
+                                title: Text(policy.label),
+                                value: policy.id!,
+                                groupValue: _selectedPolicyId,
+                                onChanged: isReadOnly
+                                    ? null
+                                    : (val) => setState(
+                                        () => _selectedPolicyId = val,
+                                      ),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    }
+                    return Text(state.message);
+                  },
+                ),
+
+                const SizedBox(height: 24),
+              ],
+
               const SizedBox(height: 20),
+
               if (widget.type != FormType.create) ...[
-                Text('Status: ${widget.data?.status ?? 'N/A'}'),
+                Text(
+                  'Status: ${_selectedStatus.toUpperCase()}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
                 const SizedBox(height: 20),
               ],
 
               filePath.isEmpty
-                  ? FilePickerView(
-                      onPickDocument: (path) => pickFile(path),
-                      extensions: ['pdf'],
-                      label: 'Upload Doc',
-                    )
+                  ? (isReadOnly
+                        ? const Text('No document uploaded.')
+                        : FilePickerView(
+                            onPickDocument: (path) {
+                              setState(() {
+                                filePath = path;
+                              });
+                            },
+                            extensions: ['pdf'],
+                            label: 'Upload Doc',
+                          ))
                   : ListTile(
-                      leading: Icon(Icons.picture_as_pdf),
-                      title: Text('${_policyNoController.text.trim()}.pdf'),
+                      leading: const Icon(
+                        Icons.picture_as_pdf,
+                        color: Colors.red,
+                      ),
+                      title: Text(filePath.split('/').last),
+                      trailing: isReadOnly
+                          ? null
+                          : IconButton(
+                              icon: const Icon(
+                                Icons.delete,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () => setState(() => filePath = ''),
+                            ),
                     ),
-              OutlinedButton(
-                onPressed: _handleAction,
-                child: Text(widget.type == FormType.detail ? 'Back' : 'Save'),
+              const SizedBox(height: 30),
+
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: _handleAction,
+                  child: Text(
+                    widget.type == FormType.detail ? 'Back' : 'Save Policy',
+                  ),
+                ),
               ),
             ],
           ),
