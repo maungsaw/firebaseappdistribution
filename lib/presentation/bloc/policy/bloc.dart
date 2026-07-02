@@ -91,12 +91,13 @@ class PolicyBloc extends Bloc<PolicyEvent, PolicyState> {
     Emitter<PolicyState> emit,
   ) async {
     try {
-      // Fetch dynamic options concurrently from your local DB layer using the age parameter
-      // final terms = await repository.getPremiumTermsByAge(event.age);
-      // final policies = await repository.getPremiumPoliciesByAge(event.age);
+      final rate = await policyRepository.getRates(
+        event.age,
+        event.term,
+        event.gender,
+      );
 
-      // Emit the state containing data arrays so the UI state listeners can capture it
-      //  emit(PremiumOptionsLoadedState(terms: terms, policies: policies));
+      emit(PremiumOptionsLoadedState(rate: rate));
     } catch (error) {
       // Handle fallback or error states gracefully if query execution fails
       emit(ErrorPolicyState(error.toString()));

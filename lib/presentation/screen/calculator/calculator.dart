@@ -15,6 +15,9 @@ class CalculatorScreen extends StatelessWidget {
           if (state is FailurePremiumRateState) {
             GlobalSnackbar.showError(context, state.errorMessage);
           }
+          if (state is SuccessPremiumRateState) {
+            GlobalSnackbar.showSuccess(context, state.message);
+          }
         },
         child: Text('Hello'),
       ),

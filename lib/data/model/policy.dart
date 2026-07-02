@@ -10,8 +10,9 @@ class PolicyModel {
   final String name;
   final double sumAssured;
   final double premiumAmount;
-  final int termId;
-  final int policyId;
+  final int term;
+  final double policy;
+  final String gender;
   PolicyModel({
     this.id,
     required this.no,
@@ -22,8 +23,9 @@ class PolicyModel {
     required this.name,
     required this.sumAssured,
     required this.premiumAmount,
-    required this.termId,
-    required this.policyId,
+    required this.term,
+    required this.policy,
+    required this.gender,
   });
 
   Map<String, dynamic> toMap() {
@@ -37,8 +39,9 @@ class PolicyModel {
       'name': name,
       'sum_assured': sumAssured,
       'premium_amount': premiumAmount,
-      'term_id': termId,
-      'policy_id': policyId,
+      'term': term,
+      'policy': policy,
+      'gender': gender,
     };
   }
 
@@ -54,8 +57,9 @@ class PolicyModel {
       name: map['name'],
       sumAssured: map['sum_assured'],
       premiumAmount: map['premium_amount'],
-      termId: map['term_id'],
-      policyId: map['policy_id'],
+      term: map['term'],
+      policy: map['policy'],
+      gender: map['gender'],
     );
   }
 
@@ -69,8 +73,9 @@ class PolicyModel {
     DateTime? birthday,
     double? sumAssured,
     double? premiumAmount,
-    int? termId,
-    int? policyId,
+    int? term,
+    double? policy,
+    String? gender,
   }) {
     return PolicyModel(
       id: id ?? this.id,
@@ -82,8 +87,9 @@ class PolicyModel {
       name: name ?? this.name,
       sumAssured: sumAssured ?? this.sumAssured,
       premiumAmount: premiumAmount ?? this.premiumAmount,
-      termId: termId ?? this.termId,
-      policyId: policyId ?? this.policyId,
+      term: term ?? this.term,
+      policy: policy ?? this.policy,
+      gender: gender ?? this.gender,
     );
   }
 }

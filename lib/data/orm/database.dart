@@ -34,18 +34,7 @@ class DatabaseManager {
         await PremiumPolicyORM.createTable(db);
         await PremiumTermORM.createTable(db);
       },
-      onUpgrade: (db, oldVersion, newVersion) async {
-        if (oldVersion < 2) {
-          await db.execute(
-            'ALTER TABLE ${PolicyORM.table} ADD COLUMN file_path TEXT;',
-          );
-        }
-        if (oldVersion < 3) {
-          await PremiumRateORM.createTable(db);
-          await PremiumPolicyORM.createTable(db);
-          await PremiumTermORM.createTable(db);
-        }
-      },
+      onUpgrade: (db, oldVersion, newVersion) async {},
     );
   }
 }

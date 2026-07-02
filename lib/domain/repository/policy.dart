@@ -1,22 +1,36 @@
 import 'package:firebaseappdistribution/data/data.dart'
-    show PolicyORM, PolicyModel, DatabaseManager;
+    show PremiumPolicyORM, PolicyModel, PolicyORM, PremiumTermORM;
+import 'package:firebaseappdistribution/data/model/master/premium_policy.dart';
+import 'package:firebaseappdistribution/data/model/master/premium_term.dart';
 import 'package:firebaseappdistribution/domain/domain.dart'
     show PolicyRepositoryImpl;
-import 'package:sqflite_common/sqlite_api.dart';
 
-class PolicyRepository extends PolicyORM implements PolicyRepositoryImpl {
+class PolicyRepository implements PolicyRepositoryImpl {
+  final policyORM = PolicyORM();
+  final premiumPolicyORM = PremiumPolicyORM();
+  final premiumTermORM = PremiumTermORM();
   @override
-  Future<List<PolicyModel>> getAll() async => await super.getAll();
+  Future<List<PolicyModel>> getAll() async => await policyORM.getAll();
   @override
-  Future<int> createPolicy(PolicyModel data) async => await super.insert(data);
+  Future<int> createPolicy(PolicyModel data) async =>
+      await policyORM.insert(data);
 
   @override
-  Future<int> removePolicy(int id) async => await super.remove(id);
+  Future<int> removePolicy(int id) async => await policyORM.remove(id);
 
   @override
   Future<int> updatePolicy(PolicyModel data) async =>
-      await super.update(data, data.id!);
+      await policyORM.update(data, data.id!);
 
   @override
-  Future<Database> get database => DatabaseManager().database;
+  Future<double> getRates(int age, int term, String gender) async =>
+      policyORM.getPremiumRates(age, term, gender);
+
+  @override
+  Future<List<PremiumPolicyModel>> getPolicies() async =>
+      await premiumPolicyORM.getAll();
+
+  @override
+  Future<List<PremiumTermModel>> getTerms() async =>
+      await premiumTermORM.getAll();
 }

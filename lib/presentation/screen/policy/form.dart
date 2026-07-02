@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:firebaseappdistribution/core/core.dart'
-    show FormType, PolicyStatus;
+    show FormType, GlobalSnackbar, PolicyStatus;
 import 'package:firebaseappdistribution/data/data.dart'
     show PolicyModel, PremiumTermModel, PremiumPolicyModel;
 import 'package:firebaseappdistribution/presentation/presentation.dart';
@@ -26,19 +26,18 @@ class _PolicyFormState extends State<PolicyForm> {
   final _ageController = TextEditingController();
   final _sumAssuredController = TextEditingController();
   final _premiumAmountController = TextEditingController();
+  final _genderController = TextEditingController();
 
   String filePath = '';
+  double rate = 0.0;
   DateTime? _selectedBirthday;
   String _selectedStatus = PolicyStatus.draft.label;
 
   // Custom tracking for boundary validation
   String? _ageValidationError;
 
-  List<PremiumTermModel> _availableTerms = [];
-  List<PremiumPolicyModel> _availablePolicies = [];
-
-  int? _selectedTermId;
-  int? _selectedPolicyId;
+  int? _selectedTerm;
+  double? _selectedPolicy;
 
   @override
   void initState() {
@@ -50,12 +49,13 @@ class _PolicyFormState extends State<PolicyForm> {
       _ageController.text = data.age.toString();
       _sumAssuredController.text = data.sumAssured.toString();
       _premiumAmountController.text = data.premiumAmount.toString();
+      _genderController.text = data.gender.toString();
 
       filePath = data.filePath;
       _selectedBirthday = data.birthday;
       _selectedStatus = data.status;
-      _selectedTermId = data.termId;
-      _selectedPolicyId = data.policyId;
+      _selectedTerm = data.term;
+      _selectedPolicy = data.policy;
 
       // Perform initial boundary check for editing flow
       _validateAgeBounds(data.age);
@@ -69,6 +69,7 @@ class _PolicyFormState extends State<PolicyForm> {
     _ageController.dispose();
     _sumAssuredController.dispose();
     _premiumAmountController.dispose();
+    _genderController.dispose();
     super.dispose();
   }
 
@@ -78,10 +79,8 @@ class _PolicyFormState extends State<PolicyForm> {
       setState(() {
         _ageValidationError =
             'Age must be between 5 and 60 years old (Selected: $age)';
-        _availableTerms = [];
-        _availablePolicies = [];
-        _selectedTermId = null;
-        _selectedPolicyId = null;
+        _selectedTerm = null;
+        _selectedPolicy = null;
       });
       return false;
     }
@@ -100,16 +99,26 @@ class _PolicyFormState extends State<PolicyForm> {
         (today.month == birthday.month && today.day < birthday.day)) {
       age--;
     }
+    double premiumAmount = 0.0;
+    if (_sumAssuredController.text.isNotEmpty &&
+        _genderController.text.isNotEmpty &&
+        _selectedTerm != null) {
+      if (_validateAgeBounds(age)) {
+        context.read<PolicyBloc>().add(
+          LoadPremiumOptionsEvent(age, _selectedTerm!, _genderController.text),
+        );
+      }
+      debugPrint("Rate in state $rate");
+      premiumAmount = (double.parse(_sumAssuredController.text) / 1000) * rate;
+    }
 
     setState(() {
       _selectedBirthday = birthday;
+      _premiumAmountController.text = premiumAmount.toString();
       _ageController.text = age.toString();
     });
 
     // Only hit the database via Bloc if age is completely valid
-    if (_validateAgeBounds(age)) {
-      context.read<PolicyBloc>().add(LoadPremiumOptionsEvent(age));
-    }
   }
 
   Future<void> _selectBirthday(BuildContext context) async {
@@ -148,13 +157,10 @@ class _PolicyFormState extends State<PolicyForm> {
       return;
     }
 
-    if (_selectedTermId == null || _selectedPolicyId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Please select an eligible Premium Term and Policy option',
-          ),
-        ),
+    if (_selectedTerm == null || _selectedPolicy == null) {
+      GlobalSnackbar.showError(
+        context,
+        'Please select an eligible Premium Term and Policy option.',
       );
       return;
     }
@@ -164,6 +170,7 @@ class _PolicyFormState extends State<PolicyForm> {
     final age = int.parse(_ageController.text);
     final sumAssured = double.tryParse(_sumAssuredController.text) ?? 100.0;
     final premiumAmount = double.tryParse(_premiumAmountController.text) ?? 1.0;
+    final gender = _genderController.text.trim();
 
     if (widget.type == FormType.create) {
       final policyModel = PolicyModel(
@@ -175,8 +182,9 @@ class _PolicyFormState extends State<PolicyForm> {
         name: name,
         sumAssured: sumAssured,
         premiumAmount: premiumAmount,
-        termId: _selectedTermId!,
-        policyId: _selectedPolicyId!,
+        term: _selectedTerm!,
+        policy: _selectedPolicy!,
+        gender: gender,
       );
       context.read<PolicyBloc>().add(NewPolicyEvent(policyModel));
     } else if (widget.type == FormType.edit && widget.data != null) {
@@ -186,8 +194,8 @@ class _PolicyFormState extends State<PolicyForm> {
         age: age,
         sumAssured: sumAssured,
         premiumAmount: premiumAmount,
-        termId: _selectedTermId,
-        policyId: _selectedPolicyId,
+        term: _selectedTerm,
+        policy: _selectedPolicy,
         birthday: _selectedBirthday,
         filePath: filePath,
         status: _selectedStatus,
@@ -206,16 +214,23 @@ class _PolicyFormState extends State<PolicyForm> {
           context.pop();
         }
         if (state is PremiumOptionsLoadedState && _ageValidationError == null) {
+          debugPrint('Rate -> ${state.rate}');
           setState(() {
-            _availableTerms = state.terms;
-            _availablePolicies = state.policies;
+            rate = state.rate;
+            setState(() {
+              rate = state.rate;
 
-            if (!_availableTerms.any((t) => t.id == _selectedTermId)) {
-              _selectedTermId = null;
-            }
-            if (!_availablePolicies.any((p) => p.id == _selectedPolicyId)) {
-              _selectedPolicyId = null;
-            }
+              // Calculate the actual premium amount using the freshly received rate
+              final sumAssured =
+                  double.tryParse(_sumAssuredController.text) ?? 0.0;
+              double premiumAmount = (sumAssured / 1000) * rate;
+              if (_selectedPolicy != null) {
+                premiumAmount = premiumAmount * _selectedPolicy!;
+              }
+
+              // Update the controller so the user can see it reactively
+              _premiumAmountController.text = premiumAmount.toString();
+            });
           });
         }
       },
@@ -260,10 +275,9 @@ class _PolicyFormState extends State<PolicyForm> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: GlobalFormField(
-                      controller: _premiumAmountController,
-                      labelText: 'Premium Amount',
-                      hintText: 'Enter premium amount',
-                      keyboardType: TextInputType.number,
+                      controller: _genderController,
+                      labelText: 'Gender',
+                      hintText: 'Enter gender ',
                       isReadOnly: isReadOnly,
                       validator: (value) =>
                           (value == null || value.isEmpty) ? 'Required' : null,
@@ -272,7 +286,79 @@ class _PolicyFormState extends State<PolicyForm> {
                 ],
               ),
               const SizedBox(height: 24),
+              ...[
+                const Text(
+                  'Select Premium Term',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                BlocConsumer<PremiumTermBloc, PremiumTermState>(
+                  listener: (context, state) => debugPrint('$state'),
+                  builder: (context, state) {
+                    if (state is InitialPremiumTermState) {
+                      context.watch<PremiumTermBloc>().add(
+                        FetchedPremiumTermEvent(),
+                      );
+                      return GlobalWidget.loadingView();
+                    }
+                    if (state is SuccessPremiumTermState) {
+                      return Column(
+                        children: state.data
+                            .map(
+                              (policy) => RadioListTile<int>(
+                                title: Text(policy.label),
+                                value: policy.id!,
+                                groupValue: _selectedTerm,
+                                onChanged: isReadOnly
+                                    ? null
+                                    : (val) =>
+                                          setState(() => _selectedTerm = val),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    }
+                    return Text(state.message);
+                  },
+                ),
+                const SizedBox(height: 24),
 
+                const Text(
+                  'Select Premium Policy',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                ),
+                const SizedBox(height: 8),
+                BlocConsumer<PremiumPolicyBloc, PremiumPolicyState>(
+                  listener: (context, state) => debugPrint('$state'),
+                  builder: (context, state) {
+                    if (state is InitialPremiumPolicyState) {
+                      context.watch<PremiumPolicyBloc>().add(
+                        FetchedPremiumPolicyEvent(),
+                      );
+                      return GlobalWidget.loadingView();
+                    }
+                    if (state is SuccessPremiumPolicyState) {
+                      return Column(
+                        children: state.premiumPolicys
+                            .map(
+                              (policy) => RadioListTile<double>(
+                                title: Text(policy.label),
+                                value: policy.value,
+                                groupValue: _selectedPolicy,
+                                onChanged: isReadOnly
+                                    ? null
+                                    : (val) =>
+                                          setState(() => _selectedPolicy = val),
+                              ),
+                            )
+                            .toList(),
+                      );
+                    }
+                    return Text(state.message);
+                  },
+                ),
+              ],
+              const SizedBox(height: 16),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -323,90 +409,19 @@ class _PolicyFormState extends State<PolicyForm> {
                   ),
                 ),
               ],
-              const SizedBox(height: 24),
-
-              // --- Dynamic Radio Choices for Terms and Policies ---
-              if (_selectedBirthday != null && _ageValidationError == null) ...[
-                const Text(
-                  'Select Premium Term',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                BlocConsumer<PremiumTermBloc, PremiumTermState>(
-                  listener: (context, state) => debugPrint('$state'),
-                  builder: (context, state) {
-                    if (state is InitialPremiumTermState) {
-                      context.watch<PremiumTermBloc>().add(
-                        FetchedPremiumTermEvent(),
-                      );
-                      return GlobalWidget.loadingView();
-                    }
-                    if (state is SuccessPremiumTermState) {
-                      return Column(
-                        children: state.data
-                            .map(
-                              (policy) => RadioListTile<int>(
-                                title: Text(policy.label),
-                                value: policy.id!,
-                                groupValue: _selectedTermId,
-                                onChanged: isReadOnly
-                                    ? null
-                                    : (val) =>
-                                          setState(() => _selectedTermId = val),
-                              ),
-                            )
-                            .toList(),
-                      );
-                    }
-                    return Text(state.message);
-                  },
-                ),
-                const SizedBox(height: 24),
-
-                const Text(
-                  'Select Premium Policy',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                ),
-                const SizedBox(height: 8),
-                BlocConsumer<PremiumPolicyBloc, PremiumPolicyState>(
-                  listener: (context, state) => debugPrint('$state'),
-                  builder: (context, state) {
-                    if (state is InitialPremiumPolicyState) {
-                      context.watch<PremiumPolicyBloc>().add(
-                        FetchedPremiumPolicyEvent(),
-                      );
-                      return GlobalWidget.loadingView();
-                    }
-                    if (state is SuccessPremiumPolicyState) {
-                      return Column(
-                        children: state.premiumPolicys
-                            .map(
-                              (policy) => RadioListTile<int>(
-                                title: Text(policy.label),
-                                value: policy.id!,
-                                groupValue: _selectedPolicyId,
-                                onChanged: isReadOnly
-                                    ? null
-                                    : (val) => setState(
-                                        () => _selectedPolicyId = val,
-                                      ),
-                              ),
-                            )
-                            .toList(),
-                      );
-                    }
-                    return Text(state.message);
-                  },
-                ),
-
-                const SizedBox(height: 24),
-              ],
 
               const SizedBox(height: 20),
 
               if (widget.type != FormType.create) ...[
                 Text(
                   'Status: ${_selectedStatus.toUpperCase()}',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+              ],
+              if (_premiumAmountController.text.isNotEmpty) ...[
+                Text(
+                  'Premium: ${_premiumAmountController.text.toUpperCase()}',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 20),

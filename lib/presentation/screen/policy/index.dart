@@ -63,7 +63,9 @@ class PolicyScreen extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton.icon(
         icon: Icon(Icons.add),
-        onPressed: () => context.push('${AppRoutes.policy}/create'),
+        onPressed: () {
+          context.push('${AppRoutes.policy}/create');
+        },
         label: Text("Create"),
       ),
     );

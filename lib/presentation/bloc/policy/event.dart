@@ -21,5 +21,7 @@ class RemovePolicyEvent extends PolicyEvent {
 
 class LoadPremiumOptionsEvent extends PolicyEvent {
   final int age;
-  LoadPremiumOptionsEvent(this.age);
+  final int term;
+  final String gender;
+  LoadPremiumOptionsEvent(this.age, this.term, this.gender);
 }

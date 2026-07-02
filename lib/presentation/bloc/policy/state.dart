@@ -31,7 +31,6 @@ class FetchPolicyState extends PolicyState {
 }
 
 class PremiumOptionsLoadedState extends PolicyState {
-  final List<PremiumTermModel> terms;
-  final List<PremiumPolicyModel> policies;
-  PremiumOptionsLoadedState({required this.terms, required this.policies});
+  final double rate;
+  PremiumOptionsLoadedState({required this.rate});
 }

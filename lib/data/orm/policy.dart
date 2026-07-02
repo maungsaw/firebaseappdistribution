@@ -4,7 +4,7 @@ import 'package:firebaseappdistribution/data/data.dart'
 import 'package:flutter/rendering.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
-abstract class PolicyORM implements DatabaseManager {
+mixin class PolicyORM implements DatabaseManager {
   static final table = Schema.tblPolicy;
   static Future<void> createTable(Database db) async {
     await db.execute('''
@@ -15,10 +15,11 @@ abstract class PolicyORM implements DatabaseManager {
             name TEXT NOT NULL,
             age int NOT NULL,
             sum_assured DOUBLE NOT NULL,
-            term_id INT NOT NULL,
-            policy_id INT NOT NULL,
+            term INT NOT NULL,
+            policy DOUBLE NOT NULL,
             premium_amount DOUBLE NOT NULL,
             status TEXT,
+            gender TEXT,
             file_path TEXT
           );
         ''');
@@ -71,4 +72,28 @@ abstract class PolicyORM implements DatabaseManager {
     final result = await db.rawDelete('DELETE FROM $table WHERE id = ?', [id]);
     return result;
   }
+
+  Future<double> getPremiumRates(int age, int term, String gender) async {
+    try {
+      final db = await database;
+      debugPrint("$age $term <- Premiums");
+      final raw = await db.rawQuery(
+        'SELECT premium_rate FROM ${Schema.tblPremiumRate} WHERE ? BETWEEN from_age AND to_age AND premium_term = ? AND gender = ?',
+        [age, term, gender],
+      );
+      if (raw.isEmpty) return 0.0;
+      final rateValue = raw.first['premium_rate'];
+
+      if (rateValue is num) {
+        return rateValue.toDouble();
+      }
+      return 0.0;
+    } catch (e) {
+      debugPrint('Premium Rate Error - $e');
+      return 0.0;
+    }
+  }
+
+  @override
+  Future<Database> get database => DatabaseManager().database;
 }
