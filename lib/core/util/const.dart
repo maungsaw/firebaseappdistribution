@@ -6,6 +6,7 @@ abstract class AppRoutes {
   static const String policy = '/policy';
   static const String premiumTerm = '/premium-term';
   static const String premiumPolicy = '/premium-policy';
+  static const String taskManage = '/task-manage';
 }
 
 abstract class RootNavigation {

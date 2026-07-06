@@ -67,6 +67,7 @@ class ForegroundTaskHandler extends TaskHandler {
   @override
   Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {
     debugPrint("Service destroyed.");
+    _isSyncing = false;
     // No error throwing here to ensure smooth shutdown
   }
 }

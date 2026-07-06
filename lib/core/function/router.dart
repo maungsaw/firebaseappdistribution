@@ -114,8 +114,9 @@ class AppRouter {
         path: AppRoutes.calculator,
         name: AppRoutes.calculator,
         builder: (BuildContext context, GoRouterState state) {
-          return const CalculatorScreen();
+          return CalculatorScreen();
         },
+
         // Example of a nested sub-route if you need parameters passed
         // routes: <RouteBase>[
         //   /*
@@ -129,6 +130,13 @@ class AppRouter {
         //   ),
         //   */
         // ],
+      ),
+      GoRoute(
+        path: RouteName.taskManage.path,
+        name: RouteName.taskManage.name,
+        builder: (BuildContext context, GoRouterState state) {
+          return TaskScreen();
+        },
       ),
     ],
   );

@@ -14,6 +14,8 @@ extension RouteNameExtension on RouteName {
         return AppRoutes.premiumTerm;
       case RouteName.premiumPolicy:
         return AppRoutes.premiumPolicy;
+      case RouteName.taskManage:
+        return AppRoutes.taskManage;
     }
   }
 }

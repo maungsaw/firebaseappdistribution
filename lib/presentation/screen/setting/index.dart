@@ -84,6 +84,11 @@ class SettingScreen extends StatelessWidget {
                 onTap: () => context.push(RouteName.premiumPolicy.path),
               ),
               MasterMenuOption(
+                title: 'Tasks',
+                leadingIcon: Icons.task,
+                onTap: () => context.push(RouteName.taskManage.path),
+              ),
+              MasterMenuOption(
                 title: 'Tax',
                 leadingIcon: Icons.receipt_long_rounded,
                 onTap: () => debugPrint('Go to Tax'),

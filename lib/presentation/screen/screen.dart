@@ -5,3 +5,4 @@ export 'profile/profile.dart';
 export 'product/product.dart';
 export 'policy/policy.dart';
 export 'master/master.dart';
+export 'task/task.dart';

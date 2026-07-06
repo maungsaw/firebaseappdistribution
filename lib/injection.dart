@@ -28,6 +28,7 @@ class AppDependencies extends StatelessWidget {
         ),
         RepositoryProvider<PolicyRepositoryImpl>(
           create: (_) => PolicyRepository(),
+          dispose: (repository) => repository.getAll(),
         ),
         RepositoryProvider<PremiumRateRepositoryImpl>(
           create: (_) => PremiumRateRepository(),
@@ -37,6 +38,7 @@ class AppDependencies extends StatelessWidget {
         ),
         RepositoryProvider<PremiumTermRepositoryImpl>(
           create: (_) => PremiumTermRepository(),
+          dispose: (repository) => repository.getAllTerms(),
         ),
       ],
       child: MultiBlocProvider(

@@ -295,7 +295,7 @@ class _PolicyFormState extends State<PolicyForm> {
                   listener: (context, state) => debugPrint('$state'),
                   builder: (context, state) {
                     if (state is InitialPremiumTermState) {
-                      context.watch<PremiumTermBloc>().add(
+                      context.read<PremiumTermBloc>().add(
                         FetchedPremiumTermEvent(),
                       );
                       return GlobalWidget.loadingView();
@@ -331,7 +331,7 @@ class _PolicyFormState extends State<PolicyForm> {
                   listener: (context, state) => debugPrint('$state'),
                   builder: (context, state) {
                     if (state is InitialPremiumPolicyState) {
-                      context.watch<PremiumPolicyBloc>().add(
+                      context.read<PremiumPolicyBloc>().add(
                         FetchedPremiumPolicyEvent(),
                       );
                       return GlobalWidget.loadingView();

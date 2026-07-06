@@ -1,4 +1,11 @@
-enum RouteName { home, calculator, policy, premiumTerm, premiumPolicy }
+enum RouteName {
+  home,
+  calculator,
+  policy,
+  premiumTerm,
+  premiumPolicy,
+  taskManage,
+}
 
 enum PolicyStatus {
   complete("COMPLETED"),
