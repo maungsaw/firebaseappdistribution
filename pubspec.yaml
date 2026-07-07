@@ -57,6 +57,7 @@ dependencies:
   syncfusion_flutter_xlsio: ^33.2.15
   excel_plus: ^2.2.0
   flutter_slidable: ^4.0.3
+  intl: ^0.20.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
+import 'hour_view.dart';
 import 'model.dart';
 import 'provider.dart';
-import 'widget.dart';
 
 class JiraMonthView extends StatelessWidget {
   final JiraTimeCalendarProvider provider;
@@ -43,25 +43,19 @@ class JiraMonthView extends StatelessWidget {
 
     return Column(
       children: [
-        // 1. Static Weekday Header Row
+        // 1. Static Weekday Header Row (Clean, no background)
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
           child: Row(
             children: List.generate(7, (index) {
-              final isWeekendHeader =
-                  index == 5 || index == 6; // Sat and Sun indices
               return Expanded(
                 child: Center(
                   child: Text(
                     weekdayNames[index],
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.bold,
-                      color: isWeekendHeader
-                          ? Colors.grey.shade500
-                          : const Color(
-                              0xFF5E6C84,
-                            ), // Jira mid-grey text representation
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
                     ),
                   ),
                 ),
@@ -70,116 +64,114 @@ class JiraMonthView extends StatelessWidget {
           ),
         ),
 
-        // 2. Main Calendar Grid
-        Expanded(
-          child: GridView.builder(
-            padding: const EdgeInsets.all(4),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 7,
-              childAspectRatio: 0.75,
-            ),
-            itemCount: days.length,
-            itemBuilder: (context, index) {
-              final day = days[index];
+        ListenableBuilder(
+          listenable: provider,
+          builder: (context, _) {
+            return GridView.builder(
+              shrinkWrap: true, // ADD THIS
+              physics: const NeverScrollableScrollPhysics(), // ADD THIS
+              padding: const EdgeInsets.all(4),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 7,
+                childAspectRatio:
+                    1.1, // Adjusted for a squarer, cleaner look like the image
+              ),
+              itemCount: days.length,
+              itemBuilder: (context, index) {
+                final day = days[index];
 
-              // Dynamic Range Validation Check
-              final dayTasks = provider.tasks.where((task) {
-                final cleanDay = DateTime(day.year, day.month, day.day);
-                final cleanStart = DateTime(
-                  task.startTime.year,
-                  task.startTime.month,
-                  task.startTime.day,
-                );
-                final cleanEnd = DateTime(
-                  task.endTime.year,
-                  task.endTime.month,
-                  task.endTime.day,
-                );
-                return !cleanDay.isBefore(cleanStart) &&
-                    !cleanDay.isAfter(cleanEnd);
-              }).toList();
+                final dayTasks = provider.tasks.where((task) {
+                  final cleanDay = DateTime(day.year, day.month, day.day);
+                  final cleanStart = DateTime(
+                    task.startTime.year,
+                    task.startTime.month,
+                    task.startTime.day,
+                  );
+                  final cleanEnd = DateTime(
+                    task.endTime.year,
+                    task.endTime.month,
+                    task.endTime.day,
+                  );
+                  return !cleanDay.isBefore(cleanStart) &&
+                      !cleanDay.isAfter(cleanEnd);
+                }).toList();
+                final activeDate = provider.activeDate;
+                final isSelectedDate =
+                    activeDate != null &&
+                    day.year == activeDate.year &&
+                    day.month == activeDate.month &&
+                    day.day == activeDate.day;
+                final isCurrentMonth = day.month == provider.focusedDate.month;
 
-              final isCurrentMonth = day.month == provider.focusedDate.month;
-              final isWeekend = provider.isWeekend(day);
-              final holiday = provider.getHoliday(day);
-
-              Color cellBgColor = Colors.white;
-              if (holiday != null) {
-                cellBgColor = const Color(0xFFFFEBE6);
-              } else if (isWeekend) {
-                cellBgColor = const Color(0xfff4f5f7);
-              }
-
-              return GestureDetector(
-                onTap: () => onCreate(day),
-                child: Container(
-                  color: cellBgColor,
+                return GestureDetector(
+                  onTap: () {
+                    provider.setActiveDate(day);
+                    onCreate(day);
+                  },
                   child: Container(
-                    decoration: BorderBoxDecoration.cellBorder,
+                    color: Colors.transparent, // Removed heavy cell backgrounds
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "${day.day}",
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.bold,
-                                  color: isCurrentMonth
-                                      ? Colors.black87
-                                      : Colors.black26,
-                                ),
-                              ),
-                              if (holiday != null && isCurrentMonth)
-                                Expanded(
-                                  child: Text(
-                                    holiday.name,
-                                    textAlign: TextAlign.end,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 8,
-                                      color: Color(0xFFBF2600),
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                            ],
+                        // Date Number Circle
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: isSelectedDate
+                                ? Colors.black
+                                : Colors.transparent,
+                            shape: BoxShape.circle,
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "${day.day}",
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: isSelectedDate
+                                  ? FontWeight.bold
+                                  : FontWeight.w500,
+                              color: isSelectedDate
+                                  ? Colors.white
+                                  : (isCurrentMonth
+                                        ? Colors.black87
+                                        : Colors.black26),
+                            ),
                           ),
                         ),
-                        Expanded(
-                          child: ListView(
-                            physics: const NeverScrollableScrollPhysics(),
-                            children: dayTasks
-                                .map(
-                                  (t) => GestureDetector(
-                                    onTap: () => onTaskTap(t),
-                                    child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                        vertical: 1,
-                                        horizontal: 2,
-                                      ),
-                                      height:
-                                          12, // Increased task height slightly from 2 to 12 for scannable visibility
-                                      decoration: BoxDecoration(
-                                        color: t.color,
-                                        borderRadius: BorderRadius.circular(2),
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
+                        const SizedBox(height: 4),
+                        // Task Dot Indicators (up to 3 dots)
+                        if (dayTasks.isNotEmpty)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: dayTasks.take(3).map((t) {
+                              return Container(
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 1.5,
+                                ),
+                                width: 5,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color: t.color,
+                                  shape: BoxShape.circle,
+                                ),
+                              );
+                            }).toList(),
                           ),
-                        ),
                       ],
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            );
+          },
+        ),
+        Expanded(
+          child: TaskHourView(
+            onTaskTap: onTaskTap,
+            tasks: provider.getActiveTasks(),
+            activeDate: provider.activeDate!,
+            normalize: (d) => provider.normalize(d),
           ),
         ),
       ],

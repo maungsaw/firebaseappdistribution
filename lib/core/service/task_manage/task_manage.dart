@@ -96,7 +96,6 @@ class _JiraTimeCalendarViewState extends State<JiraTimeCalendarView> {
       String alertMessage = isWeekend
           ? "Weekend (Non-working Day)"
           : "${holiday!.name} (Public Holiday)";
-
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
