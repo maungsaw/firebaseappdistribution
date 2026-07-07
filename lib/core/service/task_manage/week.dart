@@ -70,25 +70,21 @@ class _JiraWeekViewState extends State<JiraWeekView> {
                             fontSize: 12,
                             color: widget.provider.isWeekend(day)
                                 ? Colors.red
-                                : (isSelected ? Colors.black : Colors.grey),
+                                : null,
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: isSelected
-                                ? Colors.black
-                                : Colors.transparent,
-                            shape: BoxShape.circle,
-                          ),
+                        CircleAvatar(
+                          backgroundColor: isSelected
+                              ? null
+                              : Colors.transparent,
                           child: Text(
                             "${day.day}",
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: widget.provider.isWeekend(day)
                                   ? Colors.red
-                                  : (isSelected ? Colors.white : Colors.grey),
+                                  : null,
                             ),
                           ),
                         ),
@@ -105,7 +101,7 @@ class _JiraWeekViewState extends State<JiraWeekView> {
           child: TaskHourView(
             onTaskTap: widget.onTaskTap,
             tasks: widget.provider.getActiveTasks(),
-            activeDate: widget.provider.activeDate!,
+            activeDate: widget.provider.activeDate ?? DateTime.now(),
             normalize: (d) => widget.provider.normalize(d),
           ),
         ),

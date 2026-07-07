@@ -160,42 +160,28 @@ class _JiraTimeCalendarViewState extends State<JiraTimeCalendarView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         elevation: 0.5,
-        backgroundColor: const Color(0xFF0747A6),
         title: ListenableBuilder(
           listenable: _provider,
           builder: (context, _) => Text(
             _getAppBarTitle(_provider.focusedDate, _provider.viewMode),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
         ),
         actions: [
           IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios,
-              size: 16,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.arrow_back_ios, size: 16),
             onPressed: _provider.previous,
           ),
           IconButton(
-            icon: const Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: Colors.white,
-            ),
+            icon: const Icon(Icons.arrow_forward_ios, size: 16),
             onPressed: _provider.next,
           ),
           ListenableBuilder(
             listenable: _provider,
             builder: (context, _) => PopupMenuButton<CalendarViewMode>(
-              icon: const Icon(Icons.calendar_view_day, color: Colors.white),
+              icon: const Icon(Icons.calendar_view_day),
               onSelected: _provider.setViewMode,
               itemBuilder: (context) => [
                 const PopupMenuItem(

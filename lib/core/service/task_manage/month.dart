@@ -55,7 +55,6 @@ class JiraMonthView extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Colors.black54,
                     ),
                   ),
                 ),
@@ -101,8 +100,6 @@ class JiraMonthView extends StatelessWidget {
                     day.year == activeDate.year &&
                     day.month == activeDate.month &&
                     day.day == activeDate.day;
-                final isCurrentMonth = day.month == provider.focusedDate.month;
-
                 return GestureDetector(
                   onTap: () {
                     provider.setActiveDate(day);
@@ -114,16 +111,10 @@ class JiraMonthView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         // Date Number Circle
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: isSelectedDate
-                                ? Colors.black
-                                : Colors.transparent,
-                            shape: BoxShape.circle,
-                          ),
-                          alignment: Alignment.center,
+                        CircleAvatar(
+                          backgroundColor: isSelectedDate
+                              ? null
+                              : Colors.transparent,
                           child: Text(
                             "${day.day}",
                             style: TextStyle(
@@ -131,11 +122,6 @@ class JiraMonthView extends StatelessWidget {
                               fontWeight: isSelectedDate
                                   ? FontWeight.bold
                                   : FontWeight.w500,
-                              color: isSelectedDate
-                                  ? Colors.white
-                                  : (isCurrentMonth
-                                        ? Colors.black87
-                                        : Colors.black26),
                             ),
                           ),
                         ),
@@ -170,7 +156,7 @@ class JiraMonthView extends StatelessWidget {
           child: TaskHourView(
             onTaskTap: onTaskTap,
             tasks: provider.getActiveTasks(),
-            activeDate: provider.activeDate!,
+            activeDate: provider.activeDate ?? DateTime.now(),
             normalize: (d) => provider.normalize(d),
           ),
         ),

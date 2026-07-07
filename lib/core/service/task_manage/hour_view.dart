@@ -98,7 +98,6 @@ class TaskHourView extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
-                        color: Colors.black,
                       ),
                     ), // Ensure you have this import
                     // ... inside your build method
@@ -114,10 +113,7 @@ class TaskHourView extends StatelessWidget {
                             text: DateFormat('h:mm a').format(task.endTime),
                           ),
                         ],
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: Colors.black,
-                        ), // Shared style
+                        style: const TextStyle(fontSize: 10), // Shared style
                       ),
                     ),
                   ],
