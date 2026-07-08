@@ -26,9 +26,9 @@ class JiraDayView extends StatelessWidget {
       padding: const .all(8.0),
       child: TaskHourView(
         onTaskTap: onTaskTap,
-        tasks: provider.getActiveTasks(),
-        activeDate: provider.activeDate ?? DateTime.now(),
-        normalize: (d) => provider.normalize(d),
+        onCreate: (date) => onCreate(date),
+        tasks: provider.getTasksForRange(provider.getActiveTasks()),
+        provider: provider,
       ),
     );
   }

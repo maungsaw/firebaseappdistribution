@@ -70,3 +70,104 @@ class CompromisedDeviceApp extends StatelessWidget {
     );
   }
 }
+
+
+
+// Task Schedule
+
+ _provider.addHolidays([
+      CustomHoliday(
+        date: DateTime(today.year, today.month, today.day + 2),
+        name: "Public Holiday",
+      ),
+    ]);
+
+    _provider.updateTasks([
+      // Task 1: Existing Multi-day Task (Spans 2 Days)
+      JiraTimeTask(
+        id: 'task-erp-refactor',
+        title: 'Enterprise ERP Architecture Refactor',
+        startTime: DateTime(today.year, today.month, today.day, 10, 0),
+        endTime: DateTime(today.year, today.month, today.day, 15, 0),
+        color: const Color.fromARGB(255, 5, 26, 58), // Jira Blue
+        status: JiraStatus.inProgress,
+        remark: 'Updating state layers across enterprise modules',
+      ),
+
+      // Task 2: Morning Agile Sync & Code Review (Today Only)
+      JiraTimeTask(
+        id: 'task-agile-sync',
+        title: 'Daily Standup & Flutter SOP Alignment',
+        startTime: DateTime(today.year, today.month, today.day, 9, 0),
+        endTime: DateTime(today.year, today.month, today.day, 10, 30),
+        color: const Color.fromARGB(255, 55, 60, 201), // Indigo
+        status: JiraStatus.done,
+        remark: 'Align team on Riverpod state standardization',
+      ),
+
+      // Task 3: Evening High-Priority Hotfix (Today Only - Overlaps Task 1's timeline)
+      JiraTimeTask(
+        id: 'task-payment-hotfix',
+        title: 'Hotfix: Payment Gateway Timeout Issue',
+        startTime: DateTime(today.year, today.month, today.day, 16, 0),
+        endTime: DateTime(today.year, today.month, today.day, 17, 0),
+        color: const Color.fromARGB(255, 203, 137, 137), // Crimson Red
+        status: JiraStatus.toDo,
+        remark: 'Investigate API payload encryption headers',
+      ),
+
+      // Task 4: Mid-Week Cross-Team Review (Spans 3 Days into the future)
+      JiraTimeTask(
+        id: 'task-cross-review',
+        title: 'Cross-Hub Database Migration Sync',
+        startTime: DateTime(today.year, today.month, today.day + 2, 11, 0),
+        endTime: DateTime(today.year, today.month, today.day + 4, 16, 30),
+        color: const Color.fromARGB(255, 200, 131, 85), // Orange
+        status: JiraStatus.toDo,
+        remark: 'Verify staging schemas match historical records',
+      ),
+
+      // Task 5: End of Week Client Reporting Automation (Next Week / Day + 5)
+      JiraTimeTask(
+        id: 'task-automation-reporting',
+        title: 'Build Automated Reporting Automation Scripts',
+        startTime: DateTime(today.year, today.month, today.day + 5, 13, 0),
+        endTime: DateTime(today.year, today.month, today.day + 5, 15, 0),
+        color: const Color.fromARGB(255, 48, 122, 121), // Teal
+        status: JiraStatus.inProgress,
+        remark: 'Map dynamic SQL aggregates back to Looker views',
+      ),
+    ]);
+
+     void _handleOnCreate(DateTime targetDate) {
+    final holiday = _provider.getHoliday(targetDate);
+    final isWeekend = _provider.isWeekend(targetDate);
+
+    if (holiday != null || isWeekend) {
+      String alertMessage = isWeekend
+          ? "Weekend (Non-working Day)"
+          : "${holiday!.name} (Public Holiday)";
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: const Color(0xFFBF2600),
+          content: Row(
+            children: [
+              const Icon(Icons.block, color: Colors.white, size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  "Cannot schedule: $alertMessage",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }

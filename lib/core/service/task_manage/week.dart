@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'model.dart';
 import 'provider.dart';
 
-class JiraWeekView extends StatefulWidget {
+class JiraWeekView extends StatelessWidget {
   final JiraTimeCalendarProvider provider;
   final Function(DateTime) onCreate;
   final Function(JiraTimeTask) onTaskTap;
@@ -16,35 +16,23 @@ class JiraWeekView extends StatefulWidget {
   });
 
   @override
-  State<JiraWeekView> createState() => _JiraWeekViewState();
-}
-
-class _JiraWeekViewState extends State<JiraWeekView> {
-  // REMOVED local _activeDate state
-
-  @override
   Widget build(BuildContext context) {
-    final DateTime startOfWeek = widget.provider.focusedDate.subtract(
-      Duration(days: widget.provider.focusedDate.weekday - 1),
-    );
-    final List<DateTime> weekDays = List.generate(
-      7,
-      (i) => startOfWeek.add(Duration(days: i)),
-    );
-
     return Column(
       children: [
-        // --- Header ---
         ListenableBuilder(
-          listenable: widget.provider,
+          listenable: provider,
           builder: (context, _) {
-            final activeDate = widget.provider.activeDate;
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: List.generate(7, (index) {
-                  final day = weekDays[index];
+            final activeDate = provider.activeDate;
+            return // Ensure this is wrapped in a Container or SizedBox with a fixed height
+            Container(
+              padding: .all(8),
+              height: 80,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                shrinkWrap: true,
+                itemCount: provider.getWeekDays().length,
+                itemBuilder: (context, index) {
+                  final day = provider.getWeekDays()[index];
                   final bool isSelected =
                       activeDate != null &&
                       activeDate.year == day.year &&
@@ -52,46 +40,41 @@ class _JiraWeekViewState extends State<JiraWeekView> {
                       activeDate.day == day.day;
 
                   return GestureDetector(
-                    onTap: () =>
-                        widget.provider.setActiveDate(isSelected ? null : day),
-                    child: Column(
-                      children: [
-                        Text(
-                          [
-                            "Mon",
-                            "Tue",
-                            "Wed",
-                            "Thu",
-                            "Fri",
-                            "Sat",
-                            "Sun",
-                          ][index],
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: widget.provider.isWeekend(day)
-                                ? Colors.red
-                                : null,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        CircleAvatar(
-                          backgroundColor: isSelected
-                              ? null
-                              : Colors.transparent,
-                          child: Text(
-                            "${day.day}",
+                    onTap: () => provider.setActiveDate(day),
+                    child: Container(
+                      width: 50, // Set a specific width for each day cell
+                      alignment: Alignment.center,
+                      child: Column(
+                        children: [
+                          Text(
+                            provider.weekdayNames[index],
                             style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: widget.provider.isWeekend(day)
-                                  ? Colors.red
+                              fontSize: 12,
+                              color: provider.isWeekend(day)
+                                  ? Theme.of(context).colorScheme.error
                                   : null,
                             ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 4),
+                          CircleAvatar(
+                            backgroundColor: isSelected
+                                ? null
+                                : Colors.transparent,
+                            child: Text(
+                              "${day.day}",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: provider.isWeekend(day)
+                                    ? Theme.of(context).colorScheme.error
+                                    : null,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
-                }),
+                },
               ),
             );
           },
@@ -99,10 +82,10 @@ class _JiraWeekViewState extends State<JiraWeekView> {
         const Divider(),
         Expanded(
           child: TaskHourView(
-            onTaskTap: widget.onTaskTap,
-            tasks: widget.provider.getActiveTasks(),
-            activeDate: widget.provider.activeDate ?? DateTime.now(),
-            normalize: (d) => widget.provider.normalize(d),
+            onTaskTap: onTaskTap,
+            onCreate: (date) => onCreate(date),
+            tasks: provider.getTasksForRange(provider.getActiveTasks()),
+            provider: provider,
           ),
         ),
       ],

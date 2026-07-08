@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'hour_view.dart';
 import 'model.dart';
 import 'provider.dart';
@@ -16,50 +15,36 @@ class JiraMonthView extends StatelessWidget {
     required this.onTaskTap,
   });
 
-  List<DateTime> _generateMonthDays(DateTime date) {
-    final first = DateTime(date.year, date.month, 1);
-    final last = DateTime(date.year, date.month + 1, 0);
-    int offset = first.weekday - 1;
-    if (offset < 0) offset = 6;
-
-    final List<DateTime> days = [];
-    final startOffsetDate = first.subtract(Duration(days: offset));
-    for (int i = 0; i < offset; i++) {
-      days.add(startOffsetDate.add(Duration(days: i)));
-    }
-    for (int i = 0; i < last.day; i++) {
-      days.add(first.add(Duration(days: i)));
-    }
-    while (days.length % 7 != 0) {
-      days.add(days.last.add(const Duration(days: 1)));
-    }
-    return days;
-  }
-
   @override
   Widget build(BuildContext context) {
-    final days = _generateMonthDays(provider.focusedDate);
-    const weekdayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-
     return Column(
       children: [
-        // 1. Static Weekday Header Row (Clean, no background)
         Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 4.0),
-          child: Row(
-            children: List.generate(7, (index) {
-              return Expanded(
-                child: Center(
-                  child: Text(
-                    weekdayNames[index],
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+          padding: const .symmetric(vertical: 6.0, horizontal: 4.0),
+          child: SizedBox(
+            height: 30, // Define a height for the header row
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: provider.weekdayNames.length,
+              itemBuilder: (context, index) {
+                final double itemWidth = MediaQuery.of(context).size.width / 7;
+                return SizedBox(
+                  width: itemWidth,
+                  child: Center(
+                    child: Text(
+                      provider.weekdayNames[index],
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: provider.weekdayNames[index].contains('S')
+                            ? Theme.of(context).colorScheme.error
+                            : null,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
-                ),
-              );
-            }),
+                );
+              },
+            ),
           ),
         ),
 
@@ -67,33 +52,17 @@ class JiraMonthView extends StatelessWidget {
           listenable: provider,
           builder: (context, _) {
             return GridView.builder(
-              shrinkWrap: true, // ADD THIS
-              physics: const NeverScrollableScrollPhysics(), // ADD THIS
-              padding: const EdgeInsets.all(4),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 7,
-                childAspectRatio:
-                    1.1, // Adjusted for a squarer, cleaner look like the image
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const .all(4),
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: provider.getWeekDays().length,
+                childAspectRatio: 1.1,
               ),
-              itemCount: days.length,
+              itemCount: provider.generateMonthDays().length,
               itemBuilder: (context, index) {
-                final day = days[index];
-
-                final dayTasks = provider.tasks.where((task) {
-                  final cleanDay = DateTime(day.year, day.month, day.day);
-                  final cleanStart = DateTime(
-                    task.startTime.year,
-                    task.startTime.month,
-                    task.startTime.day,
-                  );
-                  final cleanEnd = DateTime(
-                    task.endTime.year,
-                    task.endTime.month,
-                    task.endTime.day,
-                  );
-                  return !cleanDay.isBefore(cleanStart) &&
-                      !cleanDay.isAfter(cleanEnd);
-                }).toList();
+                final day = provider.generateMonthDays()[index];
+                final dayTasks = provider.getTasksForDay(day);
                 final activeDate = provider.activeDate;
                 final isSelectedDate =
                     activeDate != null &&
@@ -101,12 +70,9 @@ class JiraMonthView extends StatelessWidget {
                     day.month == activeDate.month &&
                     day.day == activeDate.day;
                 return GestureDetector(
-                  onTap: () {
-                    provider.setActiveDate(day);
-                    onCreate(day);
-                  },
+                  onTap: () => provider.setActiveDate(day),
                   child: Container(
-                    color: Colors.transparent, // Removed heavy cell backgrounds
+                    color: Colors.transparent,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -119,6 +85,9 @@ class JiraMonthView extends StatelessWidget {
                             "${day.day}",
                             style: TextStyle(
                               fontSize: 14,
+                              color: provider.isWeekend(day)
+                                  ? Theme.of(context).colorScheme.error
+                                  : null,
                               fontWeight: isSelectedDate
                                   ? FontWeight.bold
                                   : FontWeight.w500,
@@ -126,11 +95,10 @@ class JiraMonthView extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 4),
-                        // Task Dot Indicators (up to 3 dots)
                         if (dayTasks.isNotEmpty)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            children: dayTasks.take(3).map((t) {
+                            children: dayTasks.map((t) {
                               return Container(
                                 margin: const EdgeInsets.symmetric(
                                   horizontal: 1.5,
@@ -155,9 +123,9 @@ class JiraMonthView extends StatelessWidget {
         Expanded(
           child: TaskHourView(
             onTaskTap: onTaskTap,
-            tasks: provider.getActiveTasks(),
-            activeDate: provider.activeDate ?? DateTime.now(),
-            normalize: (d) => provider.normalize(d),
+            onCreate: (date) => onCreate(date),
+            tasks: provider.getTasksForRange(provider.getActiveTasks()),
+            provider: provider,
           ),
         ),
       ],

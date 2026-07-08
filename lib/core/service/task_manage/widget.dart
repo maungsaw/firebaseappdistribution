@@ -13,14 +13,14 @@ class BorderBoxDecoration {
 
 class JiraTaskCard extends StatelessWidget {
   final JiraTimeTask task;
-  final VoidCallback onTap;
+  final Function(JiraTimeTask) onTap;
 
   const JiraTaskCard({super.key, required this.task, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => onTap(task),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 2),
         padding: const EdgeInsets.all(8),
@@ -37,11 +37,7 @@ class JiraTaskCard extends StatelessWidget {
           children: [
             Text(
               task.title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-                color: Colors.black,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
@@ -53,7 +49,7 @@ class JiraTaskCard extends StatelessWidget {
                   const TextSpan(text: " - "),
                   TextSpan(text: DateFormat('h:mm a').format(task.endTime)),
                 ],
-                style: const TextStyle(fontSize: 10, color: Colors.black54),
+                style: const TextStyle(fontSize: 10),
               ),
             ),
           ],

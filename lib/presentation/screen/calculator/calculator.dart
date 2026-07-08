@@ -11,8 +11,7 @@ class CalculatorScreen extends StatefulWidget {
 }
 
 class _CalculatorScreenState extends State<CalculatorScreen> {
-  final CustomSignatureController signatureController =
-      CustomSignatureController();
+  final signatureController = CustomSignatureController();
 
   @override
   void dispose() {
