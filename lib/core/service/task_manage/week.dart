@@ -23,8 +23,7 @@ class JiraWeekView extends StatelessWidget {
           listenable: provider,
           builder: (context, _) {
             final activeDate = provider.activeDate;
-            return // Ensure this is wrapped in a Container or SizedBox with a fixed height
-            Container(
+            return Container(
               padding: .all(8),
               height: 80,
               child: ListView.builder(

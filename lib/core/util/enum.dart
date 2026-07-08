@@ -5,6 +5,7 @@ enum RouteName {
   premiumTerm,
   premiumPolicy,
   taskManage,
+  tax,
 }
 
 enum PolicyStatus {

@@ -1,9 +1,11 @@
-import 'injection.dart';
+import 'app_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'core/core.dart'
     show AppRouter, FileStorageService, ForegroundScheculerService;
+import 'injection.dart';
 
 void main() async {
+  initInjector();
   WidgetsFlutterBinding.ensureInitialized();
   await FileStorageService.createFolders();
   ForegroundScheculerService().initTask();
@@ -21,7 +23,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0x000000AB),
+            seedColor: Color(0x000950A8),
             brightness: Brightness.light,
           ),
         ),
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
         darkTheme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSeed(
-            seedColor: Color(0x00002C76),
+            seedColor: Color(0x000950A8),
             brightness: Brightness.dark,
           ),
         ),

@@ -1,5 +1,6 @@
 import 'package:firebaseappdistribution/data/data.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
+import 'package:firebaseappdistribution/presentation/screen/tax/tax.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -136,6 +137,13 @@ class AppRouter {
         name: RouteName.taskManage.name,
         builder: (BuildContext context, GoRouterState state) {
           return TaskScreen();
+        },
+      ),
+      GoRoute(
+        path: RouteName.tax.path,
+        name: RouteName.tax.name,
+        builder: (BuildContext context, GoRouterState state) {
+          return TaxScreen();
         },
       ),
     ],

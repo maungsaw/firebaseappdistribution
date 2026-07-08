@@ -9,10 +9,6 @@ class JiraDayView extends StatelessWidget {
   final Function(DateTime) onCreate;
   final Function(JiraTimeTask) onTaskTap;
 
-  final double hourRowHeight = 65.0;
-  final int startHour = 9;
-  final int endHour = 20;
-
   const JiraDayView({
     super.key,
     required this.provider,

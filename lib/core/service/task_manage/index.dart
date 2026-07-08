@@ -44,12 +44,10 @@ class _JiraTimeCalendarViewState extends State<JiraTimeCalendarView> {
   }
 
   void _handleOnCreate(DateTime targetDate) {
-    debugPrint('task- >$targetDate ');
     widget.onTapCreate(targetDate);
   }
 
   void _handleOnViewOrEdit(JiraTimeTask task) {
-    debugPrint("ON Task -> $task");
     widget.onTapUpdate(task);
   }
 

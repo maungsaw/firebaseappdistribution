@@ -1,77 +1,43 @@
+import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'core/core.dart';
 import 'data/data.dart';
 import 'domain/domain.dart';
-import 'core/core.dart';
 import 'presentation/presentation.dart';
+// Import your classes...
 
-class AppDependencies extends StatelessWidget {
-  final Widget child;
+final sl = GetIt.instance;
 
-  const AppDependencies({super.key, required this.child});
+void initInjector() {
+  // --- External ---
+  sl.registerLazySingleton<Dio>(
+    () => NetworkClient.getClient(ClientServiceType.protected),
+  );
 
-  @override
-  Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
-      providers: [
-        RepositoryProvider<Dio>(
-          create: (_) => NetworkClient.getClient(ClientServiceType.protected),
-        ),
-        RepositoryProvider<WeatherServiceImp>(
-          create: (ctx) => WeatherService(),
-        ),
-        RepositoryProvider<WeatherRepositoryImpl>(
-          create: (ctx) =>
-              WeatherRepository(service: ctx.read<WeatherServiceImp>()),
-        ),
-        RepositoryProvider<PolicyRepositoryImpl>(
-          create: (_) => PolicyRepository(),
-          dispose: (repository) => repository.getAll(),
-        ),
-        RepositoryProvider<PremiumRateRepositoryImpl>(
-          create: (_) => PremiumRateRepository(),
-        ),
-        RepositoryProvider<PremiumPolicyRepositoryImpl>(
-          create: (_) => PremiumPolicyRepository(),
-        ),
-        RepositoryProvider<PremiumTermRepositoryImpl>(
-          create: (_) => PremiumTermRepository(),
-          dispose: (repository) => repository.getAllTerms(),
-        ),
-      ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => BottomAppbarBloc()),
-          BlocProvider(create: (_) => FilePickerBloc()),
-          BlocProvider(
-            create: (ctx) =>
-                PolicyBloc(policyRepository: ctx.read<PolicyRepositoryImpl>()),
-          ),
-          BlocProvider(
-            create: (ctx) => WeatherBloc(
-              weatherRepository: ctx.read<WeatherRepositoryImpl>(),
-            ),
-          ),
-          BlocProvider(
-            create: (ctx) => PremiumRateBloc(
-              repository: ctx.read<PremiumRateRepositoryImpl>(),
-            ),
-          ),
-          BlocProvider(
-            create: (ctx) => PremiumTermBloc(
-              repository: ctx.read<PremiumTermRepositoryImpl>(),
-            ),
-          ),
-          BlocProvider(
-            create: (ctx) => PremiumPolicyBloc(
-              repository: ctx.read<PremiumPolicyRepositoryImpl>(),
-            ),
-          ),
-        ],
-        child: child,
-      ),
-    );
-  }
+  // --- Repositories ---
+  sl.registerLazySingleton<WeatherServiceImp>(() => WeatherService());
+  sl.registerLazySingleton<WeatherRepositoryImpl>(
+    () => WeatherRepository(service: sl()),
+  );
+
+  sl.registerLazySingleton<PolicyRepositoryImpl>(() => PolicyRepository());
+  sl.registerLazySingleton<PremiumRateRepositoryImpl>(
+    () => PremiumRateRepository(),
+  );
+  sl.registerLazySingleton<PremiumPolicyRepositoryImpl>(
+    () => PremiumPolicyRepository(),
+  );
+  sl.registerLazySingleton<PremiumTermRepositoryImpl>(
+    () => PremiumTermRepository(),
+  );
+
+  // --- BLoCs ---
+  sl.registerFactory(() => BottomAppbarBloc());
+  sl.registerFactory(() => FilePickerBloc());
+  sl.registerFactory(() => PolicyBloc(policyRepository: sl()));
+  sl.registerFactory(() => WeatherBloc(weatherRepository: sl()));
+  sl.registerFactory(() => PremiumRateBloc(repository: sl()));
+  sl.registerFactory(() => PremiumTermBloc(repository: sl()));
+  sl.registerFactory(() => PremiumPolicyBloc(repository: sl()));
 }
