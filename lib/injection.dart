@@ -38,6 +38,7 @@ abstract class Injection {
     sl.registerLazySingleton<PremiumTermRepositoryImpl>(
       () => PremiumTermRepository(),
     );
+    sl.registerLazySingleton<UserRepositoryImpl>(() => UserRepository());
 
     // --- BLoCs ---
     sl.registerFactory(() => BottomAppbarBloc());

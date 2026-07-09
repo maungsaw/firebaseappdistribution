@@ -4,7 +4,7 @@ import 'package:firebaseappdistribution/data/data.dart'
 import 'package:flutter/rendering.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
-class PremiumPolicyORM implements DatabaseManager {
+class PremiumPolicyORM {
   static final table = Schema.tblPremiumPolicy;
   static Future<void> createTable(Database db) async {
     await db.execute('''
@@ -64,6 +64,5 @@ class PremiumPolicyORM implements DatabaseManager {
     return result;
   }
 
-  @override
   Future<Database> get database => DatabaseManager().database;
 }

@@ -20,6 +20,7 @@ class AppDependencies extends StatelessWidget {
         BlocProvider(create: (_) => Injection.sl<PremiumRateBloc>()),
         BlocProvider(create: (_) => Injection.sl<PremiumTermBloc>()),
         BlocProvider(create: (_) => Injection.sl<PremiumPolicyBloc>()),
+        BlocProvider(create: (_) => Injection.sl<UserBloc>()),
       ],
       child: child,
     );

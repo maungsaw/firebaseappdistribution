@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:encrypt/encrypt.dart' as encrypt;
 import 'package:flutter/foundation.dart';
 
-abstract class EncryptionService {
+class EncryptionService {
   // AES-256 Key (32 chars = 32 bytes)
   static final encrypt.Key _key = encrypt.Key.fromUtf8(
     '12345678901234567890123456789012',
@@ -58,65 +58,61 @@ abstract class EncryptionService {
     return '12345678901234567890123456789012';
   }
 
-  String encryptData(String plainText) {
-    if (plainText.isEmpty) return plainText;
-
-    final iv = encrypt.IV.fromSecureRandom(16); // 16 bytes for AES
-    final encrypter = encrypt.Encrypter(
-      encrypt.AES(_key, mode: encrypt.AESMode.cbc),
-    );
-
-    final encrypted = encrypter.encrypt(plainText, iv: iv);
-
-    // Combine IV and Ciphertext so you don't need a separate database column for the IV
-    return "${iv.base64}:${encrypted.base64}";
+  static encrypt.Key _keyFromPassword(String password) {
+    final normalized = password.padRight(32, '0').substring(0, 32);
+    return encrypt.Key.fromUtf8(normalized);
   }
 
-  // Extracts the IV and decrypts the ciphertext
-  String decryptData(String encryptedString) {
-    if (!encryptedString.contains(':')) return encryptedString;
-
-    final parts = encryptedString.split(':');
-    final iv = encrypt.IV.fromBase64(parts[0]);
-    final cipherText = parts[1];
-
-    final encrypter = encrypt.Encrypter(
-      encrypt.AES(_key, mode: encrypt.AESMode.cbc),
-    );
-    return encrypter.decrypt64(cipherText, iv: iv);
-  }
-
-  /// Top-level function required by compute()
-  static Uint8List _encryptBytes(Map<String, dynamic> params) {
-    final Uint8List bytes = params['bytes'] as Uint8List;
-
-    final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
-
-    final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
-
+  /// Encrypt plain text using a password-derived AES key.
+  static String encryptText(String plainText, String password) {
+    final key = _keyFromPassword(password);
     final encrypter = encrypt.Encrypter(
       encrypt.AES(key, mode: encrypt.AESMode.cbc),
     );
-
-    final encrypted = encrypter.encryptBytes(bytes, iv: iv);
-
-    return Uint8List.fromList(encrypted.bytes);
+    final encrypted = encrypter.encrypt(plainText, iv: _iv);
+    return encrypted.base64;
   }
 
-  /// Top-level function required by compute()
-  static Uint8List _decryptBytes(Map<String, dynamic> params) {
-    final Uint8List bytes = params['bytes'] as Uint8List;
-
-    final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
-
-    final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
-
+  /// Decrypt base64 cipher text using a password-derived AES key.
+  static String decryptText(String cipherText, String password) {
+    final key = _keyFromPassword(password);
     final encrypter = encrypt.Encrypter(
       encrypt.AES(key, mode: encrypt.AESMode.cbc),
     );
-
-    final decrypted = encrypter.decryptBytes(encrypt.Encrypted(bytes), iv: iv);
-
-    return Uint8List.fromList(decrypted);
+    return encrypter.decrypt64(cipherText, iv: _iv);
   }
+}
+
+/// Top-level function required by compute()
+Uint8List _encryptBytes(Map<String, dynamic> params) {
+  final Uint8List bytes = params['bytes'] as Uint8List;
+
+  final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
+
+  final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
+
+  final encrypter = encrypt.Encrypter(
+    encrypt.AES(key, mode: encrypt.AESMode.cbc),
+  );
+
+  final encrypted = encrypter.encryptBytes(bytes, iv: iv);
+
+  return Uint8List.fromList(encrypted.bytes);
+}
+
+/// Top-level function required by compute()
+Uint8List _decryptBytes(Map<String, dynamic> params) {
+  final Uint8List bytes = params['bytes'] as Uint8List;
+
+  final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
+
+  final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
+
+  final encrypter = encrypt.Encrypter(
+    encrypt.AES(key, mode: encrypt.AESMode.cbc),
+  );
+
+  final decrypted = encrypter.decryptBytes(encrypt.Encrypted(bytes), iv: iv);
+
+  return Uint8List.fromList(decrypted);
 }

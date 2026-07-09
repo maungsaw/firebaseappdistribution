@@ -1,8 +1,14 @@
+import 'package:firebaseappdistribution/firebase.dart';
+
 import 'app_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'core/core.dart'
-    show AppRouter, FileStorageService, ForegroundScheculerService;
-import 'firebase.dart';
+    show
+        AppRouter,
+        DatabaseFileService,
+        FileStorageService,
+        ForegroundScheculerService;
+import 'data/data.dart';
 import 'injection.dart';
 
 void main() async {
@@ -10,6 +16,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FirebaseInjection.initFirebaseServices();
   await FileStorageService.createFolders();
+  await DatabaseFileService.ensureDatabaseFile();
+  await DatabaseManager().open();
   ForegroundScheculerService().initTask();
   runApp(MyApp());
 }

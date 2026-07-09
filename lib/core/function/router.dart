@@ -146,6 +146,21 @@ class AppRouter {
           return TaxScreen();
         },
       ),
+      GoRoute(
+        path: RouteName.user.path,
+        name: RouteName.user.name,
+        builder: (BuildContext context, GoRouterState state) {
+          return const UserScreen();
+        },
+        routes: [
+          GoRoute(
+            path: 'detail',
+            builder: (BuildContext context, GoRouterState state) {
+              return UserDetailScreen(data: state.extra as UserModel);
+            },
+          ),
+        ],
+      ),
     ],
   );
 }

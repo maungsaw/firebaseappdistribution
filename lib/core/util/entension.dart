@@ -18,6 +18,8 @@ extension RouteNameExtension on RouteName {
         return AppRoutes.taskManage;
       case RouteName.tax:
         return AppRoutes.tax;
+      case RouteName.user:
+        return AppRoutes.user;
     }
   }
 }
