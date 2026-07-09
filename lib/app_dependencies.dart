@@ -13,13 +13,13 @@ class AppDependencies extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => sl<BottomAppbarBloc>()),
-        BlocProvider(create: (_) => sl<FilePickerBloc>()),
-        BlocProvider(create: (_) => sl<PolicyBloc>()),
-        BlocProvider(create: (_) => sl<WeatherBloc>()),
-        BlocProvider(create: (_) => sl<PremiumRateBloc>()),
-        BlocProvider(create: (_) => sl<PremiumTermBloc>()),
-        BlocProvider(create: (_) => sl<PremiumPolicyBloc>()),
+        BlocProvider(create: (_) => Injection.sl<BottomAppbarBloc>()),
+        BlocProvider(create: (_) => Injection.sl<FilePickerBloc>()),
+        BlocProvider(create: (_) => Injection.sl<PolicyBloc>()),
+        BlocProvider(create: (_) => Injection.sl<WeatherBloc>()),
+        BlocProvider(create: (_) => Injection.sl<PremiumRateBloc>()),
+        BlocProvider(create: (_) => Injection.sl<PremiumTermBloc>()),
+        BlocProvider(create: (_) => Injection.sl<PremiumPolicyBloc>()),
       ],
       child: child,
     );

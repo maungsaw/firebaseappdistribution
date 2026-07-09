@@ -2,11 +2,13 @@ import 'app_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'core/core.dart'
     show AppRouter, FileStorageService, ForegroundScheculerService;
+import 'firebase.dart';
 import 'injection.dart';
 
 void main() async {
-  initInjector();
+  Injection.initInjector();
   WidgetsFlutterBinding.ensureInitialized();
+  await FirebaseInjection.initFirebaseServices();
   await FileStorageService.createFolders();
   ForegroundScheculerService().initTask();
   runApp(MyApp());
