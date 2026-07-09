@@ -4,7 +4,7 @@ import 'package:firebaseappdistribution/data/data.dart'
 import 'package:flutter/rendering.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
-mixin class PolicyORM implements DatabaseManager {
+mixin class PolicyORM {
   static final table = Schema.tblPolicy;
   static Future<void> createTable(Database db) async {
     await db.execute('''
@@ -94,6 +94,5 @@ mixin class PolicyORM implements DatabaseManager {
     }
   }
 
-  @override
   Future<Database> get database => DatabaseManager().database;
 }

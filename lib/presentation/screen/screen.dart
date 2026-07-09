@@ -6,3 +6,4 @@ export 'product/product.dart';
 export 'policy/policy.dart';
 export 'master/master.dart';
 export 'task/task.dart';
+export 'user/user.dart';

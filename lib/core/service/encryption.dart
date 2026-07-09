@@ -57,6 +57,30 @@ class EncryptionService {
   Future<String> getDatabaseKey() async {
     return '12345678901234567890123456789012';
   }
+
+  static encrypt.Key _keyFromPassword(String password) {
+    final normalized = password.padRight(32, '0').substring(0, 32);
+    return encrypt.Key.fromUtf8(normalized);
+  }
+
+  /// Encrypt plain text using a password-derived AES key.
+  static String encryptText(String plainText, String password) {
+    final key = _keyFromPassword(password);
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(key, mode: encrypt.AESMode.cbc),
+    );
+    final encrypted = encrypter.encrypt(plainText, iv: _iv);
+    return encrypted.base64;
+  }
+
+  /// Decrypt base64 cipher text using a password-derived AES key.
+  static String decryptText(String cipherText, String password) {
+    final key = _keyFromPassword(password);
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(key, mode: encrypt.AESMode.cbc),
+    );
+    return encrypter.decrypt64(cipherText, iv: _iv);
+  }
 }
 
 /// Top-level function required by compute()

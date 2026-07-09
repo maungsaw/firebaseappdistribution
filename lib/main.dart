@@ -1,13 +1,20 @@
 import 'app_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'core/core.dart'
-    show AppRouter, FileStorageService, ForegroundScheculerService;
+    show
+        AppRouter,
+        DatabaseFileService,
+        FileStorageService,
+        ForegroundScheculerService;
+import 'data/data.dart';
 import 'injection.dart';
 
 void main() async {
   initInjector();
   WidgetsFlutterBinding.ensureInitialized();
   await FileStorageService.createFolders();
+  await DatabaseFileService.ensureDatabaseFile();
+  await DatabaseManager().open();
   ForegroundScheculerService().initTask();
   runApp(MyApp());
 }

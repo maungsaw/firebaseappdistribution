@@ -31,6 +31,7 @@ void initInjector() {
   sl.registerLazySingleton<PremiumTermRepositoryImpl>(
     () => PremiumTermRepository(),
   );
+  sl.registerLazySingleton<UserRepositoryImpl>(() => UserRepository());
 
   // --- BLoCs ---
   sl.registerFactory(() => BottomAppbarBloc());
@@ -40,4 +41,5 @@ void initInjector() {
   sl.registerFactory(() => PremiumRateBloc(repository: sl()));
   sl.registerFactory(() => PremiumTermBloc(repository: sl()));
   sl.registerFactory(() => PremiumPolicyBloc(repository: sl()));
+  sl.registerFactory(() => UserBloc(repository: sl()));
 }

@@ -5,3 +5,4 @@ export 'weather/weather.dart';
 export 'premium_rate/premium_rate.dart';
 export 'premium_term/premium_term.dart';
 export 'premium_policy/premium_policy.dart';
+export 'user/user.dart';

@@ -4,7 +4,7 @@ import 'package:firebaseappdistribution/data/data.dart'
 import 'package:flutter/rendering.dart';
 import 'package:sqflite_sqlcipher/sqflite.dart';
 
-abstract class PremiumRateORM implements DatabaseManager {
+abstract class PremiumRateORM {
   static final table = Schema.tblPremiumRate;
   static Future<void> createTable(Database db) async {
     await db.execute('''
@@ -93,4 +93,6 @@ abstract class PremiumRateORM implements DatabaseManager {
     final result = await db.rawDelete('DELETE FROM $table WHERE id = ?', [id]);
     return result;
   }
+
+  Future<Database> get database => DatabaseManager().database;
 }

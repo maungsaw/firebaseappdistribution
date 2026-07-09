@@ -1,10 +1,8 @@
-import 'package:firebaseappdistribution/core/util/util.dart';
+import 'package:firebaseappdistribution/core/core.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
 import 'menu_card.dart';
 import 'menu_model.dart';
-
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
 
@@ -92,6 +90,11 @@ class SettingScreen extends StatelessWidget {
                 title: 'Tax',
                 leadingIcon: Icons.receipt_long_rounded,
                 onTap: () => context.push(RouteName.tax.path),
+              ),
+              MasterMenuOption(
+                title: 'User',
+                leadingIcon: Icons.people_rounded,
+                onTap: () => context.push(RouteName.user.path),
               ),
               MasterMenuOption(
                 title: 'AddOn',

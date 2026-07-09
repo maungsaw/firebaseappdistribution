@@ -20,6 +20,7 @@ class AppDependencies extends StatelessWidget {
         BlocProvider(create: (_) => sl<PremiumRateBloc>()),
         BlocProvider(create: (_) => sl<PremiumTermBloc>()),
         BlocProvider(create: (_) => sl<PremiumPolicyBloc>()),
+        BlocProvider(create: (_) => sl<UserBloc>()),
       ],
       child: child,
     );

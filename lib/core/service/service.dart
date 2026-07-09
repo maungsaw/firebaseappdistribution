@@ -1,6 +1,7 @@
 export 'encryption.dart';
 export 'notification/notification.dart';
 export 'file_storage.dart';
+export 'database_file_service.dart';
 export 'network/network.dart';
 export 'cache.dart';
 export 'scheduler/scheduler.dart';
