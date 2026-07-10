@@ -27,7 +27,7 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: .start,
                 mainAxisAlignment: .center,
-                children: [Text('Profile FCM TOKEN :'), Text(token)],
+                children: [Text(' FCM TOKEN :'), SelectableText(token)],
               ),
             );
           }
