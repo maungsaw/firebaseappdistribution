@@ -23,6 +23,7 @@ abstract class FirebaseInjection {
 
       try {
         final fcmToken = await instance.getToken();
+        LocalCacheService.write('fcm-token', fcmToken.toString());
         debugPrint('FCM Token: $fcmToken');
       } catch (e) {
         debugPrint(

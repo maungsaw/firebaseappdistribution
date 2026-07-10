@@ -20,6 +20,8 @@ extension RouteNameExtension on RouteName {
         return AppRoutes.tax;
       case RouteName.user:
         return AppRoutes.user;
+      case RouteName.profile:
+        return AppRoutes.profile;
     }
   }
 }
