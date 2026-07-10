@@ -48,5 +48,6 @@ abstract class Injection {
     sl.registerFactory(() => PremiumRateBloc(repository: sl()));
     sl.registerFactory(() => PremiumTermBloc(repository: sl()));
     sl.registerFactory(() => PremiumPolicyBloc(repository: sl()));
+    sl.registerFactory(() => UserBloc(repository: sl()));
   }
 }
