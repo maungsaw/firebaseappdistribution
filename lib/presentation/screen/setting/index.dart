@@ -91,77 +91,81 @@ class _SettingScreenState extends State<SettingScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final capabilities = _session.capabilities ?? PhoneSecurityCapabilities.loading;
+    final capabilities =
+        _session.capabilities ?? PhoneSecurityCapabilities.loading;
     final isVerified = _session.isVerified;
 
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       children: [
-        Container(
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: isVerified
-                  ? Colors.green.withValues(alpha: 0.35)
-                  : theme.colorScheme.primary.withValues(alpha: 0.2),
-            ),
-          ),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: theme.colorScheme.primary,
-                child: Icon(
-                  Icons.person,
-                  color: theme.colorScheme.onPrimary,
-                  size: 28,
-                ),
+        GestureDetector(
+          onTap: () => context.push(RouteName.profile.path),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isVerified
+                    ? Colors.green.withValues(alpha: 0.35)
+                    : theme.colorScheme.primary.withValues(alpha: 0.2),
               ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Agent-1',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      isVerified ? 'Secured Session' : 'Active Session',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: isVerified
-                            ? Colors.green.shade700
-                            : theme.colorScheme.primary,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    if (isVerified) ...[
-                      const SizedBox(height: 2),
+            ),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 28,
+                  backgroundColor: theme.colorScheme.primary,
+                  child: Icon(
+                    Icons.person,
+                    color: theme.colorScheme.onPrimary,
+                    size: 28,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                       Text(
-                        capabilities.shortStatusLabel,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                        'Agent-1',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
+                      const SizedBox(height: 2),
+                      Text(
+                        isVerified ? 'Secured Session' : 'Active Session',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: isVerified
+                              ? Colors.green.shade700
+                              : theme.colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (isVerified) ...[
+                        const SizedBox(height: 2),
+                        Text(
+                          capabilities.shortStatusLabel,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
-              ),
-              Icon(
-                isVerified
-                    ? Icons.verified_rounded
-                    : Icons.verified_user_rounded,
-                color: isVerified
-                    ? Colors.green
-                    : theme.colorScheme.primary.withAlpha(7),
-              ),
-            ],
+                Icon(
+                  isVerified
+                      ? Icons.verified_rounded
+                      : Icons.verified_user_rounded,
+                  color: isVerified
+                      ? Colors.green
+                      : theme.colorScheme.primary.withAlpha(7),
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -201,7 +205,11 @@ class _SettingScreenState extends State<SettingScreen>
               leadingIcon: Icons.people_rounded,
               onTap: _openUserScreen,
               trailing: isVerified
-                  ? Icon(Icons.lock_open_rounded, color: Colors.green.shade600, size: 18)
+                  ? Icon(
+                      Icons.lock_open_rounded,
+                      color: Colors.green.shade600,
+                      size: 18,
+                    )
                   : null,
             ),
             MasterMenuOption(

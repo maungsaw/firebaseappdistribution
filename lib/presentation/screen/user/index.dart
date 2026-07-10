@@ -38,6 +38,7 @@ class _UserScreenState extends State<UserScreen> {
           if (state is LoadingUserState || state is InitialUserState) {
             return GlobalWidget.loadingView();
           }
+
           if (state is SuccessUserState) {
             if (state.users.isEmpty) {
               return Center(

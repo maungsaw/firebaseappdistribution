@@ -1,75 +1,38 @@
+import 'package:firebaseappdistribution/core/core.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // If this is a simple read, keep it here.
+    // If it's a Future, you should handle it in the FutureBuilder.
+
     return Scaffold(
-      body: SfCalendar(
-        view: CalendarView.workWeek,
-        onTap: (calendarTapDetails) =>
-            debugPrint("ON TAP -> {calendarTapDetails}"),
-        dataSource: MeetingDataSource(_getDataSource()),
-        timeSlotViewSettings: TimeSlotViewSettings(
-          startHour: 9,
-          endHour: 17,
-          // Note: DateTime.friday and saturday are constants (5 and 6)
-          nonWorkingDays: <int>[DateTime.sunday, DateTime.saturday],
-        ),
-      ),
-    );
-  }
+      appBar: AppBar(title: Text('Profile')),
+      body: FutureBuilder<String?>(
+        // Changed from <String> to <String?>
+        future: LocalCacheService.read('fcm-token'),
 
-  // Example method to populate the calendar
-  List<Appointment> _getDataSource() {
-    final List<Appointment> meetings = <Appointment>[];
-    final DateTime today = DateTime.now();
-    final DateTime startTime = DateTime(
-      today.year,
-      today.month,
-      today.day,
-      10,
-      0,
-      0,
-    );
-    final DateTime endTime = startTime.add(const Duration(hours: 2));
-
-    meetings.add(
-      Appointment(
-        startTime: startTime,
-        endTime: endTime,
-        subject: 'Meeting',
-        notes: 'Hello Calendar',
-        color: Colors.blue,
+        builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            // Use '??' to provide a fallback if the data is null
+            final token = snapshot.data ?? 'No Token Found';
+            return Center(
+              child: Column(
+                crossAxisAlignment: .start,
+                mainAxisAlignment: .center,
+                children: [Text('Profile FCM TOKEN :'), Text(token)],
+              ),
+            );
+          }
+        },
       ),
     );
-    meetings.add(
-      Appointment(
-        startTime: endTime.add(Duration(hours: 3)),
-        endTime: endTime.add(Duration(hours: 4)),
-        subject: 'Appoinment',
-        notes: 'Hello Calendar',
-        color: Colors.orange,
-      ),
-    );
-    meetings.add(
-      Appointment(
-        startTime: endTime.add(Duration(hours: 1)),
-        endTime: endTime.add(Duration(hours: 2)),
-        subject: 'Other',
-        notes: 'Hello Calendar',
-        color: Colors.red,
-      ),
-    );
-    return meetings;
-  }
-}
-
-// Data source class required by SfCalendar
-class MeetingDataSource extends CalendarDataSource {
-  MeetingDataSource(List<Appointment> source) {
-    appointments = source;
   }
 }

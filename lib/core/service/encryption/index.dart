@@ -5,7 +5,6 @@ class KeyManager {
   static const _storage = FlutterSecureStorage();
   static const _keyName = 'column_encryption_key';
 
-  // Gets or creates a 32-byte (256-bit) AES key
   static Future<encrypt.Key> getEncryptionKey() async {
     String? base64Key = await _storage.read(key: _keyName);
 

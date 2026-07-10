@@ -7,6 +7,7 @@ enum RouteName {
   taskManage,
   tax,
   user,
+  profile,
 }
 
 enum PolicyStatus {

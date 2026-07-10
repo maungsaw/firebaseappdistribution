@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/rendering.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
+import 'package:sqflite_sqlcipher/sqflite.dart';
 
 class DatabaseFileService {
   static Future<String> getDatabasePath() async {
@@ -39,5 +40,10 @@ class DatabaseFileService {
 
   static Future<bool> databaseFileExists() async {
     return File(await getDatabasePath()).exists();
+  }
+
+  static Future<void> cleanDatabase() async {
+    final path = await getDatabasePath();
+    await deleteDatabase(path);
   }
 }

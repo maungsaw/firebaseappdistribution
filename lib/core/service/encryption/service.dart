@@ -113,38 +113,38 @@ class EncryptionService {
     final normalized = password.padRight(32, '0').substring(0, 32);
     return encrypt.Key.fromUtf8(normalized);
   }
-}
 
-/// Top-level function required by compute()
-Uint8List _encryptBytes(Map<String, dynamic> params) {
-  final Uint8List bytes = params['bytes'] as Uint8List;
+  /// Top-level function required by compute()
+  static Uint8List _encryptBytes(Map<String, dynamic> params) {
+    final Uint8List bytes = params['bytes'] as Uint8List;
 
-  final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
+    final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
 
-  final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
+    final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
 
-  final encrypter = encrypt.Encrypter(
-    encrypt.AES(key, mode: encrypt.AESMode.cbc),
-  );
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(key, mode: encrypt.AESMode.cbc),
+    );
 
-  final encrypted = encrypter.encryptBytes(bytes, iv: iv);
+    final encrypted = encrypter.encryptBytes(bytes, iv: iv);
 
-  return Uint8List.fromList(encrypted.bytes);
-}
+    return Uint8List.fromList(encrypted.bytes);
+  }
 
-/// Top-level function required by compute()
-Uint8List _decryptBytes(Map<String, dynamic> params) {
-  final Uint8List bytes = params['bytes'] as Uint8List;
+  /// Top-level function required by compute()
+  static Uint8List _decryptBytes(Map<String, dynamic> params) {
+    final Uint8List bytes = params['bytes'] as Uint8List;
 
-  final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
+    final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
 
-  final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
+    final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
 
-  final encrypter = encrypt.Encrypter(
-    encrypt.AES(key, mode: encrypt.AESMode.cbc),
-  );
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(key, mode: encrypt.AESMode.cbc),
+    );
 
-  final decrypted = encrypter.decryptBytes(encrypt.Encrypted(bytes), iv: iv);
+    final decrypted = encrypter.decryptBytes(encrypt.Encrypted(bytes), iv: iv);
 
-  return Uint8List.fromList(decrypted);
+    return Uint8List.fromList(decrypted);
+  }
 }

@@ -4,7 +4,7 @@ class ForegroundScheculerService {
   void initTask() {
     FlutterForegroundTask.init(
       androidNotificationOptions: AndroidNotificationOptions(
-        channelId: 'sync_channel_id', // Use a unique ID
+        channelId: 'sync_channel_id',
         channelName: 'Syncing Data',
         channelDescription: 'App is syncing in the background',
         priority: NotificationPriority.LOW,

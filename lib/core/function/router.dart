@@ -147,6 +147,13 @@ class AppRouter {
         },
       ),
       GoRoute(
+        path: RouteName.profile.path,
+        name: RouteName.profile.name,
+        builder: (BuildContext context, GoRouterState state) {
+          return ProfileScreen();
+        },
+      ),
+      GoRoute(
         path: RouteName.user.path,
         name: RouteName.user.name,
         builder: (BuildContext context, GoRouterState state) {

@@ -53,14 +53,16 @@ dependencies:
   dio: ^5.9.2
   worker_manager: ^7.2.9
   flutter_foreground_task: ^9.2.2
-  syncfusion_flutter_calendar: ^33.2.15
-  syncfusion_flutter_xlsio: ^33.2.15
   excel_plus: ^2.2.0
-  flutter_slidable: ^4.0.3
   intl: ^0.20.2
   get_it: ^9.2.1
+<<<<<<< HEAD
   local_auth: ^2.3.0
   local_auth_android: ^1.0.56
+=======
+  flutter_slidable: ^3.0.0
+  
+>>>>>>> 0ab63cada4acafd89b09a898fcfd7f3f5cb314b6
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -14,6 +14,24 @@ class FileStorageService {
     await Directory(p.join(appDir.path, 'docs')).create(recursive: true);
   }
 
+  static Future<void> removeFolders() async {
+    final appDir = await getApplicationDocumentsDirectory();
+
+    // Define the directories
+    final imageDir = Directory(p.join(appDir.path, 'images'));
+    final docsDir = Directory(p.join(appDir.path, 'docs'));
+
+    // Delete the 'images' folder if it exists
+    if (await imageDir.exists()) {
+      await imageDir.delete(recursive: true);
+    }
+
+    // Delete the 'docs' folder if it exists
+    if (await docsDir.exists()) {
+      await docsDir.delete(recursive: true);
+    }
+  }
+
   static Future<String> getPath(String type) async {
     final appDir = await getApplicationDocumentsDirectory();
 

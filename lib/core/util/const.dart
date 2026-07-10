@@ -9,6 +9,7 @@ abstract class AppRoutes {
   static const String taskManage = '/task-manage';
   static const String tax = '/tax';
   static const String user = '/user';
+  static const String profile = '/profile';
 }
 
 abstract class RootNavigation {
