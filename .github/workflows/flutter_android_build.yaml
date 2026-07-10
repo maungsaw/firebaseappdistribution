@@ -46,7 +46,7 @@ jobs:
       # 7. Build Release APK
       # Change 'apk' to 'appbundle' if you want an .aab for Google Play Store
       - name: Build Debug/Release APK
-        run: flutter build apk --debug # Swap to `--release` once keystore is configured
+        run: flutter build apk --release # Swap to `--release` once keystore is configured
 
       # 8. Upload the built file so you can download it from GitHub
       - name: Upload APK Artifact
