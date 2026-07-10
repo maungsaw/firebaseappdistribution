@@ -61,5 +61,5 @@ jobs:
           appId: ${{ secrets.FIREBASE_APP_ID }}
           serviceCredentialsFileContent: ${{ secrets.FIREBASE_CREDENTIALS }}
           groups: testers # 🔴 Replace with your Firebase Tester Group alias (Optional)
-          file: build/app/outputs/flutter-apk/app-debug.apk
+          file: build/app/outputs/flutter-apk/app-release.apk
           releaseNotes: "Automated CI build: ${{ github.event.head_commit.message }}"
