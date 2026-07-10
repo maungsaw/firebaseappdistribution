@@ -6,9 +6,15 @@ import 'package:firebaseappdistribution/domain/domain.dart'
     show PolicyRepositoryImpl;
 
 class PolicyRepository implements PolicyRepositoryImpl {
-  final policyORM = PolicyORM();
-  final premiumPolicyORM = PremiumPolicyORM();
-  final premiumTermORM = PremiumTermORM();
+  final PolicyORM policyORM;
+  final PremiumPolicyORM premiumPolicyORM;
+  final PremiumTermORM premiumTermORM;
+
+  PolicyRepository({
+    required this.policyORM,
+    required this.premiumPolicyORM,
+    required this.premiumTermORM,
+  });
   @override
   Future<List<PolicyModel>> getAll() async => await policyORM.getAll();
   @override

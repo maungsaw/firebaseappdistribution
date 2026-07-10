@@ -1,3 +1,5 @@
+import 'package:firebaseappdistribution/firebase.dart';
+
 import 'app_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'core/core.dart'
@@ -10,8 +12,9 @@ import 'data/data.dart';
 import 'injection.dart';
 
 void main() async {
-  initInjector();
+  Injection.initInjector();
   WidgetsFlutterBinding.ensureInitialized();
+  await FirebaseInjection.initFirebaseServices();
   await FileStorageService.createFolders();
   await DatabaseFileService.ensureDatabaseFile();
   await DatabaseManager().open();

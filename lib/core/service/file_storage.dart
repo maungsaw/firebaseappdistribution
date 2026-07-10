@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
-import 'encryption.dart';
+import 'encryption/service.dart';
 
 class FileStorageService {
   static Future<void> createFolders() async {

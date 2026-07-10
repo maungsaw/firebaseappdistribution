@@ -147,6 +147,7 @@ class NotificationService {
   }
 
   void _onForegroundMessage(RemoteMessage message) {
+    debugPrint('MESSage -> ${message.data}');
     final notification = message.notification;
     if (notification == null) return;
 
