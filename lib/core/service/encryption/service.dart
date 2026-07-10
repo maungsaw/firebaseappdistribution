@@ -81,38 +81,66 @@ class EncryptionService {
     );
     return encrypter.decrypt64(cipherText, iv: _iv);
   }
-}
 
-/// Top-level function required by compute()
-Uint8List _encryptBytes(Map<String, dynamic> params) {
-  final Uint8List bytes = params['bytes'] as Uint8List;
+  String encryptData(String plainText) {
+    if (plainText.isEmpty) return plainText;
 
-  final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
+    final iv = encrypt.IV.fromSecureRandom(16); // 16 bytes for AES
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(_key, mode: encrypt.AESMode.cbc),
+    );
 
-  final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
+    final encrypted = encrypter.encrypt(plainText, iv: iv);
 
-  final encrypter = encrypt.Encrypter(
-    encrypt.AES(key, mode: encrypt.AESMode.cbc),
-  );
+    // Combine IV and Ciphertext so you don't need a separate database column for the IV
+    return "${iv.base64}:${encrypted.base64}";
+  }
 
-  final encrypted = encrypter.encryptBytes(bytes, iv: iv);
+  // Extracts the IV and decrypts the ciphertext
+  String decryptData(String encryptedString) {
+    if (!encryptedString.contains(':')) return encryptedString;
 
-  return Uint8List.fromList(encrypted.bytes);
-}
+    final parts = encryptedString.split(':');
+    final iv = encrypt.IV.fromBase64(parts[0]);
+    final cipherText = parts[1];
 
-/// Top-level function required by compute()
-Uint8List _decryptBytes(Map<String, dynamic> params) {
-  final Uint8List bytes = params['bytes'] as Uint8List;
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(_key, mode: encrypt.AESMode.cbc),
+    );
+    return encrypter.decrypt64(cipherText, iv: iv);
+  }
 
-  final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
+  /// Top-level function required by compute()
+  static Uint8List _encryptBytes(Map<String, dynamic> params) {
+    final Uint8List bytes = params['bytes'] as Uint8List;
 
-  final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
+    final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
 
-  final encrypter = encrypt.Encrypter(
-    encrypt.AES(key, mode: encrypt.AESMode.cbc),
-  );
+    final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
 
-  final decrypted = encrypter.decryptBytes(encrypt.Encrypted(bytes), iv: iv);
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(key, mode: encrypt.AESMode.cbc),
+    );
 
-  return Uint8List.fromList(decrypted);
+    final encrypted = encrypter.encryptBytes(bytes, iv: iv);
+
+    return Uint8List.fromList(encrypted.bytes);
+  }
+
+  /// Top-level function required by compute()
+  static Uint8List _decryptBytes(Map<String, dynamic> params) {
+    final Uint8List bytes = params['bytes'] as Uint8List;
+
+    final encrypt.Key key = encrypt.Key.fromBase64(params['key']);
+
+    final encrypt.IV iv = encrypt.IV.fromBase64(params['iv']);
+
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(key, mode: encrypt.AESMode.cbc),
+    );
+
+    final decrypted = encrypter.decryptBytes(encrypt.Encrypted(bytes), iv: iv);
+
+    return Uint8List.fromList(decrypted);
+  }
 }

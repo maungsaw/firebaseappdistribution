@@ -1,9 +1,8 @@
 import 'dart:io' show Platform;
-import 'package:firebase_core/firebase_core.dart'
-    show Firebase, FirebaseOptions;
 import 'package:firebase_messaging/firebase_messaging.dart'
     show RemoteMessage, FirebaseMessaging, NotificationSettings;
-import 'package:flutter/material.dart';
+import 'package:firebaseappdistribution/core/core.dart';
+import 'package:flutter/rendering.dart' show debugPrint;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show
         FlutterLocalNotificationsPlugin,
@@ -18,11 +17,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart'
         Priority,
         AndroidNotificationDetails,
         DarwinNotificationDetails;
-import 'callback.dart'
-    show
-        NotificationNavigationCallback,
-        PermissionCallback,
-        BackgroundMsgCallback;
 
 export 'package:firebase_core/firebase_core.dart'
     show FirebaseOptions, Firebase; // Added this export
@@ -42,8 +36,17 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (message.data["action"] == "WIPE_DATA") {
     debugPrint('Security alert: Remote wipe command detected!');
 
+    await _performWipe();
+
     debugPrint('Success: App-wide local data has been securely deleted.');
   }
+}
+
+Future<void> _performWipe() async {
+  await DatabaseFileService.cleanDatabase();
+  await LocalCacheService.clearAll();
+  await FileStorageService.removeFolders();
+  debugPrint('Clean Successful! ');
 }
 
 class NotificationService {
