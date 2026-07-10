@@ -15,7 +15,7 @@ abstract class FirebaseInjection {
       final instance = NotificationService.instance;
       await instance.initialize(
         options: options,
-        onNavigate: (data) => _handleNavigation(data),
+        onNavigate: handleNotificationNavigation,
         onPermissionResult: (status) => debugPrint('Permission: $status'),
         backgroundMsgCallback: (data) async =>
             debugPrint('Background msg: ${data.messageId}'),
@@ -33,13 +33,6 @@ abstract class FirebaseInjection {
     } catch (e, stackTrace) {
       debugPrint('Firebase services init skipped: $e');
       debugPrint('$stackTrace');
-    }
-  }
-
-  static void _handleNavigation(Map<String, dynamic> data) {
-    final screen = data['screen'];
-    if (screen == RouteName.calculator.path) {
-      AppRouter.router.push(RouteName.calculator.path);
     }
   }
 }
