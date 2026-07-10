@@ -19,7 +19,7 @@ class UserORM {
         ''');
   }
 
-  static Future<void> seedExampleData(Database db, String password) async {
+  static Future<void> seedExampleData(Database db) async {
     final countResult = await db.rawQuery('SELECT COUNT(*) FROM $table');
     final count = Sqflite.firstIntValue(countResult) ?? 0;
     if (count > 0) return;
@@ -46,18 +46,16 @@ class UserORM {
     ];
 
     for (final user in examples) {
-      await db.insert(table, user.toEncryptedMap(password));
+      await db.insert(table, user.toEncryptedMap());
     }
   }
 
-  Future<List<UserModel>> getAllDecrypted(String password) async {
+  Future<List<UserModel>> getAllDecrypted() async {
     try {
       final db = await database;
       final result = await db.rawQuery('SELECT * FROM $table');
       if (result.isEmpty) return [];
-      return result
-          .map((row) => UserModel.fromEncryptedMap(row, password))
-          .toList();
+      return result.map((row) => UserModel.fromEncryptedMap(row)).toList();
     } on Exception catch (_, e) {
       debugPrint('User ORM ERROR -> $e');
       return [];

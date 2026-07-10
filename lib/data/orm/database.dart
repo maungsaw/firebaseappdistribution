@@ -26,12 +26,16 @@ class DatabaseManager {
       password: password,
       version: _version,
       onCreate: (db, version) async {
-        await _createSchema(db, password);
+        await _createSchema(db);
       },
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
           await UserORM.createTable(db);
-          await UserORM.seedExampleData(db, password);
+          await UserORM.seedExampleData(db);
+        }
+        if (oldVersion < 3) {
+          await db.delete(Schema.tblUser);
+          await UserORM.seedExampleData(db);
         }
       },
     );
@@ -48,12 +52,12 @@ class DatabaseManager {
     }
   }
 
-  static Future<void> _createSchema(Database db, String password) async {
+  static Future<void> _createSchema(Database db) async {
     await PolicyORM.createTable(db);
     await PremiumRateORM.createTable(db);
     await PremiumPolicyORM.createTable(db);
     await PremiumTermORM.createTable(db);
     await UserORM.createTable(db);
-    await UserORM.seedExampleData(db, password);
+    await UserORM.seedExampleData(db);
   }
 }
