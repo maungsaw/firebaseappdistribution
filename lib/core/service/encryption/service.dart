@@ -1,14 +1,18 @@
 import 'dart:io';
+
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'package:firebaseappdistribution/core/util/schema.dart';
 import 'package:flutter/foundation.dart';
 
+import 'user_field.dart';
+
 class EncryptionService {
-  // AES-256 Key (32 chars = 32 bytes)
+  // AES-256 Key (32 chars = 32 bytes) for file encryption
   static final encrypt.Key _key = encrypt.Key.fromUtf8(
     '12345678901234567890123456789012',
   );
 
-  // AES IV (16 chars = 16 bytes)
+  // AES IV (16 chars = 16 bytes) for file encryption
   static final encrypt.IV _iv = encrypt.IV.fromUtf8('1234567890123456');
 
   /// Encrypt file and save to target path
@@ -58,28 +62,56 @@ class EncryptionService {
     return '12345678901234567890123456789012';
   }
 
-  static encrypt.Key _keyFromPassword(String password) {
-    final normalized = password.padRight(32, '0').substring(0, 32);
-    return encrypt.Key.fromUtf8(normalized);
-  }
+  /// Encrypt a user column value with a per-column derived key and random IV.
+  /// Stored format: `iv.base64:cipher.base64`
+  static String encryptField(String plainText, UserField field) {
+    if (plainText.isEmpty) return plainText;
 
-  /// Encrypt plain text using a password-derived AES key.
-  static String encryptText(String plainText, String password) {
-    final key = _keyFromPassword(password);
+    final key = _deriveColumnKey(field);
+    final iv = encrypt.IV.fromSecureRandom(16);
     final encrypter = encrypt.Encrypter(
       encrypt.AES(key, mode: encrypt.AESMode.cbc),
     );
-    final encrypted = encrypter.encrypt(plainText, iv: _iv);
-    return encrypted.base64;
+    final encrypted = encrypter.encrypt(plainText, iv: iv);
+    return '${iv.base64}:${encrypted.base64}';
   }
 
-  /// Decrypt base64 cipher text using a password-derived AES key.
-  static String decryptText(String cipherText, String password) {
-    final key = _keyFromPassword(password);
+  /// Decrypt a user column value encrypted with [encryptField].
+  static String decryptField(String encryptedString, UserField field) {
+    if (encryptedString.isEmpty) return encryptedString;
+
+    if (!encryptedString.contains(':')) {
+      return _decryptLegacyField(encryptedString);
+    }
+
+    final parts = encryptedString.split(':');
+    if (parts.length != 2) return encryptedString;
+
+    final key = _deriveColumnKey(field);
+    final iv = encrypt.IV.fromBase64(parts[0]);
+    final encrypter = encrypt.Encrypter(
+      encrypt.AES(key, mode: encrypt.AESMode.cbc),
+    );
+    return encrypter.decrypt64(parts[1], iv: iv);
+  }
+
+  static encrypt.Key _deriveColumnKey(UserField field) {
+    final material = '${Schema.databasePwd}:tblUser:${field.name}';
+    final normalized = material.padRight(32, '0').substring(0, 32);
+    return encrypt.Key.fromUtf8(normalized);
+  }
+
+  static String _decryptLegacyField(String cipherText) {
+    final key = _deriveLegacyKey(Schema.databasePwd);
     final encrypter = encrypt.Encrypter(
       encrypt.AES(key, mode: encrypt.AESMode.cbc),
     );
     return encrypter.decrypt64(cipherText, iv: _iv);
+  }
+
+  static encrypt.Key _deriveLegacyKey(String password) {
+    final normalized = password.padRight(32, '0').substring(0, 32);
+    return encrypt.Key.fromUtf8(normalized);
   }
 }
 
@@ -115,4 +147,4 @@ Uint8List _decryptBytes(Map<String, dynamic> params) {
   final decrypted = encrypter.decryptBytes(encrypt.Encrypted(bytes), iv: iv);
 
   return Uint8List.fromList(decrypted);
-} 
+}

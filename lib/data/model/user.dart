@@ -15,25 +15,25 @@ class UserModel {
     required this.address,
   });
 
-  Map<String, dynamic> toEncryptedMap(String password) {
+  Map<String, dynamic> toEncryptedMap() {
     return {
       'id': id,
-      'name': EncryptionService.encryptText(name, password),
-      'phone': EncryptionService.encryptText(phone, password),
-      'nrc': EncryptionService.encryptText(nrc, password),
+      'name': EncryptionService.encryptField(name, UserField.name),
+      'phone': EncryptionService.encryptField(phone, UserField.phone),
+      'nrc': EncryptionService.encryptField(nrc, UserField.nrc),
       'address': address,
     };
   }
 
-  factory UserModel.fromEncryptedMap(
-    Map<String, dynamic> map,
-    String password,
-  ) {
+  factory UserModel.fromEncryptedMap(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] as int?,
-      name: EncryptionService.decryptText(map['name'] as String, password),
-      phone: EncryptionService.decryptText(map['phone'] as String, password),
-      nrc: EncryptionService.decryptText(map['nrc'] as String, password),
+      name: EncryptionService.decryptField(map['name'] as String, UserField.name),
+      phone: EncryptionService.decryptField(
+        map['phone'] as String,
+        UserField.phone,
+      ),
+      nrc: EncryptionService.decryptField(map['nrc'] as String, UserField.nrc),
       address: map['address'] as String,
     );
   }

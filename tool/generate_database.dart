@@ -32,7 +32,7 @@ Future<void> main() async {
       await PremiumPolicyORM.createTable(database);
       await PremiumTermORM.createTable(database);
       await UserORM.createTable(database);
-      await UserORM.seedExampleData(database, password);
+      await UserORM.seedExampleData(database);
     },
   );
 

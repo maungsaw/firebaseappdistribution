@@ -4,24 +4,35 @@ import 'core/core.dart';
 
 abstract class FirebaseInjection {
   static Future<void> initFirebaseServices() async {
-    final options = FirebaseOptions(
-      apiKey: "AIzaSyDqdwGdHUkghv8Iaydq0uG4IcGF0cYuWw",
-      appId: "1:432071418438:android:588d784d19c971b92a204",
-      messagingSenderId: "432071418438",
-      projectId: "paypass-97314",
-    );
+    try {
+      final options = FirebaseOptions(
+        apiKey: "AIzaSyDqdwGdHUkghv8Iaydq0uG4IcGF0cYuWw",
+        appId: "1:432071418438:android:588d784d19c971b92a204",
+        messagingSenderId: "432071418438",
+        projectId: "paypass-97314",
+      );
 
-    final instance = NotificationService.instance;
-    await instance.initialize(
-      options: options,
-      onNavigate: (data) => _handleNavigation(data),
-      onPermissionResult: (status) => debugPrint('Permission: $status'),
-      backgroundMsgCallback: (data) async =>
-          debugPrint('Background msg: ${data.messageId}'),
-    );
+      final instance = NotificationService.instance;
+      await instance.initialize(
+        options: options,
+        onNavigate: (data) => _handleNavigation(data),
+        onPermissionResult: (status) => debugPrint('Permission: $status'),
+        backgroundMsgCallback: (data) async =>
+            debugPrint('Background msg: ${data.messageId}'),
+      );
 
-    final fcmToken = await instance.getToken();
-    debugPrint('FCM Token: $fcmToken');
+      try {
+        final fcmToken = await instance.getToken();
+        debugPrint('FCM Token: $fcmToken');
+      } catch (e) {
+        debugPrint(
+          'FCM token unavailable. Push notifications disabled on this device: $e',
+        );
+      }
+    } catch (e, stackTrace) {
+      debugPrint('Firebase services init skipped: $e');
+      debugPrint('$stackTrace');
+    }
   }
 
   static void _handleNavigation(Map<String, dynamic> data) {
