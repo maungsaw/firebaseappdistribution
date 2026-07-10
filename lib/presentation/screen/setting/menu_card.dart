@@ -41,9 +41,10 @@ class DynamicMasterSectionCard extends StatelessWidget {
                   leading: Icon(option.leadingIcon),
                   title: Text(option.title),
                   onTap: option.onTap,
-                  trailing: const Icon(
-                    Icons.arrow_forward,
-                  ), // Cleaner as a static icon since the tile is tappable
+                  trailing: option.trailing ??
+                      const Icon(
+                        Icons.arrow_forward,
+                      ),
                 );
               }),
             ).toList(),

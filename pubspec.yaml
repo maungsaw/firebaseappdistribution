@@ -59,6 +59,8 @@ dependencies:
   flutter_slidable: ^4.0.3
   intl: ^0.20.2
   get_it: ^9.2.1
+  local_auth: ^2.3.0
+  local_auth_android: ^1.0.56
 dev_dependencies:
   flutter_test:
     sdk: flutter

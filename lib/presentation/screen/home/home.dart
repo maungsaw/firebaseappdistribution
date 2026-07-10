@@ -10,53 +10,51 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: BlocSelector<BottomAppbarBloc, BottomAppbarState, int>(
-        selector: (state) => state.currentIndex,
-        builder: (context, index) {
-          // Return the screen widget based on the index
-          if (index == 1) return const ProductScreen();
-          if (index == 2) return const SettingScreen();
-          return const PolicyScreen();
-        },
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-        child: Row(
-          children: [
-            Expanded(
-              child: Container(
-                height: 60,
-                decoration: BoxDecoration(
-                  color: Colors.grey[800],
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withAlpha(2), // Shadow color
-                      spreadRadius: 4, // How much the shadow expands
-                      blurRadius: 10, // How blurry the shadow is
-                      offset: const Offset(
-                        0,
-                        4,
-                      ), // Shadow position changes: x (horizontal) and y (vertical)
-                    ),
-                  ],
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Home')),
+        body: BlocSelector<BottomAppbarBloc, BottomAppbarState, int>(
+          selector: (state) => state.currentIndex,
+          builder: (context, index) {
+            if (index == 1) return const ProductScreen();
+            if (index == 2) return const SettingScreen();
+            return const PolicyScreen();
+          },
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+          child: Row(
+            children: [
+              Expanded(
+                child: Container(
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withAlpha(2),
+                        spreadRadius: 4,
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: GlobalWidget.bottomAppbar(),
                 ),
-                child: GlobalWidget.bottomAppbar(),
               ),
-            ),
-            const SizedBox(width: 15), // Spacing between nav and edit button
-            FloatingActionButton(
-              onPressed: () => context.push(RouteName.calculator.path),
-              backgroundColor: Colors.grey[800],
-              child: const Icon(
-                Icons.calculate,
-                color: Colors.lightBlue,
-                size: 40,
+              const SizedBox(width: 15),
+              FloatingActionButton(
+                onPressed: () => context.push(RouteName.calculator.path),
+                backgroundColor: Colors.grey[800],
+                child: const Icon(
+                  Icons.calculate,
+                  color: Colors.lightBlue,
+                  size: 40,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
