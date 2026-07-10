@@ -56,13 +56,8 @@ dependencies:
   excel_plus: ^2.2.0
   intl: ^0.20.2
   get_it: ^9.2.1
-<<<<<<< HEAD
   local_auth: ^2.3.0
   local_auth_android: ^1.0.56
-=======
-  flutter_slidable: ^3.0.0
-  
->>>>>>> 0ab63cada4acafd89b09a898fcfd7f3f5cb314b6
 dev_dependencies:
   flutter_test:
     sdk: flutter
