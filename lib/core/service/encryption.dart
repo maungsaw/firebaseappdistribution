@@ -115,4 +115,4 @@ Uint8List _decryptBytes(Map<String, dynamic> params) {
   final decrypted = encrypter.decryptBytes(encrypt.Encrypted(bytes), iv: iv);
 
   return Uint8List.fromList(decrypted);
-}
+} 
