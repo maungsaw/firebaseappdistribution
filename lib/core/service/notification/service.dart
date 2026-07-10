@@ -33,20 +33,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('Payload Data: ${message.data}');
 
   // 3. Check for your remote kill-switch action
-  if (message.data["action"] == "WIPE_DATA") {
-    debugPrint('Security alert: Remote wipe command detected!');
-
-    await _performWipe();
-
-    debugPrint('Success: App-wide local data has been securely deleted.');
-  }
-}
-
-Future<void> _performWipe() async {
-  await DatabaseFileService.cleanDatabase();
-  await LocalCacheService.clearAll();
-  await FileStorageService.removeFolders();
-  debugPrint('Clean Successful! ');
+  await performRemoteWipeIfRequested(message.data);
 }
 
 class NotificationService {

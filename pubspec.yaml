@@ -54,6 +54,8 @@ dependencies:
   worker_manager: ^7.2.9
   flutter_foreground_task: ^9.2.2
   excel_plus: ^2.2.0
+  flutter_slidable: ^4.0.3
+  pushy_flutter: 2.0.47
   intl: ^0.20.2
   get_it: ^9.2.1
   local_auth: ^2.3.0
