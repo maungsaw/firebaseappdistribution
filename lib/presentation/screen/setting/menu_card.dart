@@ -31,6 +31,9 @@ class DynamicMasterSectionCard extends StatelessWidget {
         Card.filled(
           color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
           margin: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: ListTile.divideTiles(

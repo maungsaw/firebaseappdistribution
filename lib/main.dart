@@ -9,7 +9,8 @@ import 'core/core.dart'
         DatabaseFileService,
         DeviceInfoService,
         FileStorageService,
-        ForegroundScheculerService;
+        ForegroundScheculerService,
+        SystemBottomBarService;
 import 'data/data.dart';
 import 'injection.dart';
 
@@ -23,6 +24,7 @@ void main() async {
   await DatabaseFileService.ensureDatabaseFile();
   await DatabaseManager().open();
   ForegroundScheculerService().initTask();
+  SystemBottomBarService.ensureVisible();
   runApp(MyApp());
 }
 

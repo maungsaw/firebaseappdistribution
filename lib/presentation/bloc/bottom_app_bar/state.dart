@@ -1,13 +1,20 @@
 sealed class BottomAppbarState {
-  int currentIndex;
+  final int currentIndex;
+  final bool isBottomBarVisible;
 
-  BottomAppbarState({this.currentIndex = 0});
+  BottomAppbarState({
+    this.currentIndex = 0,
+    this.isBottomBarVisible = true,
+  });
 }
 
 class BottomAppBarInitial extends BottomAppbarState {
-  BottomAppBarInitial() : super(currentIndex: 0);
+  BottomAppBarInitial() : super();
 }
 
 class BottomAppBarChanged extends BottomAppbarState {
-  BottomAppBarChanged(int index) : super(currentIndex: index);
+  BottomAppBarChanged({
+    required super.currentIndex,
+    super.isBottomBarVisible = true,
+  });
 }

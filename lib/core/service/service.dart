@@ -7,6 +7,7 @@ export 'biometric/biometric.dart';
 export 'network/network.dart';
 export 'cache.dart';
 export 'scheduler/scheduler.dart';
+export 'system_bottom_bar_service.dart';
 export 'pushy/pushy.dart';
 export 'excel_reader.dart';
 export 'signature/signature.dart';
