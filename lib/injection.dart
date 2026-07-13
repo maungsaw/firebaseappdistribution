@@ -19,9 +19,15 @@ abstract class Injection {
     );
     // --- Repositories ---
     sl.registerLazySingleton<WeatherServiceImp>(() => WeatherService());
+    sl.registerLazySingleton<AuthServiceImp>(() => AuthService());
     sl.registerLazySingleton<WeatherRepositoryImpl>(
       () => WeatherRepository(service: sl()),
     );
+    sl.registerLazySingleton<AuthRepositoryImpl>(
+      () => AuthRepository(service: sl()),
+    );
+    sl.registerLazySingleton(() => LoginUseCase(sl()));
+    sl.registerLazySingleton(() => RegisterDeviceUseCase(sl()));
     sl.registerLazySingleton<PolicyRepositoryImpl>(
       () => PolicyRepository(
         policyORM: sl(),
@@ -49,5 +55,11 @@ abstract class Injection {
     sl.registerFactory(() => PremiumTermBloc(repository: sl()));
     sl.registerFactory(() => PremiumPolicyBloc(repository: sl()));
     sl.registerFactory(() => UserBloc(repository: sl()));
+    sl.registerFactory(
+      () => AuthBloc(
+        loginUseCase: sl(),
+        registerDeviceUseCase: sl(),
+      ),
+    );
   }
 }

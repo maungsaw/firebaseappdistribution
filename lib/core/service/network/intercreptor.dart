@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/rendering.dart';
 
 import '../cache.dart';
+import '../../util/client.dart';
 
 class DioInterceptor extends Interceptor {
   final Dio dio;
@@ -38,7 +39,7 @@ class DioInterceptor extends Interceptor {
   ) async {
     // Handle 401 Unauthorized
     if (err.response?.statusCode == 401 &&
-        err.requestOptions.path != '/auth/refresh') {
+        err.requestOptions.path != ClientEndPoint.refresh) {
       try {
         final refreshToken = await LocalCacheService.read('refresh_token');
 
@@ -46,7 +47,7 @@ class DioInterceptor extends Interceptor {
         final refreshDio = Dio(BaseOptions(baseUrl: dio.options.baseUrl));
 
         final response = await refreshDio.post(
-          '/auth/refresh',
+          ClientEndPoint.refresh,
           data: {'refreshToken': refreshToken},
         );
 
