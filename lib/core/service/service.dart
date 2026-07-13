@@ -1,3 +1,4 @@
+export 'device/device.dart';
 export 'encryption/encryption.dart';
 export 'notification/notification.dart';
 export 'file_storage.dart';

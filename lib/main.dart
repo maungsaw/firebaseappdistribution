@@ -7,6 +7,7 @@ import 'core/core.dart'
     show
         AppRouter,
         DatabaseFileService,
+        DeviceInfoService,
         FileStorageService,
         ForegroundScheculerService;
 import 'data/data.dart';
@@ -15,6 +16,7 @@ import 'injection.dart';
 void main() async {
   Injection.initInjector();
   WidgetsFlutterBinding.ensureInitialized();
+  await DeviceInfoService.logToDebugConsole();
   await FirebaseInjection.initFirebaseServices();
   await PushyInjection.initPushyServices();
   await FileStorageService.createFolders();

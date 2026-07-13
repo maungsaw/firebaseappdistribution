@@ -1,4 +1,5 @@
 import 'package:firebaseappdistribution/core/service/cache.dart';
+import 'package:firebaseappdistribution/core/service/device/device_info_service.dart';
 import 'package:firebaseappdistribution/core/service/notification/remote_wipe_crypto.dart';
 import 'package:firebaseappdistribution/core/util/schema.dart';
 import 'package:flutter/foundation.dart';
@@ -29,27 +30,43 @@ class RemoteWipeValidationResult {
       const RemoteWipeValidationResult._(RemoteWipeValidationStatus.accepted);
 }
 
+class _RemoteWipeSecrets {
+  const _RemoteWipeSecrets({
+    required this.signingSecret,
+    required this.aesKeyMaterial,
+  });
+
+  final String signingSecret;
+  final String aesKeyMaterial;
+}
+
 class RemoteWipeSecurityService {
   static const _nonceCacheKey = 'remote-wipe-used-nonces';
 
-  static String get _signingSecret =>
-      RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd);
-
-  static String get _aesKeyMaterial =>
-      RemoteWipeCrypto.aesKeyMaterialFrom(Schema.databasePwd);
+  static Future<_RemoteWipeSecrets> _resolveSecrets() async {
+    final deviceId = await DeviceInfoService.getDeviceId();
+    return _RemoteWipeSecrets(
+      signingSecret:
+          RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd, deviceId),
+      aesKeyMaterial:
+          RemoteWipeCrypto.aesKeyMaterialFrom(Schema.databasePwd, deviceId),
+    );
+  }
 
   /// Builds the encrypted envelope for FCM/Pushy `data` payloads.
-  static Map<String, String> buildEncryptedWipePayload() {
+  static Future<Map<String, String>> buildEncryptedWipePayload() async {
+    final secrets = await _resolveSecrets();
     return RemoteWipeCrypto.buildEncryptedEnvelope(
-      signingSecret: _signingSecret,
-      aesKeyMaterial: _aesKeyMaterial,
+      signingSecret: secrets.signingSecret,
+      aesKeyMaterial: secrets.aesKeyMaterial,
     );
   }
 
   /// Builds signed plaintext fields for dashboard testing.
-  static Map<String, String> buildSignedPlainWipePayload() {
+  static Future<Map<String, String>> buildSignedPlainWipePayload() async {
+    final secrets = await _resolveSecrets();
     return RemoteWipeCrypto.buildSignedPlainEnvelope(
-      signingSecret: _signingSecret,
+      signingSecret: secrets.signingSecret,
     );
   }
 
@@ -79,14 +96,30 @@ class RemoteWipeSecurityService {
   static Future<RemoteWipeValidationResult> _validateEncryptedEnvelope(
     Map<String, String> data,
   ) async {
+    late final _RemoteWipeSecrets secrets;
+    try {
+      secrets = await _resolveSecrets();
+    } catch (error) {
+      return RemoteWipeValidationResult.rejected(
+        'Unable to resolve device-bound wipe secrets: $error',
+      );
+    }
+
     final payload = data['payload']!;
     final signature = data['signature']!;
 
-    if (!RemoteWipeCrypto.verifySignature(payload, signature, _signingSecret)) {
+    if (!RemoteWipeCrypto.verifySignature(
+      payload,
+      signature,
+      secrets.signingSecret,
+    )) {
       return RemoteWipeValidationResult.rejected('Invalid wipe signature');
     }
 
-    final inner = RemoteWipeCrypto.decryptPayload(payload, _aesKeyMaterial);
+    final inner = RemoteWipeCrypto.decryptPayload(
+      payload,
+      secrets.aesKeyMaterial,
+    );
     if (inner == null) {
       return RemoteWipeValidationResult.rejected('Unable to decrypt wipe payload');
     }
@@ -102,6 +135,15 @@ class RemoteWipeSecurityService {
   static Future<RemoteWipeValidationResult> _validateSignedPlainEnvelope(
     Map<String, String> data,
   ) async {
+    late final _RemoteWipeSecrets secrets;
+    try {
+      secrets = await _resolveSecrets();
+    } catch (error) {
+      return RemoteWipeValidationResult.rejected(
+        'Unable to resolve device-bound wipe secrets: $error',
+      );
+    }
+
     final action = data['action']!;
     final issuedAt = data['issuedAt']!;
     final nonce = data['nonce']!;
@@ -115,7 +157,7 @@ class RemoteWipeSecurityService {
     if (!RemoteWipeCrypto.verifySignature(
       canonical,
       signature,
-      _signingSecret,
+      secrets.signingSecret,
     )) {
       return RemoteWipeValidationResult.rejected('Invalid wipe signature');
     }

@@ -10,11 +10,11 @@ class RemoteWipeCrypto {
   static const Duration maxCommandAge = Duration(days: 7);
   static const Duration maxClockSkew = Duration(seconds: 60);
 
-  static String signingSecretFrom(String databasePwd) =>
-      '$databasePwd:remote-wipe-sign:v1';
+  static String signingSecretFrom(String databasePwd, String deviceId) =>
+      '$databasePwd:$deviceId:remote-wipe-sign:v1';
 
-  static String aesKeyMaterialFrom(String databasePwd) =>
-      '$databasePwd:remote-wipe-aes:v1';
+  static String aesKeyMaterialFrom(String databasePwd, String deviceId) =>
+      '$databasePwd:$deviceId:remote-wipe-aes:v1';
 
   static encrypt.Key aesKeyFromMaterial(String material) {
     final normalized = material.padRight(32, '0').substring(0, 32);

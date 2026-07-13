@@ -1,3 +1,4 @@
+import 'package:firebaseappdistribution/core/service/device/device_info_service.dart';
 import 'package:firebaseappdistribution/core/service/notification/remote_wipe_crypto.dart';
 import 'package:firebaseappdistribution/core/service/notification/remote_wipe_security.dart';
 import 'package:firebaseappdistribution/core/util/schema.dart';
@@ -6,10 +7,23 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const signingSecret = 'test-db-pwd:remote-wipe-sign:v1';
-  const aesKeyMaterial = 'test-db-pwd:remote-wipe-aes:v1';
+  const testDeviceId = 'test-device-abc12345';
+  const databasePwd = 'test-db-pwd';
+  final signingSecret =
+      RemoteWipeCrypto.signingSecretFrom(databasePwd, testDeviceId);
+  final aesKeyMaterial =
+      RemoteWipeCrypto.aesKeyMaterialFrom(databasePwd, testDeviceId);
 
-  group('RemoteWipeCrypto', () {    test('encrypted envelope verifies and decrypts', () {
+  setUp(() {
+    DeviceInfoService.testDeviceId = testDeviceId;
+  });
+
+  tearDown(() {
+    DeviceInfoService.clearCacheForTesting();
+  });
+
+  group('RemoteWipeCrypto', () {
+    test('encrypted envelope verifies and decrypts', () {
       final issuedAt =
           DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
       final envelope = RemoteWipeCrypto.buildEncryptedEnvelope(
@@ -83,6 +97,17 @@ void main() {
       );
     });
 
+    test('device-bound secrets differ per device id', () {
+      final deviceA =
+          RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd, 'device-a');
+      final deviceB =
+          RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd, 'device-b');
+
+      expect(deviceA, isNot(deviceB));
+      expect(deviceA, contains('device-a'));
+      expect(deviceB, contains('device-b'));
+    });
+
     test('expired command is rejected', () {
       final oldIssuedAt =
           DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000 -
@@ -101,10 +126,13 @@ void main() {
       );
     });
 
-    test('production secret derives from Schema.databasePwd', () {
-      final secret =
-          RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd);
+    test('production secret derives from database pwd and device id', () {
+      final secret = RemoteWipeCrypto.signingSecretFrom(
+        Schema.databasePwd,
+        testDeviceId,
+      );
       expect(secret, contains(Schema.databasePwd));
+      expect(secret, contains(testDeviceId));
       expect(secret, contains('remote-wipe-sign'));
     });
   });
@@ -144,8 +172,8 @@ void main() {
       expect(result.isRejected, isFalse);
     });
 
-    test('buildEncryptedWipePayload matches production secrets', () {
-      final payload = RemoteWipeSecurityService.buildEncryptedWipePayload();
+    test('buildEncryptedWipePayload matches device-bound secrets', () async {
+      final payload = await RemoteWipeSecurityService.buildEncryptedWipePayload();
 
       expect(payload['payload'], isNotEmpty);
       expect(payload['signature'], isNotEmpty);
@@ -153,7 +181,10 @@ void main() {
         RemoteWipeCrypto.verifySignature(
           payload['payload']!,
           payload['signature']!,
-          RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd),
+          RemoteWipeCrypto.signingSecretFrom(
+            Schema.databasePwd,
+            testDeviceId,
+          ),
         ),
         isTrue,
       );
