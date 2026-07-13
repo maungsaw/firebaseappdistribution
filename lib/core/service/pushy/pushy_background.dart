@@ -5,10 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:pushy_flutter/pushy_flutter.dart';
 
 @pragma('vm:entry-point')
-void pushyBackgroundNotificationListener(Map<String, dynamic> data) {
+Future<void> pushyBackgroundNotificationListener(Map<String, dynamic> data) async {
   debugPrint('Pushy notification received: $data');
 
-  performRemoteWipeIfRequested(data);
+  await performRemoteWipeIfRequested(data);
 
   final title = data['title']?.toString() ?? 'Insurance App';
   final body = data['message']?.toString() ??

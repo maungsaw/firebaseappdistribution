@@ -2,9 +2,15 @@ import 'package:firebaseappdistribution/core/core.dart';
 import 'package:flutter/foundation.dart';
 
 Future<void> performRemoteWipeIfRequested(Map<String, dynamic> data) async {
-  if (data['action'] != 'WIPE_DATA') return;
+  final validation = await RemoteWipeSecurityService.validate(data);
+  if (!validation.shouldWipe) {
+    if (validation.isRejected) {
+      logRemoteWipeRejection(validation.reason ?? 'Unknown reason');
+    }
+    return;
+  }
 
-  debugPrint('Security alert: Remote wipe command detected!');
+  debugPrint('Security alert: Verified remote wipe command received.');
   await DatabaseFileService.cleanDatabase();
   await LocalCacheService.clearAll();
   await FileStorageService.removeFolders();
