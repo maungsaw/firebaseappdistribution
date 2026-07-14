@@ -1,5 +1,5 @@
-import 'package:firebaseappdistribution/data/data.dart';
-import 'package:flutter/rendering.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 
 import 'core/core.dart';
 
@@ -22,13 +22,22 @@ abstract class FirebaseInjection {
             debugPrint('Background msg: ${data.messageId}'),
       );
 
+      FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
+        await PushTokenService.saveFcmToken(token);
+        debugPrint('FCM Token refreshed: $token');
+      });
+
       try {
         final fcmToken = await instance.getToken();
-        LocalCacheService.write('fcm-token', fcmToken.toString());
-        debugPrint('FCM Token: $fcmToken');
+        await PushTokenService.saveFcmToken(fcmToken);
+        if (fcmToken != null && fcmToken.isNotEmpty) {
+          debugPrint('FCM Token: $fcmToken');
+        } else {
+          debugPrint('FCM Token empty — Pushy may be used for Chinese phones');
+        }
       } catch (e) {
         debugPrint(
-          'FCM token unavailable. Push notifications disabled on this device: $e',
+          'FCM token unavailable. Pushy will be used if available: $e',
         );
       }
     } catch (e, stackTrace) {

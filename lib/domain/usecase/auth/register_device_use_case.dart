@@ -11,18 +11,19 @@ class RegisterDeviceUseCase {
   Future<RegisterDeviceResponseModel> call() async {
     final deviceId = await DeviceInfoService.getDeviceId();
     final model = await DeviceInfoService.getModel();
-    final pushToken = await PushTokenService.resolve();
+    final pushResult = await PushTokenService.resolve();
 
     debugPrint(
       '[RegisterDevice] device_id=$deviceId model=$model '
-      'fcm_token=${pushToken ?? '(none)'}',
+      'token_source=${pushResult?.sourceLabel ?? 'none'} '
+      'fcm_token=${pushResult?.token ?? '(none)'}',
     );
 
     return _repository.registerDevice(
       RegisterDeviceRequestDto(
         deviceId: deviceId,
         model: model,
-        fcmToken: pushToken,
+        fcmToken: pushResult?.token,
       ),
     );
   }

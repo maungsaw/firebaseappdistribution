@@ -1,5 +1,6 @@
 import 'dart:io' show Platform;
 
+import 'package:firebaseappdistribution/core/service/push_token_service.dart';
 import 'package:firebaseappdistribution/core/service/pushy/pushy_background.dart';
 import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/foundation.dart';
@@ -40,7 +41,14 @@ class PushyService {
 
     try {
       final deviceToken = await Pushy.register();
-      await LocalCacheService.write('pushy-token', deviceToken);
+      if (deviceToken.isEmpty) {
+        debugPrint('Pushy registration returned empty token');
+        return null;
+      }
+      await LocalCacheService.write(
+        PushTokenService.pushyCacheKey,
+        deviceToken,
+      );
       debugPrint('Pushy device token: $deviceToken');
       return deviceToken;
     } catch (e, stackTrace) {
