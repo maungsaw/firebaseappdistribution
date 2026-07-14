@@ -11,6 +11,9 @@ class LoginUseCase {
     required String mobileNumber,
     required String password,
   }) {
+    if (mobileNumber.isEmpty || password.isEmpty) {
+      throw Exception('Pls fill form');
+    }
     return _repository.login(
       LoginRequestDto(mobileNumber: mobileNumber, password: password),
     );

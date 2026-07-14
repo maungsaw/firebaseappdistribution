@@ -9,6 +9,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<LoginResponseModel> login(LoginRequestDto request) async {
     final response = await service.login(request);
+
     if (!response.success || response.data == null) {
       throw AuthFailure(response.message ?? 'Login failed');
     }

@@ -1,13 +1,11 @@
+import 'package:flutter/foundation.dart';
+
 class ApiResponseModel<T> {
   final bool success;
   final String? message;
   final T? data;
 
-  const ApiResponseModel({
-    required this.success,
-    this.message,
-    this.data,
-  });
+  const ApiResponseModel({required this.success, this.message, this.data});
 
   factory ApiResponseModel.fromJson(
     Map<String, dynamic> json,
