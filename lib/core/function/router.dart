@@ -1,4 +1,5 @@
 import 'package:firebaseappdistribution/data/data.dart';
+import 'package:firebaseappdistribution/injection.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 import 'package:firebaseappdistribution/presentation/screen/tax/tax.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,26 @@ import '../util/util.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: RootNavigation.rootKey,
-    initialLocation: AppRoutes.login,
+    initialLocation: RouteName.login.path,
     debugLogDiagnostics: true,
+    refreshListenable: Injection.sl<AuthBloc>(),
+    redirect: (context, state) {
+      final bloc = Injection.sl<AuthBloc>();
+      final currentState = bloc.state;
+      final isLoggedIn = currentState is AuthLoginSuccessState;
+      final isGoingToLogin = state.matchedLocation == '/login';
+
+      // ADD THIS DEBUG PRINT
+      debugPrint('DEBUG: Current State is ${currentState.runtimeType}');
+      debugPrint(
+        'ROUTE -> GoingToLogin: $isGoingToLogin, IsLoggedIn: $isLoggedIn',
+      );
+
+      if (!isLoggedIn && !isGoingToLogin) return AppRoutes.login;
+      if (isLoggedIn && isGoingToLogin) return AppRoutes.home;
+
+      return null;
+    },
     errorBuilder: (context, state) =>
         Scaffold(body: GlobalWidget.errorView('Page not found')),
 

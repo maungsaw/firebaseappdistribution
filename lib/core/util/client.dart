@@ -1,5 +1,5 @@
 abstract class ApiClient {
-  static String baseUrl = 'http://10.10.1.63:5132';
+  static String baseUrl = 'http://10.10.1.99:5132';
   static String clientVersion = '/api';
   static String prefix = '';
 }

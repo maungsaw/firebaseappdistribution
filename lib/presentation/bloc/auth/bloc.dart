@@ -1,18 +1,21 @@
 import 'package:dio/dio.dart';
 import 'package:firebaseappdistribution/domain/error/auth_failure.dart';
 import 'package:firebaseappdistribution/domain/usecase/usecase.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'event.dart';
 import 'state.dart';
 
-class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc({
-    required this.loginUseCase,
-    required this.registerDeviceUseCase,
-  }) : super(AuthInitialState()) {
+class AuthBloc extends Bloc<AuthEvent, AuthState> with ChangeNotifier {
+  AuthBloc({required this.loginUseCase, required this.registerDeviceUseCase})
+    : super(AuthInitialState()) {
     on<LoginSubmittedEvent>(_onLoginSubmitted);
     on<RegisterDeviceSubmittedEvent>(_onRegisterDeviceSubmitted);
+    stream.listen((state) {
+      debugPrint('AuthBloc: State changed to ${state.runtimeType}');
+      notifyListeners();
+    });
   }
 
   final LoginUseCase loginUseCase;
@@ -28,6 +31,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         mobileNumber: event.mobileNumber,
         password: event.password,
       );
+      debugPrint('Data -> ${data.accessToken}');
+
       emit(AuthLoginSuccessState(data));
     } catch (error) {
       emit(AuthFailureState(_mapError(error)));

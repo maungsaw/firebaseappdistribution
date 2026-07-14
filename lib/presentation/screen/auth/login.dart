@@ -28,11 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        // Handle navigation on success
-        if (state is AuthLoginSuccessState) {
-          context.push(RouteName.home.path);
-        }
-
         // Handle errors (e.g., showing a Snackbar)
         if (state is AuthFailureState) {
           GlobalSnackbar.showError(context, state.message);

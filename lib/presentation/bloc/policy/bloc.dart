@@ -1,14 +1,23 @@
-import 'package:firebaseappdistribution/data/data.dart';
 import 'package:firebaseappdistribution/domain/domain.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'event.dart';
 import 'state.dart';
 
 class PolicyBloc extends Bloc<PolicyEvent, PolicyState> {
-  final PolicyRepository policyRepository;
+  // Inject UseCases instead of Repository
+  final CreatePolicyUseCase createPolicyUseCase;
+  final RemovePolicyUseCase removePolicyUseCase;
+  final UpdatePolicyUseCase updatePolicyUseCase;
+  final GetAllPoliciesUseCase getAllPoliciesUseCase;
+  final GetRatesUseCase getRatesUseCase;
 
-  PolicyBloc({required this.policyRepository}) : super(InitialPolicyState()) {
-    // Corrected syntax for event handlers
+  PolicyBloc({
+    required this.createPolicyUseCase,
+    required this.removePolicyUseCase,
+    required this.updatePolicyUseCase,
+    required this.getAllPoliciesUseCase,
+    required this.getRatesUseCase,
+  }) : super(InitialPolicyState()) {
     on<SuccessPolicyEvent>(_onFetchPolicy);
     on<NewPolicyEvent>(_onCreatePolicy);
     on<RemovePolicyEvent>(_removePolicy);
@@ -20,9 +29,9 @@ class PolicyBloc extends Bloc<PolicyEvent, PolicyState> {
     SuccessPolicyEvent event,
     Emitter<PolicyState> emit,
   ) async {
+    emit(LoadingPolicyState());
     try {
-      emit(LoadingPolicyState());
-      final data = await getAll();
+      final data = await getAllPoliciesUseCase();
       emit(FetchPolicyState(data));
     } catch (e) {
       emit(ErrorPolicyState('Failed to fetch policies: ${e.toString()}'));
@@ -33,34 +42,28 @@ class PolicyBloc extends Bloc<PolicyEvent, PolicyState> {
     RemovePolicyEvent event,
     Emitter<PolicyState> emit,
   ) async {
+    emit(LoadingPolicyState());
     try {
-      emit(LoadingPolicyState());
-      final count = await policyRepository.removePolicy(event.id);
+      final count = await removePolicyUseCase(event.id);
       if (count > -1) {
-        final data = await getAll();
+        final data = await getAllPoliciesUseCase();
         emit(FetchPolicyState(data));
       }
     } catch (e) {
-      emit(ErrorPolicyState('Failed to fetch policies: ${e.toString()}'));
+      emit(ErrorPolicyState('Failed to remove policy: ${e.toString()}'));
     }
-  }
-
-  Future<List<PolicyModel>> getAll() async {
-    return await policyRepository.getAll();
   }
 
   Future<void> _onCreatePolicy(
     NewPolicyEvent event,
     Emitter<PolicyState> emit,
   ) async {
+    emit(LoadingPolicyState());
     try {
-      emit(LoadingPolicyState());
-
-      final count = await policyRepository.createPolicy(event.policyModel);
-
+      final count = await createPolicyUseCase(event.policyModel);
       if (count > -1) {
         emit(SuccessPolicyState());
-        final data = await getAll();
+        final data = await getAllPoliciesUseCase();
         emit(FetchPolicyState(data));
       }
     } catch (e) {
@@ -72,17 +75,16 @@ class PolicyBloc extends Bloc<PolicyEvent, PolicyState> {
     UpdatePolicyEvent event,
     Emitter<PolicyState> emit,
   ) async {
+    emit(LoadingPolicyState());
     try {
-      emit(LoadingPolicyState());
-      final count = await policyRepository.updatePolicy(event.policy);
-
+      final count = await updatePolicyUseCase(event.policy);
       if (count > -1) {
         emit(SuccessPolicyState());
-        final data = await getAll();
+        final data = await getAllPoliciesUseCase();
         emit(FetchPolicyState(data));
       }
     } catch (e) {
-      emit(ErrorPolicyState('Failed to create policy: ${e.toString()}'));
+      emit(ErrorPolicyState('Failed to update policy: ${e.toString()}'));
     }
   }
 
@@ -91,16 +93,10 @@ class PolicyBloc extends Bloc<PolicyEvent, PolicyState> {
     Emitter<PolicyState> emit,
   ) async {
     try {
-      final rate = await policyRepository.getRates(
-        event.age,
-        event.term,
-        event.gender,
-      );
-
+      final rate = await getRatesUseCase(event.age, event.term, event.gender);
       emit(PremiumOptionsLoadedState(rate: rate));
-    } catch (error) {
-      // Handle fallback or error states gracefully if query execution fails
-      emit(ErrorPolicyState(error.toString()));
+    } catch (e) {
+      emit(ErrorPolicyState(e.toString()));
     }
   }
 }

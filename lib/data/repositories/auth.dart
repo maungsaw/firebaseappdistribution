@@ -1,6 +1,5 @@
 import 'package:firebaseappdistribution/data/data.dart';
-import 'package:firebaseappdistribution/domain/error/auth_failure.dart';
-import 'package:firebaseappdistribution/domain/repositories/auth.dart';
+import 'package:firebaseappdistribution/domain/domain.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({required this.service});
