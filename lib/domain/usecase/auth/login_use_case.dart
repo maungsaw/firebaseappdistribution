@@ -15,7 +15,10 @@ class LoginUseCase {
       throw Exception('Pls fill form');
     }
     return _repository.login(
-      LoginRequestDto(mobileNumber: mobileNumber, password: password),
+      LoginRequestDto(
+        mobileNumber: mobileNumber.trim(),
+        password: password.trim(),
+      ),
     );
   }
 }

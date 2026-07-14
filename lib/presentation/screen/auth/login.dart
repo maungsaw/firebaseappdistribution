@@ -57,8 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       context.read<AuthBloc>().add(
                         LoginSubmittedEvent(
-                          mobileNumber: phoneController.text,
-                          password: passwordController.text,
+                          mobileNumber: phoneController.text.trim(),
+                          password: passwordController.text.trim(),
                         ),
                       );
                     },

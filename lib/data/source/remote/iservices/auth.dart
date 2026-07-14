@@ -4,6 +4,7 @@ import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/foundation.dart';
 
 import '../error_handler.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthServiceImpl extends BaseNetworkService<ApiResponseModel>
     implements AuthService {
@@ -38,6 +39,11 @@ class AuthServiceImpl extends BaseNetworkService<ApiResponseModel>
   Future<ApiResponseModel> registerDevice(
     RegisterDeviceRequestDto request,
   ) async {
+    debugPrint(
+      'Auth registerDevice → ${ApiClient.baseUrl}${ApiClient.clientVersion}'
+      '${ClientEndPoint.joinPath(ClientEndPoint.auth, ClientEndPoint.devicesRegister)} '
+      'body=${request.toMap()}',
+    );
     final response = await createWithSuffix(
       suffix: ClientEndPoint.devicesRegister,
       data: request.toMap(),

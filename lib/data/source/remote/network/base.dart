@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
-import 'package:firebaseappdistribution/core/core.dart' show ClientServiceType;
+import 'package:firebaseappdistribution/core/core.dart'
+    show ClientEndPoint, ClientServiceType;
 
 import 'client.dart';
 
@@ -69,8 +70,16 @@ abstract class BaseNetworkService<T> {
     bool isProtected = true,
   }) async {
     final dio = isProtected ? _protectedDio : _publicDio;
-    final response = await dio.post('$endpoint/$suffix', data: data);
-    return fromJson(response.data);
+    final path = ClientEndPoint.joinPath(endpoint, suffix);
+    final response = await dio.post(
+      path,
+      data: data,
+      options: Options(
+        contentType: Headers.jsonContentType,
+        headers: const {'Accept': 'application/json'},
+      ),
+    );
+    return fromJson(Map<String, dynamic>.from(response.data as Map));
   }
 
   Future<T> update({

@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/domain/error/auth_failure.dart';
 import 'package:firebaseappdistribution/domain/usecase/usecase.dart';
 import 'package:flutter/foundation.dart';
@@ -28,14 +29,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> with ChangeNotifier {
     emit(AuthLoadingState());
     try {
       final data = await loginUseCase(
-        mobileNumber: event.mobileNumber,
-        password: event.password,
+        mobileNumber: event.mobileNumber.trim(),
+        password: event.password.trim(),
       );
       debugPrint('Data -> ${data.accessToken}');
 
       emit(AuthLoginSuccessState(data));
+      _registerDeviceInBackground();
     } catch (error) {
       emit(AuthFailureState(_mapError(error)));
+    }
+  }
+
+  Future<void> _registerDeviceInBackground() async {
+    try {
+      final result = await registerDeviceUseCase();
+      debugPrint(
+        'Device register OK: id=${result.id} device_id=${result.deviceId} '
+        'active=${result.isActive}',
+      );
+    } catch (error, stackTrace) {
+      debugPrint('Device register failed (login still OK): $error');
+      debugPrint('$stackTrace');
     }
   }
 
@@ -56,8 +71,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> with ChangeNotifier {
     if (error is AuthFailure) return error.message;
     if (error is DioException) {
       final data = error.response?.data;
-      if (data is Map && data['message'] != null) {
-        return data['message'].toString();
+      if (data is Map) {
+        final message = data['message']?.toString();
+        if (message != null && message.isNotEmpty) return message;
+      }
+      final code = error.response?.statusCode;
+      if (code == 401) {
+        return 'Login failed (401). Check phone number / password, '
+            'or that the app is calling ${ApiClient.baseUrl}${ApiClient.clientVersion}/auth/login';
       }
       return error.message ?? 'Network request failed';
     }
