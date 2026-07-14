@@ -13,19 +13,17 @@ abstract class Injection {
     sl.registerLazySingleton(() => PolicyORM());
     sl.registerLazySingleton(() => PremiumPolicyORM());
     sl.registerLazySingleton(() => PremiumTermORM());
-    // --- External ---
+    // --- Network ---
     sl.registerLazySingleton<Dio>(
       () => NetworkClient.getClient(ClientServiceType.protected),
     );
-    // --- Repositories ---
-    sl.registerLazySingleton<WeatherServiceImp>(() => WeatherService());
     sl.registerLazySingleton<AuthServiceImp>(() => AuthService());
+    // --- Repositories ---
+
     sl.registerLazySingleton<WeatherRepositoryImpl>(
       () => WeatherRepository(service: sl()),
     );
-    sl.registerLazySingleton<AuthRepositoryImpl>(
-      () => AuthRepository(service: sl()),
-    );
+
     sl.registerLazySingleton(() => LoginUseCase(sl()));
     sl.registerLazySingleton(() => RegisterDeviceUseCase(sl()));
     sl.registerLazySingleton<PolicyRepositoryImpl>(
@@ -45,6 +43,9 @@ abstract class Injection {
       () => PremiumTermRepository(),
     );
     sl.registerLazySingleton<UserRepositoryImpl>(() => UserRepository());
+    sl.registerLazySingleton<AuthRepositoryImpl>(
+      () => AuthRepository(service: sl()),
+    );
 
     // --- BLoCs ---
     sl.registerFactory(() => BottomAppbarBloc());
@@ -56,10 +57,7 @@ abstract class Injection {
     sl.registerFactory(() => PremiumPolicyBloc(repository: sl()));
     sl.registerFactory(() => UserBloc(repository: sl()));
     sl.registerFactory(
-      () => AuthBloc(
-        loginUseCase: sl(),
-        registerDeviceUseCase: sl(),
-      ),
+      () => AuthBloc(loginUseCase: sl(), registerDeviceUseCase: sl()),
     );
   }
 }

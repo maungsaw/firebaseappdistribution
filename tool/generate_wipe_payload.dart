@@ -7,8 +7,6 @@ import 'package:firebaseappdistribution/core/util/schema.dart';
 /// Generates signed remote wipe payloads for FCM / Pushy testing.
 ///
 /// Usage:
-///   dart run tool/generate_wipe_payload.dart --device-id=<device_id>
-///   dart run tool/generate_wipe_payload.dart --device-id=<device_id> --plain
 ///
 /// Use the device ID printed in debug console: `[Device] id=... model=...`
 void main(List<String> args) {
@@ -25,10 +23,14 @@ void main(List<String> args) {
     exit(1);
   }
 
-  final signingSecret =
-      RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd, deviceId);
-  final aesKeyMaterial =
-      RemoteWipeCrypto.aesKeyMaterialFrom(Schema.databasePwd, deviceId);
+  final signingSecret = RemoteWipeCrypto.signingSecretFrom(
+    Schema.databasePwd,
+    deviceId,
+  );
+  final aesKeyMaterial = RemoteWipeCrypto.aesKeyMaterialFrom(
+    Schema.databasePwd,
+    deviceId,
+  );
 
   final payload = usePlain
       ? RemoteWipeCrypto.buildSignedPlainEnvelope(signingSecret: signingSecret)

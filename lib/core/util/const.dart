@@ -10,6 +10,7 @@ abstract class AppRoutes {
   static const String tax = '/tax';
   static const String user = '/user';
   static const String profile = '/profile';
+  static const String login = '/login';
 }
 
 abstract class RootNavigation {

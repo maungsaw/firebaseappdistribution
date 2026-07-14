@@ -8,6 +8,7 @@ enum RouteName {
   tax,
   user,
   profile,
+  login,
 }
 
 enum PolicyStatus {

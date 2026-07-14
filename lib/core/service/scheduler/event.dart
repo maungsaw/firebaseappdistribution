@@ -1,6 +1,5 @@
 import 'dart:isolate';
 import 'package:firebaseappdistribution/core/core.dart';
-import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 
@@ -38,10 +37,10 @@ class ForegroundTaskHandler extends TaskHandler {
     _isSyncing = true;
     try {
       debugPrint('Executing API Sync...');
-      final TestService service = TestService();
-      for (int i = 1; i < 30; i++) {
-        await service.syncTask('Name-MS -$i');
-      }
+
+      // for (int i = 1; i < 30; i++) {
+      //   await service.syncTask('Name-MS -$i');
+      // }
 
       // Mark as finished in cache
       await LocalCacheService.write('sync_enabled', 'false');

@@ -4,46 +4,87 @@ import 'package:firebaseappdistribution/core/core.dart' show ClientServiceType;
 import 'client.dart';
 
 abstract class BaseNetworkService<T> {
-  final Dio _dio = NetworkClient.getClient(ClientServiceType.protected);
+  final Dio _publicDio = NetworkClient.getClient(ClientServiceType.public);
+  final Dio _protectedDio = NetworkClient.getClient(
+    ClientServiceType.protected,
+  );
   final String endpoint;
 
   BaseNetworkService(this.endpoint);
 
   // Generic CRUD
-  Future<List<T>> getAll() async {
-    final response = await _dio.get(endpoint);
+  Future<List<T>> getAll({
+    required T Function(Map<String, dynamic>) fromJson,
+    bool isProtected = true,
+  }) async {
+    final dio = isProtected ? _protectedDio : _publicDio;
+    final response = await dio.get(endpoint);
     return (response.data as List).map((e) => fromJson(e)).toList();
   }
 
-  Future<T> getById(String id) async {
-    final response = await _dio.get('$endpoint/$id');
+  Future<T> getById({
+    required int id,
+    required T Function(Map<String, dynamic>) fromJson,
+    bool isProtected = true,
+  }) async {
+    final dio = isProtected ? _protectedDio : _publicDio;
+    final response = await dio.get('$endpoint/$id');
     return fromJson(response.data);
   }
 
-  Future<T> getByParam(Map<String, dynamic> param) async {
-    final response = await _dio.get(endpoint, queryParameters: param);
+  Future<T> getByParam({
+    required Map<String, dynamic> param,
+    required T Function(Map<String, dynamic>) fromJson,
+    bool isProtected = true,
+  }) async {
+    final dio = isProtected ? _protectedDio : _publicDio;
+    final response = await dio.get(endpoint, queryParameters: param);
     return fromJson(response.data);
   }
 
-  Future<T> getAllByParam(Map<String, dynamic> param) async {
-    final response = await _dio.get(endpoint, queryParameters: param);
+  Future<T> getAllByParam({
+    required Map<String, dynamic> param,
+    required T Function(Map<String, dynamic>) fromJson,
+    bool isProtected = true,
+  }) async {
+    final dio = isProtected ? _protectedDio : _publicDio;
+    final response = await dio.get(endpoint, queryParameters: param);
     return fromJson(response.data);
   }
 
-  Future<T> create(Map<String, dynamic> data) async {
-    final response = await _dio.post(endpoint, data: data);
+  Future<T> create({
+    required Map<String, dynamic> data,
+    required T Function(Map<String, dynamic>) fromJson,
+    bool isProtected = true,
+  }) async {
+    final dio = isProtected ? _protectedDio : _publicDio;
+    final response = await dio.post(endpoint, data: data);
     return fromJson(response.data);
   }
 
-  Future<T> update(String id, Map<String, dynamic> data) async {
-    final response = await _dio.put('$endpoint/$id', data: data);
+  Future<T> createWithSuffix({
+    required String suffix,
+    required Map<String, dynamic> data,
+    required T Function(Map<String, dynamic>) fromJson,
+    bool isProtected = true,
+  }) async {
+    final dio = isProtected ? _protectedDio : _publicDio;
+    final response = await dio.post('$endpoint/$suffix', data: data);
+    return fromJson(response.data);
+  }
+
+  Future<T> update({
+    required String id,
+    required Map<String, dynamic> data,
+    required T Function(Map<String, dynamic>) fromJson,
+    bool isProtected = true,
+  }) async {
+    final dio = isProtected ? _protectedDio : _publicDio;
+    final response = await dio.put('$endpoint/$id', data: data);
     return fromJson(response.data);
   }
 
   Future<void> delete(String id) async {
-    await _dio.delete('$endpoint/$id');
+    await _protectedDio.delete('$endpoint/$id');
   }
-
-  // Abstract methods for the child to implement
-  T fromJson(Map<String, dynamic> json);
 }

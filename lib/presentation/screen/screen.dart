@@ -7,3 +7,4 @@ export 'policy/policy.dart';
 export 'master/master.dart';
 export 'task/task.dart';
 export 'user/user.dart';
+export 'auth/auth.dart';

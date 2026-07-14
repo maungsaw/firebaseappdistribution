@@ -6,7 +6,8 @@ abstract class ApiClient {
 
 abstract class ClientEndPoint {
   static String weather = '/weather';
-  static String login = '/auth/login';
-  static String devicesRegister = '/auth/devices-register';
-  static String refresh = '/auth/refresh';
+  static String auth = '/auth';
+  static String login = '/login';
+  static String devicesRegister = '/devices-register';
+  static String refresh = '/refresh';
 }

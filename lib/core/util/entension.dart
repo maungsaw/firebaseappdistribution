@@ -22,6 +22,8 @@ extension RouteNameExtension on RouteName {
         return AppRoutes.user;
       case RouteName.profile:
         return AppRoutes.profile;
+      case RouteName.login:
+        return AppRoutes.login;
     }
   }
 }

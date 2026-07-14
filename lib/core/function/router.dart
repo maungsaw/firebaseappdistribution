@@ -9,7 +9,7 @@ import '../util/util.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: RootNavigation.rootKey,
-    initialLocation: AppRoutes.home,
+    initialLocation: AppRoutes.login,
     debugLogDiagnostics: true,
     errorBuilder: (context, state) =>
         Scaffold(body: GlobalWidget.errorView('Page not found')),
@@ -167,6 +167,13 @@ class AppRouter {
             },
           ),
         ],
+      ),
+      GoRoute(
+        path: RouteName.login.path,
+        name: RouteName.login.name,
+        builder: (BuildContext context, GoRouterState state) {
+          return LoginScreen();
+        },
       ),
     ],
   );
