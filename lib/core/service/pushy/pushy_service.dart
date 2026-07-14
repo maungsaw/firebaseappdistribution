@@ -1,7 +1,7 @@
 import 'dart:io' show Platform;
 
-import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/core/service/pushy/pushy_background.dart';
+import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pushy_flutter/pushy_flutter.dart';
 
@@ -15,9 +15,7 @@ class PushyService {
   bool _initialized = false;
   PushyNavigationCallback? _onNavigate;
 
-  Future<void> initialize({
-    required PushyNavigationCallback onNavigate,
-  }) async {
+  Future<void> initialize({required PushyNavigationCallback onNavigate}) async {
     if (_initialized || !Platform.isAndroid) return;
 
     _onNavigate = onNavigate;

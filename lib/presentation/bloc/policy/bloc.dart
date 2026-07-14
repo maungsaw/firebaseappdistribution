@@ -5,7 +5,7 @@ import 'event.dart';
 import 'state.dart';
 
 class PolicyBloc extends Bloc<PolicyEvent, PolicyState> {
-  final PolicyRepositoryImpl policyRepository;
+  final PolicyRepository policyRepository;
 
   PolicyBloc({required this.policyRepository}) : super(InitialPolicyState()) {
     // Corrected syntax for event handlers

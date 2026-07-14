@@ -1,14 +1,11 @@
 import 'package:firebaseappdistribution/firebase.dart';
 import 'package:firebaseappdistribution/pushy.dart';
-
 import 'app_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'core/core.dart'
     show
         AppRouter,
-        DatabaseFileService,
         DeviceInfoService,
-        FileStorageService,
         ForegroundScheculerService,
         SystemBottomBarService;
 import 'data/data.dart';
@@ -22,7 +19,7 @@ void main() async {
   await PushyInjection.initPushyServices();
   await FileStorageService.createFolders();
   await DatabaseFileService.ensureDatabaseFile();
-  await DatabaseManager().open();
+  await DatabaseHelper().open();
   ForegroundScheculerService().initTask();
   SystemBottomBarService.ensureVisible();
   runApp(MyApp());

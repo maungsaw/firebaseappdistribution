@@ -6,7 +6,7 @@ import 'event.dart';
 import 'state.dart';
 
 class UserBloc extends Bloc<UserEvent, UserState> {
-  final UserRepositoryImpl repository;
+  final UserRepository repository;
 
   UserBloc({required this.repository}) : super(InitialUserState()) {
     on<FetchedUserEvent>(fetch);

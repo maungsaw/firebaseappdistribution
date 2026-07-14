@@ -1,4 +1,5 @@
 import 'package:firebaseappdistribution/core/core.dart';
+import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/foundation.dart';
 
 Future<void> performRemoteWipeIfRequested(Map<String, dynamic> data) async {

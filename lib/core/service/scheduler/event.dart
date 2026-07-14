@@ -1,5 +1,5 @@
 import 'dart:isolate';
-import 'package:firebaseappdistribution/core/core.dart';
+import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 

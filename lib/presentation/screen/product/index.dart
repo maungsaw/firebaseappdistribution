@@ -1,4 +1,4 @@
-import 'package:firebaseappdistribution/core/service/service.dart';
+import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:worker_manager/worker_manager.dart';

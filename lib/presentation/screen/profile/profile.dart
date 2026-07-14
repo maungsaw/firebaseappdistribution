@@ -1,4 +1,4 @@
-import 'package:firebaseappdistribution/core/core.dart';
+import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {

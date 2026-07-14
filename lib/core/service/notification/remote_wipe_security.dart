@@ -1,7 +1,5 @@
-import 'package:firebaseappdistribution/core/service/cache.dart';
-import 'package:firebaseappdistribution/core/service/device/device_info_service.dart';
-import 'package:firebaseappdistribution/core/service/notification/remote_wipe_crypto.dart';
-import 'package:firebaseappdistribution/core/util/schema.dart';
+import 'package:firebaseappdistribution/data/data.dart';
+import 'package:firebaseappdistribution/core/core.dart';
 import 'package:flutter/foundation.dart';
 
 enum RemoteWipeValidationStatus { notWipeCommand, rejected, accepted }
@@ -21,10 +19,7 @@ class RemoteWipeValidationResult {
       );
 
   factory RemoteWipeValidationResult.rejected(String reason) =>
-      RemoteWipeValidationResult._(
-        RemoteWipeValidationStatus.rejected,
-        reason,
-      );
+      RemoteWipeValidationResult._(RemoteWipeValidationStatus.rejected, reason);
 
   factory RemoteWipeValidationResult.accepted() =>
       const RemoteWipeValidationResult._(RemoteWipeValidationStatus.accepted);
@@ -46,10 +41,14 @@ class RemoteWipeSecurityService {
   static Future<_RemoteWipeSecrets> _resolveSecrets() async {
     final deviceId = await DeviceInfoService.getDeviceId();
     return _RemoteWipeSecrets(
-      signingSecret:
-          RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd, deviceId),
-      aesKeyMaterial:
-          RemoteWipeCrypto.aesKeyMaterialFrom(Schema.databasePwd, deviceId),
+      signingSecret: RemoteWipeCrypto.signingSecretFrom(
+        Schema.databasePwd,
+        deviceId,
+      ),
+      aesKeyMaterial: RemoteWipeCrypto.aesKeyMaterialFrom(
+        Schema.databasePwd,
+        deviceId,
+      ),
     );
   }
 
@@ -121,7 +120,9 @@ class RemoteWipeSecurityService {
       secrets.aesKeyMaterial,
     );
     if (inner == null) {
-      return RemoteWipeValidationResult.rejected('Unable to decrypt wipe payload');
+      return RemoteWipeValidationResult.rejected(
+        'Unable to decrypt wipe payload',
+      );
     }
 
     final innerError = RemoteWipeCrypto.validateInnerCommand(inner);
@@ -193,7 +194,8 @@ class RemoteWipeSecurityService {
 
   static Future<void> _markNonceUsed(String nonce) async {
     final raw = await LocalCacheService.read(_nonceCacheKey);
-    final list = raw?.split(',').where((entry) => entry.isNotEmpty).toList() ??
+    final list =
+        raw?.split(',').where((entry) => entry.isNotEmpty).toList() ??
         <String>[];
     list.add(nonce);
     while (list.length > 100) {

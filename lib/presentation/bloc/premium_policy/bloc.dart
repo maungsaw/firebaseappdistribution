@@ -7,7 +7,7 @@ import 'event.dart';
 import 'state.dart';
 
 class PremiumPolicyBloc extends Bloc<PremiumPolicyEvent, PremiumPolicyState> {
-  final PremiumPolicyRepositoryImpl repository;
+  final PremiumPolicyRepository repository;
   PremiumPolicyBloc({required this.repository})
     : super(InitialPremiumPolicyState()) {
     on<FetchedPremiumPolicyEvent>(fetch);

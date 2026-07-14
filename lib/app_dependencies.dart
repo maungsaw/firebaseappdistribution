@@ -16,7 +16,6 @@ class AppDependencies extends StatelessWidget {
         BlocProvider(create: (_) => Injection.sl<BottomAppbarBloc>()),
         BlocProvider(create: (_) => Injection.sl<FilePickerBloc>()),
         BlocProvider(create: (_) => Injection.sl<PolicyBloc>()),
-        BlocProvider(create: (_) => Injection.sl<WeatherBloc>()),
         BlocProvider(create: (_) => Injection.sl<PremiumRateBloc>()),
         BlocProvider(create: (_) => Injection.sl<PremiumTermBloc>()),
         BlocProvider(create: (_) => Injection.sl<PremiumPolicyBloc>()),

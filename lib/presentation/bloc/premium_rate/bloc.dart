@@ -1,6 +1,6 @@
 import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/data/data.dart';
-import 'package:firebaseappdistribution/domain/irepository/premium_rate.dart';
+import 'package:firebaseappdistribution/domain/domain.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,7 +8,7 @@ import 'event.dart';
 import 'state.dart';
 
 class PremiumRateBloc extends Bloc<PremiumRateEvent, PremiumRateState> {
-  final PremiumRateRepositoryImpl repository;
+  final PremiumRateRepository repository;
   PremiumRateBloc({required this.repository})
     : super(InitialPremiumRateState()) {
     on<ImportedPremiumRateEvent>((event, emit) async {

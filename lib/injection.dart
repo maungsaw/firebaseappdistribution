@@ -1,3 +1,4 @@
+import 'package:firebaseappdistribution/data/repositories/repositories.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 
@@ -10,48 +11,43 @@ abstract class Injection {
   static final sl = GetIt.instance;
   static void initInjector() {
     // --- ORM ---
-    sl.registerLazySingleton(() => PolicyORM());
-    sl.registerLazySingleton(() => PremiumPolicyORM());
-    sl.registerLazySingleton(() => PremiumTermORM());
+    sl.registerLazySingleton(() => PolicyDAO());
+    sl.registerLazySingleton(() => PremiumPolicyDAO());
+    sl.registerLazySingleton(() => PremiumTermDAO());
     // --- Network ---
     sl.registerLazySingleton<Dio>(
       () => NetworkClient.getClient(ClientServiceType.protected),
     );
-    sl.registerLazySingleton<AuthServiceImp>(() => AuthService());
+    sl.registerLazySingleton<AuthService>(() => AuthServiceImpl());
     // --- Repositories ---
-
-    sl.registerLazySingleton<WeatherRepositoryImpl>(
-      () => WeatherRepository(service: sl()),
-    );
-
-    sl.registerLazySingleton(() => LoginUseCase(sl()));
     sl.registerLazySingleton(() => RegisterDeviceUseCase(sl()));
-    sl.registerLazySingleton<PolicyRepositoryImpl>(
-      () => PolicyRepository(
-        policyORM: sl(),
-        premiumPolicyORM: sl(),
-        premiumTermORM: sl(),
+    sl.registerLazySingleton<PolicyRepository>(
+      () => PolicyRepositoryImpl(
+        policyDAO: sl(),
+        premiumPolicyDAO: sl(),
+        premiumTermDAO: sl(),
       ),
     );
-    sl.registerLazySingleton<PremiumRateRepositoryImpl>(
-      () => PremiumRateRepository(),
+    sl.registerLazySingleton<PremiumRateRepository>(
+      () => PremiumRateRepositoryImpl(),
     );
-    sl.registerLazySingleton<PremiumPolicyRepositoryImpl>(
-      () => PremiumPolicyRepository(),
+    sl.registerLazySingleton<PremiumPolicyRepository>(
+      () => PremiumPolicyRepositoryImpl(),
     );
-    sl.registerLazySingleton<PremiumTermRepositoryImpl>(
-      () => PremiumTermRepository(),
+    sl.registerLazySingleton<PremiumTermRepository>(
+      () => PremiumTermRepositoryImpl(),
     );
-    sl.registerLazySingleton<UserRepositoryImpl>(() => UserRepository());
-    sl.registerLazySingleton<AuthRepositoryImpl>(
-      () => AuthRepository(service: sl()),
+    sl.registerLazySingleton<UserRepository>(() => UserRepositoryImpl());
+    sl.registerLazySingleton<AuthRepository>(
+      () => AuthRepositoryImpl(service: sl()),
     );
 
+    // --- UseCase ---
+    sl.registerLazySingleton(() => LoginUseCase(sl()));
     // --- BLoCs ---
     sl.registerFactory(() => BottomAppbarBloc());
     sl.registerFactory(() => FilePickerBloc());
     sl.registerFactory(() => PolicyBloc(policyRepository: sl()));
-    sl.registerFactory(() => WeatherBloc(weatherRepository: sl()));
     sl.registerFactory(() => PremiumRateBloc(repository: sl()));
     sl.registerFactory(() => PremiumTermBloc(repository: sl()));
     sl.registerFactory(() => PremiumPolicyBloc(repository: sl()));

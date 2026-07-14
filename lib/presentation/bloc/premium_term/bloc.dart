@@ -7,7 +7,7 @@ import 'event.dart';
 import 'state.dart';
 
 class PremiumTermBloc extends Bloc<PremiumTermEvent, PremiumTermState> {
-  final PremiumTermRepositoryImpl repository;
+  final PremiumTermRepository repository;
   PremiumTermBloc({required this.repository})
     : super(InitialPremiumTermState()) {
     on<FetchedPremiumTermEvent>(fetch);

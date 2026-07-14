@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:firebaseappdistribution/core/core.dart';
-import 'package:firebaseappdistribution/data/orm/orm.dart';
+import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
@@ -27,12 +27,12 @@ Future<void> main() async {
     password: password,
     version: Schema.databaseVersion,
     onCreate: (database, version) async {
-      await PolicyORM.createTable(database);
-      await PremiumRateORM.createTable(database);
-      await PremiumPolicyORM.createTable(database);
-      await PremiumTermORM.createTable(database);
-      await UserORM.createTable(database);
-      await UserORM.seedExampleData(database);
+      await PolicyDAO.createTable(database);
+      await PremiumRateDAO.createTable(database);
+      await PremiumPolicyDAO.createTable(database);
+      await PremiumTermDAO.createTable(database);
+      await UserDAO.createTable(database);
+      await UserDAO.seedExampleData(database);
     },
   );
 
