@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Auth DTOs', () {
     test('login request uses camelCase fields', () {
-      const dto = LoginRequestDto(
+      final dto = LoginRequestDto(
         mobileNumber: '09123456789',
         password: 'secret',
       );
@@ -20,6 +20,18 @@ void main() {
           'password': 'secret',
         },
       );
+    });
+
+    test('login request trims trailing spaces', () {
+      final dto = LoginRequestDto(
+        mobileNumber: ' +959123456789 ',
+        password: 'Password123! ',
+      );
+
+      expect(dto.toMap(), {
+        'mobileNumber': '+959123456789',
+        'password': 'Password123!',
+      });
     });
 
     test('register device request uses snake_case fields', () {

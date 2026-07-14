@@ -2,7 +2,6 @@ import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/presentation/bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../component/component.dart';
 
@@ -59,8 +58,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       context.read<AuthBloc>().add(
                         LoginSubmittedEvent(
-                          mobileNumber: phoneController.text,
-                          password: passwordController.text,
+                          mobileNumber: phoneController.text.trim(),
+                          password: passwordController.text.trim(),
                         ),
                       );
                     },

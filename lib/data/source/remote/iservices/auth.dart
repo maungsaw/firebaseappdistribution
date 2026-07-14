@@ -1,5 +1,6 @@
 import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/data/data.dart';
+import 'package:flutter/foundation.dart';
 
 class AuthServiceImpl extends BaseNetworkService<ApiResponseModel>
     implements AuthService {
@@ -7,6 +8,11 @@ class AuthServiceImpl extends BaseNetworkService<ApiResponseModel>
 
   @override
   Future<ApiResponseModel> login(LoginRequestDto request) async {
+    debugPrint(
+      'Auth login → ${ApiClient.baseUrl}${ApiClient.clientVersion}'
+      '${ClientEndPoint.joinPath(ClientEndPoint.auth, ClientEndPoint.login)} '
+      'body=${request.toMap()}',
+    );
     final response = await createWithSuffix(
       suffix: ClientEndPoint.login,
       data: request.toMap(),
@@ -21,6 +27,11 @@ class AuthServiceImpl extends BaseNetworkService<ApiResponseModel>
   Future<ApiResponseModel> registerDevice(
     RegisterDeviceRequestDto request,
   ) async {
+    debugPrint(
+      'Auth registerDevice → ${ApiClient.baseUrl}${ApiClient.clientVersion}'
+      '${ClientEndPoint.joinPath(ClientEndPoint.auth, ClientEndPoint.devicesRegister)} '
+      'body=${request.toMap()}',
+    );
     final response = await createWithSuffix(
       suffix: ClientEndPoint.devicesRegister,
       data: request.toMap(),

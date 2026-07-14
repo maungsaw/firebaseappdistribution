@@ -2,10 +2,11 @@ class LoginRequestDto {
   final String mobileNumber;
   final String password;
 
-  const LoginRequestDto({
-    required this.mobileNumber,
-    required this.password,
-  });
+  LoginRequestDto({
+    required String mobileNumber,
+    required String password,
+  })  : mobileNumber = mobileNumber.trim(),
+        password = password.trim();
 
   Map<String, dynamic> toMap() => {
         'mobileNumber': mobileNumber,

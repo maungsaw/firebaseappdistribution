@@ -36,9 +36,6 @@ void _initNetwork() {
 
 // --- Repositories ---
 void _initRepositories() {
-  Injection.sl.registerLazySingleton(
-    () => RegisterDeviceUseCase(Injection.sl()),
-  );
   Injection.sl.registerLazySingleton<PolicyRepository>(
     () => PolicyRepositoryImpl(
       policyDAO: Injection.sl(),
@@ -66,6 +63,9 @@ void _initRepositories() {
 // --- UseCases ---
 void _initUseCases() {
   Injection.sl.registerLazySingleton(() => LoginUseCase(Injection.sl()));
+  Injection.sl.registerLazySingleton(
+    () => RegisterDeviceUseCase(Injection.sl()),
+  );
   Injection.sl.registerLazySingleton(
     () => CreatePolicyUseCase(repository: Injection.sl()),
   );

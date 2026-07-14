@@ -5,6 +5,7 @@ export 'biometric/biometric.dart';
 export 'scheduler/scheduler.dart';
 export 'system_bottom_bar_service.dart';
 export 'pushy/pushy.dart';
+export 'push_token_service.dart';
 export 'excel_reader.dart';
 export 'signature/signature.dart';
 export 'task_manage/task_manage.dart';
