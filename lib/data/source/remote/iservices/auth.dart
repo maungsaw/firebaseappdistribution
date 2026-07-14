@@ -2,9 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/foundation.dart';
-
 import '../error_handler.dart';
-import 'package:flutter/foundation.dart';
 
 class AuthServiceImpl extends BaseNetworkService<ApiResponseModel>
     implements AuthService {
@@ -21,16 +19,10 @@ class AuthServiceImpl extends BaseNetworkService<ApiResponseModel>
             ApiResponseModel.fromJson(json, LoginResponseModel.fromJson),
         isProtected: false,
       );
-      debugPrint(
-        'Response Message -> ${response.message} ${response.success} ${response.data}',
-      );
+
       return response;
     } on DioException catch (e) {
       final message = ApiErrorHandler.getErrorMessage(e);
-
-      debugPrint('User-friendly message: $message');
-
-      // Throw the clean message
       throw Exception(message);
     }
   }
