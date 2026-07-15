@@ -2,9 +2,8 @@ import 'dart:async';
 
 import 'package:firebaseappdistribution/firebase.dart';
 import 'package:firebaseappdistribution/pushy.dart';
-import 'package:flutter/foundation.dart';
 import 'package:firebaseappdistribution/remote_config.dart';
-import 'app_dependencies.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:talker_bloc_logger/talker_bloc_logger.dart';
