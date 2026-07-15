@@ -130,20 +130,6 @@ class AppRouter {
         builder: (BuildContext context, GoRouterState state) {
           return CalculatorScreen();
         },
-
-        // Example of a nested sub-route if you need parameters passed
-        // routes: <RouteBase>[
-        //   /*
-        //   GoRoute(
-        //     path: AppRoutes.pdfViewer,
-        //     builder: (BuildContext context, GoRouterState state) {
-        //       // Extract state arguments cleanly if passed during navigation
-        //       final bytes = state.extra as Uint8List;
-        //       return SecurePdfViewer(decryptedBytes: bytes);
-        //     },
-        //   ),
-        //   */
-        // ],
       ),
       GoRoute(
         path: AppRoutes.taskManage,
