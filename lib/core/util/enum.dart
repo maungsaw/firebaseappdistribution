@@ -1,16 +1,3 @@
-enum RouteName {
-  home,
-  calculator,
-  policy,
-  premiumTerm,
-  premiumPolicy,
-  taskManage,
-  tax,
-  user,
-  profile,
-  login,
-}
-
 enum PolicyStatus {
   complete("COMPLETED"),
   pending("PENDING"),

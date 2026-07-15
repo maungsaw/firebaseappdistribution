@@ -10,20 +10,14 @@ import '../util/util.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: RootNavigation.rootKey,
-    initialLocation: RouteName.login.path,
+    initialLocation: AppRoutes.login,
     debugLogDiagnostics: true,
     refreshListenable: Injection.sl<AuthBloc>(),
     redirect: (context, state) {
       final bloc = Injection.sl<AuthBloc>();
       final currentState = bloc.state;
       final isLoggedIn = currentState is AuthLoginSuccessState;
-      final isGoingToLogin = state.matchedLocation == '/login';
-
-      // ADD THIS DEBUG PRINT
-      debugPrint('DEBUG: Current State is ${currentState.runtimeType}');
-      debugPrint(
-        'ROUTE -> GoingToLogin: $isGoingToLogin, IsLoggedIn: $isLoggedIn',
-      );
+      final isGoingToLogin = state.matchedLocation == AppRoutes.login;
 
       if (!isLoggedIn && !isGoingToLogin) return AppRoutes.login;
       if (isLoggedIn && isGoingToLogin) return AppRoutes.home;
@@ -152,29 +146,29 @@ class AppRouter {
         // ],
       ),
       GoRoute(
-        path: RouteName.taskManage.path,
-        name: RouteName.taskManage.name,
+        path: AppRoutes.taskManage,
+        name: AppRoutes.taskManage,
         builder: (BuildContext context, GoRouterState state) {
           return TaskScreen();
         },
       ),
       GoRoute(
-        path: RouteName.tax.path,
-        name: RouteName.tax.name,
+        path: AppRoutes.tax,
+        name: AppRoutes.tax,
         builder: (BuildContext context, GoRouterState state) {
           return TaxScreen();
         },
       ),
       GoRoute(
-        path: RouteName.profile.path,
-        name: RouteName.profile.name,
+        path: AppRoutes.profile,
+        name: AppRoutes.profile,
         builder: (BuildContext context, GoRouterState state) {
           return ProfileScreen();
         },
       ),
       GoRoute(
-        path: RouteName.user.path,
-        name: RouteName.user.name,
+        path: AppRoutes.user,
+        name: AppRoutes.user,
         builder: (BuildContext context, GoRouterState state) {
           return const UserScreen();
         },
@@ -188,8 +182,8 @@ class AppRouter {
         ],
       ),
       GoRoute(
-        path: RouteName.login.path,
-        name: RouteName.login.name,
+        path: AppRoutes.login,
+        name: AppRoutes.login,
         builder: (BuildContext context, GoRouterState state) {
           return LoginScreen();
         },

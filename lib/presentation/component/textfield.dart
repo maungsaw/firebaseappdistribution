@@ -47,12 +47,12 @@ class GlobalFormField extends StatelessWidget {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: Colors.grey.shade400),
+          borderSide: BorderSide(color: Theme.of(context).focusColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide(
-            color: Theme.of(context).primaryColor,
+            color: Theme.of(context).unselectedWidgetColor,
             width: 2,
           ),
         ),

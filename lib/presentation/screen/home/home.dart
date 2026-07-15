@@ -23,58 +23,60 @@ class HomeScreen extends StatelessWidget {
             },
           ),
         ),
-        bottomNavigationBar: BlocSelector<BottomAppbarBloc, BottomAppbarState, bool>(
-          selector: (state) => state.isBottomBarVisible,
-          builder: (context, isVisible) {
-            return AnimatedSlide(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeInOut,
-              offset: isVisible ? Offset.zero : const Offset(0, 1.2),
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: isVisible ? 1 : 0,
-                child: IgnorePointer(
-                  ignoring: !isVisible,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[800],
-                              borderRadius: BorderRadius.circular(30),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withAlpha(2),
-                                  spreadRadius: 4,
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
+        bottomNavigationBar:
+            BlocSelector<BottomAppbarBloc, BottomAppbarState, bool>(
+              selector: (state) => state.isBottomBarVisible,
+              builder: (context, isVisible) {
+                return AnimatedSlide(
+                  duration: const Duration(milliseconds: 250),
+                  curve: Curves.easeInOut,
+                  offset: isVisible ? Offset.zero : const Offset(0, 1.2),
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: isVisible ? 1 : 0,
+                    child: IgnorePointer(
+                      ignoring: !isVisible,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[800],
+                                  borderRadius: BorderRadius.circular(30),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withAlpha(2),
+                                      spreadRadius: 4,
+                                      blurRadius: 10,
+                                      offset: const Offset(0, 4),
+                                    ),
+                                  ],
                                 ),
-                              ],
+                                child: GlobalWidget.bottomAppbar(),
+                              ),
                             ),
-                            child: GlobalWidget.bottomAppbar(),
-                          ),
+                            const SizedBox(width: 15),
+                            FloatingActionButton(
+                              onPressed: () =>
+                                  context.push(AppRoutes.calculator),
+                              backgroundColor: Colors.grey[800],
+                              child: const Icon(
+                                Icons.calculate,
+                                color: Colors.lightBlue,
+                                size: 40,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 15),
-                        FloatingActionButton(
-                          onPressed: () => context.push(RouteName.calculator.path),
-                          backgroundColor: Colors.grey[800],
-                          child: const Icon(
-                            Icons.calculate,
-                            color: Colors.lightBlue,
-                            size: 40,
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ),
-            );
-          },
-        ),
+                );
+              },
+            ),
       ),
     );
   }

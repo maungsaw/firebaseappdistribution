@@ -47,12 +47,10 @@ class PremiumPolicyScreen extends StatelessWidget {
                   DeletePremiumPolicyEvent(id: item.id),
                 );
               },
-              onEdit: (item) => context.push(
-                '${RouteName.premiumPolicy.path}/edit',
-                extra: item,
-              ),
+              onEdit: (item) =>
+                  context.push('${AppRoutes.premiumPolicy}/edit', extra: item),
               onView: (item) => context.push(
-                '${RouteName.premiumPolicy.path}/detail',
+                '${AppRoutes.premiumPolicy}/detail',
                 extra: item,
               ),
             );
@@ -61,7 +59,7 @@ class PremiumPolicyScreen extends StatelessWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push("${RouteName.premiumPolicy.path}/create"),
+        onPressed: () => context.push("${AppRoutes.premiumPolicy}/create"),
         child: Icon(Icons.add),
       ),
     );

@@ -28,7 +28,6 @@ class FilePickerView extends StatelessWidget {
         if (state is FilePickerLoading) return GlobalWidget.loadingView();
         return OutlinedButton.icon(
           onPressed: () {
-            // Trigger your BLoC event to start picking the file
             context.read<FilePickerBloc>().add(
               FileSelectedEvent(extensions: extensions),
             );

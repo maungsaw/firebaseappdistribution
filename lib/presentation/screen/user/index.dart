@@ -81,10 +81,8 @@ class _UserScreenState extends State<UserScreen> {
                     ),
                     isThreeLine: true,
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () => context.push(
-                      '${RouteName.user.path}/detail',
-                      extra: user,
-                    ),
+                    onTap: () =>
+                        context.push('${AppRoutes.user}/detail', extra: user),
                   ),
                 );
               },

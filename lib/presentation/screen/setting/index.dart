@@ -80,7 +80,7 @@ class _SettingScreenState extends State<SettingScreen>
       showSuccessMessage: !_session.isVerified,
     );
     if (!mounted || !unlocked) return;
-    await context.push(RouteName.user.path);
+    await context.push(AppRoutes.user);
   }
 
   void _lockSession() {
@@ -99,7 +99,7 @@ class _SettingScreenState extends State<SettingScreen>
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       children: [
         GestureDetector(
-          onTap: () => context.push(RouteName.profile.path),
+          onTap: () => context.push(AppRoutes.profile),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -183,22 +183,22 @@ class _SettingScreenState extends State<SettingScreen>
             MasterMenuOption(
               title: 'Premium Term',
               leadingIcon: Icons.access_time_rounded,
-              onTap: () => context.push(RouteName.premiumTerm.path),
+              onTap: () => context.push(AppRoutes.premiumTerm),
             ),
             MasterMenuOption(
               title: 'Premium Policy',
               leadingIcon: Icons.description_rounded,
-              onTap: () => context.push(RouteName.premiumPolicy.path),
+              onTap: () => context.push(AppRoutes.premiumPolicy),
             ),
             MasterMenuOption(
               title: 'Tasks',
               leadingIcon: Icons.task,
-              onTap: () => context.push(RouteName.taskManage.path),
+              onTap: () => context.push(AppRoutes.taskManage),
             ),
             MasterMenuOption(
               title: 'Tax',
               leadingIcon: Icons.receipt_long_rounded,
-              onTap: () => context.push(RouteName.tax.path),
+              onTap: () => context.push(AppRoutes.tax),
             ),
             MasterMenuOption(
               title: 'User',

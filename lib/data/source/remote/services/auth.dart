@@ -1,6 +1,6 @@
 import 'package:firebaseappdistribution/data/data.dart';
 
 abstract class AuthService {
-  Future<ApiResponseModel> login(LoginRequestDto request);
-  Future<ApiResponseModel> registerDevice(RegisterDeviceRequestDto request);
+  Future<NetworkResponseModel> login(LoginRequestDto request);
+  Future<NetworkResponseModel> registerDevice(RegisterDeviceRequestDto request);
 }

@@ -20,7 +20,7 @@ Future<void> performRemoteWipeIfRequested(Map<String, dynamic> data) async {
 
 void handleNotificationNavigation(Map<String, dynamic> data) {
   final screen = data['screen'];
-  if (screen == RouteName.calculator.path) {
-    AppRouter.router.push(RouteName.calculator.path);
+  if (screen == AppRoutes.calculator) {
+    AppRouter.router.push(AppRoutes.calculator);
   }
 }

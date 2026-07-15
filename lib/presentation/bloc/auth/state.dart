@@ -1,5 +1,5 @@
-import 'package:firebaseappdistribution/data/model/auth_login_response.dart';
-import 'package:firebaseappdistribution/data/model/auth_register_device_response.dart';
+import 'package:firebaseappdistribution/data/dto/response/auth_login_response.dart';
+import 'package:firebaseappdistribution/data/dto/response/auth_register_device_response.dart';
 
 sealed class AuthState {}
 

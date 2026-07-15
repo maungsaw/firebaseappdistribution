@@ -26,47 +26,72 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
-        // Handle errors (e.g., showing a Snackbar)
         if (state is AuthFailureState) {
           GlobalSnackbar.showError(context, state.message);
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: const Text("Login")),
-        body: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            spacing: 8.0,
-            children: [
-              GlobalFormField(
-                controller: phoneController,
-                labelText: 'Phone No.',
-              ),
-              GlobalFormField(
-                controller: passwordController,
-                labelText: 'Password',
-              ),
-              const Spacer(),
-              // Optional: Show a loading indicator if state is AuthLoading
-              BlocBuilder<AuthBloc, AuthState>(
-                builder: (context, state) {
-                  if (state is AuthLoadingState) {
-                    return const CircularProgressIndicator();
-                  }
-                  return OutlinedButton(
-                    onPressed: () {
-                      context.read<AuthBloc>().add(
-                        LoginSubmittedEvent(
-                          mobileNumber: phoneController.text.trim(),
-                          password: passwordController.text.trim(),
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "Welcome Back",
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 40),
+                  GlobalFormField(
+                    controller: phoneController,
+                    labelText: 'Phone Number',
+                    prefixIcon: Icons.phone_outlined,
+                  ),
+                  const SizedBox(height: 16),
+                  GlobalFormField(
+                    controller: passwordController,
+                    labelText: 'Password',
+                    isPassword: true,
+                    prefixIcon: Icons.lock_outline_rounded,
+                  ),
+                  const SizedBox(height: 32),
+                  BlocBuilder<AuthBloc, AuthState>(
+                    builder: (context, state) {
+                      return SizedBox(
+                        width: double.infinity,
+                        height: 50,
+                        child: FilledButton(
+                          onPressed: state is AuthLoadingState
+                              ? null
+                              : () {
+                                  context.read<AuthBloc>().add(
+                                    LoginSubmittedEvent(
+                                      mobileNumber: phoneController.text.trim(),
+                                      password: passwordController.text.trim(),
+                                    ),
+                                  );
+                                },
+                          child: state is AuthLoadingState
+                              ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Text(
+                                  'Login',
+                                  style: TextStyle(fontSize: 16),
+                                ),
                         ),
                       );
                     },
-                    child: const Text('Login'),
-                  );
-                },
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

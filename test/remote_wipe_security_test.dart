@@ -1,7 +1,4 @@
-import 'package:firebaseappdistribution/core/service/device/device_info_service.dart';
-import 'package:firebaseappdistribution/core/service/notification/remote_wipe_crypto.dart';
-import 'package:firebaseappdistribution/core/service/notification/remote_wipe_security.dart';
-import 'package:firebaseappdistribution/core/util/schema.dart';
+import 'package:firebaseappdistribution/core/core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -9,10 +6,14 @@ void main() {
 
   const testDeviceId = 'test-device-abc12345';
   const databasePwd = 'test-db-pwd';
-  final signingSecret =
-      RemoteWipeCrypto.signingSecretFrom(databasePwd, testDeviceId);
-  final aesKeyMaterial =
-      RemoteWipeCrypto.aesKeyMaterialFrom(databasePwd, testDeviceId);
+  final signingSecret = RemoteWipeCrypto.signingSecretFrom(
+    databasePwd,
+    testDeviceId,
+  );
+  final aesKeyMaterial = RemoteWipeCrypto.aesKeyMaterialFrom(
+    databasePwd,
+    testDeviceId,
+  );
 
   setUp(() {
     DeviceInfoService.testDeviceId = testDeviceId;
@@ -24,8 +25,7 @@ void main() {
 
   group('RemoteWipeCrypto', () {
     test('encrypted envelope verifies and decrypts', () {
-      final issuedAt =
-          DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
+      final issuedAt = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
       final envelope = RemoteWipeCrypto.buildEncryptedEnvelope(
         signingSecret: signingSecret,
         aesKeyMaterial: aesKeyMaterial,
@@ -50,10 +50,7 @@ void main() {
       expect(inner!['action'], RemoteWipeCrypto.actionWipe);
       expect(inner['issuedAt'], issuedAt);
       expect(inner['nonce'], 'abcdefghijklmnop');
-      expect(
-        RemoteWipeCrypto.validateInnerCommand(inner),
-        isNull,
-      );
+      expect(RemoteWipeCrypto.validateInnerCommand(inner), isNull);
     });
 
     test('tampered signature is rejected', () {
@@ -73,8 +70,7 @@ void main() {
     });
 
     test('signed plain envelope uses canonical message', () {
-      final issuedAt =
-          DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
+      final issuedAt = DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000;
       final envelope = RemoteWipeCrypto.buildSignedPlainEnvelope(
         signingSecret: signingSecret,
         issuedAt: issuedAt,
@@ -98,10 +94,14 @@ void main() {
     });
 
     test('device-bound secrets differ per device id', () {
-      final deviceA =
-          RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd, 'device-a');
-      final deviceB =
-          RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd, 'device-b');
+      final deviceA = RemoteWipeCrypto.signingSecretFrom(
+        Schema.databasePwd,
+        'device-a',
+      );
+      final deviceB = RemoteWipeCrypto.signingSecretFrom(
+        Schema.databasePwd,
+        'device-b',
+      );
 
       expect(deviceA, isNot(deviceB));
       expect(deviceA, contains('device-a'));
@@ -111,8 +111,8 @@ void main() {
     test('expired command is rejected', () {
       final oldIssuedAt =
           DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000 -
-              RemoteWipeCrypto.maxCommandAge.inSeconds -
-              10;
+          RemoteWipeCrypto.maxCommandAge.inSeconds -
+          10;
 
       final inner = {
         'action': RemoteWipeCrypto.actionWipe,
@@ -120,10 +120,7 @@ void main() {
         'nonce': 'abcdefghijklmnop',
       };
 
-      expect(
-        RemoteWipeCrypto.validateInnerCommand(inner),
-        contains('expired'),
-      );
+      expect(RemoteWipeCrypto.validateInnerCommand(inner), contains('expired'));
     });
 
     test('production secret derives from database pwd and device id', () {
@@ -173,7 +170,8 @@ void main() {
     });
 
     test('buildEncryptedWipePayload matches device-bound secrets', () async {
-      final payload = await RemoteWipeSecurityService.buildEncryptedWipePayload();
+      final payload =
+          await RemoteWipeSecurityService.buildEncryptedWipePayload();
 
       expect(payload['payload'], isNotEmpty);
       expect(payload['signature'], isNotEmpty);
@@ -181,10 +179,7 @@ void main() {
         RemoteWipeCrypto.verifySignature(
           payload['payload']!,
           payload['signature']!,
-          RemoteWipeCrypto.signingSecretFrom(
-            Schema.databasePwd,
-            testDeviceId,
-          ),
+          RemoteWipeCrypto.signingSecretFrom(Schema.databasePwd, testDeviceId),
         ),
         isTrue,
       );

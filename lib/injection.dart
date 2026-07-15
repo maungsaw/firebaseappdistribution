@@ -1,4 +1,3 @@
-import 'package:firebaseappdistribution/data/repositories/repositories.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 

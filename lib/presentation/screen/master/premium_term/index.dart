@@ -48,21 +48,17 @@ class PremiumTermScreen extends StatelessWidget {
                   DeletePremiumTermEvent(id: item.id),
                 );
               },
-              onEdit: (item) => context.push(
-                '${RouteName.premiumTerm.path}/edit',
-                extra: item,
-              ),
-              onView: (item) => context.push(
-                '${RouteName.premiumTerm.path}/detail',
-                extra: item,
-              ),
+              onEdit: (item) =>
+                  context.push('${AppRoutes.premiumTerm}/edit', extra: item),
+              onView: (item) =>
+                  context.push('${AppRoutes.premiumTerm}/detail', extra: item),
             );
           }
           return Text(state.message);
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push("${RouteName.premiumTerm.path}/create"),
+        onPressed: () => context.push("${AppRoutes.premiumTerm}/create"),
         child: Icon(Icons.add),
       ),
     );

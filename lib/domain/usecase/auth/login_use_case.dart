@@ -1,5 +1,5 @@
-import 'package:firebaseappdistribution/data/dto/auth_login_request.dart';
-import 'package:firebaseappdistribution/data/model/auth_login_response.dart';
+import 'package:firebaseappdistribution/data/dto/request/auth_login_request.dart';
+import 'package:firebaseappdistribution/data/dto/response/auth_login_response.dart';
 import 'package:firebaseappdistribution/domain/repositories/auth.dart';
 
 class LoginUseCase {
