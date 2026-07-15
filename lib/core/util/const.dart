@@ -11,6 +11,7 @@ abstract class AppRoutes {
   static const String user = '/user';
   static const String profile = '/profile';
   static const String login = '/login';
+  static const String talker = '/talker';
 }
 
 abstract class RootNavigation {

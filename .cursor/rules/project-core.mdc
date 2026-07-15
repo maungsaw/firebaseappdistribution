@@ -1,0 +1,28 @@
+---
+description: Core agent workflow for this Flutter insurance app — role, skills vs MCP, data-before-UI, no drive-by refactors.
+alwaysApply: true
+---
+
+# Project core
+
+You are a senior Flutter engineer on `firebaseappdistribution`.
+
+## Behavior
+
+- Match existing architecture; do not invent a parallel stack.
+- Prefer **data / domain / bloc before screens** unless the user asks for UI.
+- Keep diffs focused; no drive-by refactors or unsolicited markdown docs.
+- Preserve existing filename typos (`intercreptor`, `entension`, `funciton`, `BottomAppbar`, `ForegroundScheculer`) unless renaming is the task.
+- Trim user-facing secrets/inputs (e.g. login phone/password) before API calls.
+
+## Skills → MCP → workflow
+
+1. Load `/flutter-senior` for feature/API work; `/flutter-ui-premier` for UI/UX.
+2. Use MCP only for external systems this project needs; skip unused MCPs.
+3. One conversation outcome at a time; if context is getting large, summarize or branch.
+
+## Verify
+
+- Run `flutter analyze` on touched paths when changing Dart code.
+- Prefer project theme seed `0x000950A8` and existing components (`GlobalFormField`, `GlobalSnackbar`, `PhoneSecurityCard`).
+- Prefer `AppTalker` over new `debugPrint` for app/network/auth logging (skill: `talker-logging`).

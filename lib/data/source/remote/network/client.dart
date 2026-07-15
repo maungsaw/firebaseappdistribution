@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart' show Dio, BaseOptions, Headers;
 import 'package:firebaseappdistribution/core/core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:talker_dio_logger/talker_dio_logger.dart';
 
 import 'intercreptor.dart';
 
@@ -11,7 +13,6 @@ class NetworkClient {
 
     final existing = _instances[type];
     if (existing != null) {
-      // Hot restart / IP change: keep Dio singleton in sync with ApiClient.
       if (existing.options.baseUrl != expectedBaseUrl) {
         existing.options.baseUrl = expectedBaseUrl;
       }
@@ -28,6 +29,25 @@ class NetworkClient {
       ),
     );
 
+    if (kDebugMode) {
+      dio.interceptors.add(
+        TalkerDioLogger(
+          talker: AppTalker.instance,
+          settings: const TalkerDioLoggerSettings(
+            printRequestHeaders: true,
+            printRequestData: true,
+            printResponseHeaders: false,
+            printResponseData: true,
+            printResponseMessage: true,
+            printErrorData: true,
+            printErrorHeaders: false,
+            // Avoid dumping bearer tokens into shared log screenshots.
+            hiddenHeaders: {'Authorization'},
+          ),
+        ),
+      );
+    }
+
     if (type == ClientServiceType.protected) {
       dio.interceptors.add(DioInterceptor(dio: dio));
     }
@@ -36,6 +56,5 @@ class NetworkClient {
     return dio;
   }
 
-  /// Clears cached Dio clients (e.g. after base URL change).
   static void reset() => _instances.clear();
 }

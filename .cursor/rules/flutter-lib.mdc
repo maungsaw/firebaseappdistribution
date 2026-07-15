@@ -1,0 +1,44 @@
+---
+description: Flutter lib conventions — layers, GetIt, BLoC, Dio public/protected, barrels.
+globs: lib/**/*.dart
+alwaysApply: false
+---
+
+# Flutter `lib/` conventions
+
+## Layers
+
+```
+presentation/  → screens, bloc/<feature>/{bloc,event,state}
+domain/        → repositories (abstract), usecase/, error/
+data/          → repositories (impl), dto/request|response, source/local|remote
+core/          → services, util, router helpers
+```
+
+## Adding a remote feature
+
+1. Endpoints in `ApiClient` / `ClientEndPoint` (`lib/core/util/client.dart`)
+2. Request DTO + response model under `lib/data/dto/`
+3. Abstract in `source/remote/services/`; impl in `source/remote/iservices/`
+4. Abstract repo in `domain/repositories/`; impl in `data/repositories/`
+5. Use case in `domain/usecase/`
+6. Register order in `injection.dart`: DAO → network → repos → use cases → blocs
+7. Wire `BlocProvider` in `app_dependencies.dart` if needed
+
+## Network
+
+- `NetworkClient.getClient(public|protected)` — protected adds Bearer + refresh.
+- Login = public; authenticated calls = protected.
+- Join paths with `ClientEndPoint.joinPath` (avoid `/auth//login`).
+
+## Auth post-login
+
+After login success: emit success for routing, then **background** device register. Register failure must not log the user out.
+
+## Push tokens
+
+`PushTokenService.resolve()` order: cached FCM → live FCM → cached Pushy → live Pushy. API field remains `fcm_token`.
+
+## Logging
+
+Use `AppTalker` (`lib/core/service/talker/`). Dio uses `TalkerDioLogger` in debug; BLoC uses `TalkerBlocObserver` in `main.dart`.

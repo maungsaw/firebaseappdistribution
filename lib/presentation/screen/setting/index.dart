@@ -1,5 +1,6 @@
 import 'package:firebaseappdistribution/core/core.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -222,6 +223,12 @@ class _SettingScreenState extends State<SettingScreen>
               leadingIcon: Icons.money_off,
               onTap: () => debugPrint('Go to AddOn'),
             ),
+            if (kDebugMode)
+              MasterMenuOption(
+                title: 'Talker logs',
+                leadingIcon: Icons.bug_report_rounded,
+                onTap: () => context.push(AppRoutes.talker),
+              ),
           ],
         ),
       ],

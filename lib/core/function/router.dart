@@ -2,16 +2,20 @@ import 'package:firebaseappdistribution/data/data.dart';
 import 'package:firebaseappdistribution/injection.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 import 'package:firebaseappdistribution/presentation/screen/tax/tax.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:talker_flutter/talker_flutter.dart';
 
+import '../service/talker/app_talker.dart';
 import '../util/util.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: RootNavigation.rootKey,
     initialLocation: AppRoutes.login,
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: kDebugMode,
+    observers: [TalkerRouteObserver(AppTalker.instance)],
     refreshListenable: Injection.sl<AuthBloc>(),
     redirect: (context, state) {
       final bloc = Injection.sl<AuthBloc>();
@@ -186,6 +190,13 @@ class AppRouter {
         name: AppRoutes.login,
         builder: (BuildContext context, GoRouterState state) {
           return LoginScreen();
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.talker,
+        name: AppRoutes.talker,
+        builder: (BuildContext context, GoRouterState state) {
+          return TalkerScreen(talker: AppTalker.instance);
         },
       ),
     ],

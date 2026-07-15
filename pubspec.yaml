@@ -59,6 +59,9 @@ dependencies:
   pushy_flutter: 2.0.47
   intl: ^0.20.2
   get_it: ^9.2.1
+  talker_flutter: ^5.1.17
+  talker_dio_logger: ^5.1.17
+  talker_bloc_logger: ^5.1.17
   local_auth: ^2.3.0
   local_auth_android: ^1.0.56
 dev_dependencies:

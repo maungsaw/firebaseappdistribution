@@ -27,6 +27,7 @@ void _initDAO() {
 
 // --- Network ---
 void _initNetwork() {
+  Injection.sl.registerLazySingleton(() => AppTalker.instance);
   Injection.sl.registerLazySingleton<Dio>(
     () => NetworkClient.getClient(ClientServiceType.protected),
   );
