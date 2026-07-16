@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'core/core.dart'
     show
+        AppBootstrap,
         AppRouter,
         AppTheme,
         BlocDependencies,
-        AppBootstrap,
         MaintenanceWrapper;
 
 void main() async {
