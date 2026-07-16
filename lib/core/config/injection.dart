@@ -35,6 +35,9 @@ extension NetworkInjeciton on Injection {
       () => NetworkClient.getClient(ClientServiceType.protected),
     );
     Injection.sl.registerLazySingleton<AuthService>(() => AuthServiceImpl());
+    Injection.sl.registerLazySingleton<RemoteWipeService>(
+      () => RemoteWipeServiceImpl(),
+    );
   }
 }
 
@@ -63,6 +66,9 @@ extension RespositoryInjection on Injection {
     Injection.sl.registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(service: Injection.sl()),
     );
+    Injection.sl.registerLazySingleton<RemoteWipeRepository>(
+      () => RemoteWipeRepositoryImpl(service: Injection.sl()),
+    );
   }
 }
 
@@ -73,6 +79,8 @@ extension UseCaseInjection on Injection {
     Injection.sl.registerLazySingleton(
       () => RegisterDeviceUseCase(Injection.sl()),
     );
+    Injection.sl.registerLazySingleton(() => WipeUserUseCase(Injection.sl()));
+    Injection.sl.registerLazySingleton(() => WipeAckUseCase(Injection.sl()));
     Injection.sl.registerLazySingleton(
       () => CreatePolicyUseCase(repository: Injection.sl()),
     );
@@ -119,6 +127,12 @@ extension BlocInjection on Injection {
       () => AuthBloc(
         loginUseCase: Injection.sl(),
         registerDeviceUseCase: Injection.sl(),
+      ),
+    );
+    Injection.sl.registerFactory(
+      () => RemoteWipeBloc(
+        wipeUserUseCase: Injection.sl(),
+        wipeAckUseCase: Injection.sl(),
       ),
     );
   }

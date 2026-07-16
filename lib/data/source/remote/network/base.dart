@@ -82,6 +82,28 @@ abstract class BaseNetworkService<T> {
     return fromJson(Map<String, dynamic>.from(response.data as Map));
   }
 
+  /// POST `/{endpoint}/{id}/{suffix}` (e.g. `/users/{userId}/wipe`).
+  Future<T> createWithIdSuffix({
+    required String id,
+    required String suffix,
+    required T Function(Map<String, dynamic>) fromJson,
+    Map<String, dynamic>? data,
+    bool isProtected = true,
+  }) async {
+    final dio = isProtected ? _protectedDio : _publicDio;
+    final withId = ClientEndPoint.joinPath(endpoint, id);
+    final path = ClientEndPoint.joinPath(withId, suffix);
+    final response = await dio.post(
+      path,
+      data: data ?? <String, dynamic>{},
+      options: Options(
+        contentType: Headers.jsonContentType,
+        headers: const {'Accept': 'application/json'},
+      ),
+    );
+    return fromJson(Map<String, dynamic>.from(response.data as Map));
+  }
+
   Future<T> update({
     required String id,
     required Map<String, dynamic> data,

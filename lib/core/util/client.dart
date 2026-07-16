@@ -7,9 +7,13 @@ abstract class ApiClient {
 abstract class ClientEndPoint {
   static String weather = '/weather';
   static String auth = '/auth';
+  static String users = '/users';
+  static String devices = '/devices';
   /// Relative segments (no leading slash) — joined via [joinPath].
   static String login = 'login';
   static String devicesRegister = 'devices-register';
+  static String wipe = 'wipe';
+  static String wipeAck = 'wipe-ack';
   static String refresh = '/auth/refresh';
 
   static String joinPath(String base, String segment) {

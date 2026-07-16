@@ -17,6 +17,10 @@ class AuthRepositoryImpl implements AuthRepository {
     final data = response.data!;
     await LocalCacheService.write('access_token', data.accessToken);
     await LocalCacheService.write('refresh_token', data.refreshToken);
+    final userId = data.user?.id;
+    if (userId != null && userId.isNotEmpty) {
+      await LocalCacheService.write('user_id', userId);
+    }
 
     return data;
   }

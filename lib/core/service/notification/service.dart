@@ -138,6 +138,10 @@ class NotificationService {
 
   void _onForegroundMessage(RemoteMessage message) {
     debugPrint('MESSage -> ${message.data}');
+
+    // Data-only wipe commands must run even without a notification body.
+    NotificationActions.performRemoteWipeIfRequested(message.data);
+
     final notification = message.notification;
     if (notification == null) return;
 

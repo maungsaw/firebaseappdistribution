@@ -14,9 +14,25 @@ Register errors: log only; keep session.
 
 ## Remote wipe
 
-- Entry: FCM and Pushy notification handlers → `performRemoteWipeIfRequested`
-- Require signed / encrypted envelope; reject plain `action: WIPE_DATA`
-- On accept: clean DB, clear secure cache, remove folders
+```
+Backend POST /users/{userId}/wipe
+  → FCM/Pushy data payload (signed)
+  → App validate HMAC + deviceId + userId + expiresAt + nonce
+  → Best-effort POST /devices/wipe-ack (Bearer access_token)
+  → Wipe local DB + cache + files
+```
+
+- Entry: FCM and Pushy handlers → `performRemoteWipeIfRequested`
+- Require signed command; reject plain `action: WIPE_DATA`
+- Server command fields: `signature`, `action`, `issuedAt`, `expiresAt`,
+  `commandId`, `userId`, `nonce`, `deviceId`
+- HMAC secret (server push): fixed `RemoteWipeCrypto.backendSharedSigningKey`
+  (must match Agent App API)
+- Canonical: `action|issuedAt|expiresAt|nonce|commandId|userId|deviceId`
+- Signature encoding: Base64 (server) or hex (legacy envelopes)
+- Legacy encrypted envelopes still use device-bound
+  `{databasePwd}:{deviceId}:remote-wipe-sign:v1`
+- On accept: wipe-ack (while token still present), then clean DB/cache/folders
 
 ## Phone security
 
