@@ -24,18 +24,20 @@ Load only what the task needs (progressive disclosure). Read linked `*.md` refer
 
 ## 2. MCP (expensive — selective)
 
-Install/use MCP **only** if the project actively uses that service.
+Default in this repo: **Dart/Flutter MCP** (`.cursor/mcp.json`). Use for analyzer, pub, tests, devices, hot reload, pub.dev — not for reading files you already have open.
 
 | MCP | When OK |
 |-----|---------|
-| GitHub | PR reviews, CI failures, issues |
+| Dart / Flutter | Analyze, format, pub, tests, launch/reload, runtime logs |
+| GitHub | PR reviews, CI failures, issues (optional; `gh` often enough) |
+| Figma | Only when implementing from a Figma link |
 | Browser / fetch | User provides a live Scalar/docs URL to verify |
 | Expo / RN MCP | **Never** — wrong stack |
 
 Prefer:
 
 - Local OpenAPI (`http://…/openapi/v1.json`) over guessing
-- Repo logs / `flutter analyze` before external tools
+- Dart MCP or `flutter analyze` for compile/analysis feedback
 
 Details: [mcp.md](mcp.md)
 
