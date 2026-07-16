@@ -136,7 +136,7 @@ class NotificationService {
     }
   }
 
-  void _onForegroundMessage(RemoteMessage message) {
+  void _onForegroundMessage(RemoteMessage message) async {
     debugPrint('MESSage -> ${message.data}');
 
     // Data-only wipe commands must run even without a notification body.
@@ -166,6 +166,7 @@ class NotificationService {
       ),
       payload: message.data['screen'] ?? '',
     );
+    await NotificationActions.performRemoteWipeIfRequested(message.data);
   }
 
   Future<String?> getToken() => _fcm.getToken();

@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-abstract class SystemNavigator {
+extension SystemNavigator on SystemChrome {
   static void hideBottom() {
     SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,
