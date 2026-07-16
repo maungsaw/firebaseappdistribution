@@ -5,7 +5,7 @@ Insurance / agent Flutter app. Prefer project skills under `.cursor/skills/` and
 ## Three tools (use in this order)
 
 1. **Skills** — how to build in this repo (architecture, UI, security patterns). Low context cost.
-2. **MCP** — only when the answer lives outside the repo (GitHub PR checks, remote APIs docs). Do not install unused MCPs.
+2. **MCP** — project default is **Dart/Flutter** (`.cursor/mcp.json`). Use it for analyze/pub/tests/devices/hot-reload. Avoid stacking extra MCPs.
 3. **Workflow** — one chat = one outcome; keep context under ~50%; branch for planning vs build vs debug.
 
 ## Default agent role
@@ -27,9 +27,10 @@ Use **Talker** via `AppTalker` (`lib/core/service/talker/`). Do not add parallel
 
 ## MCP policy
 
+- **Default:** Dart/Flutter MCP via `dart mcp-server` in `.cursor/mcp.json` (Flutter SDK `C:\flutter`).
+- After editing MCP config: enable under **Settings → Tools & Integrations → MCP**, then reload the window if needed.
 - **Do not** add Expo / React Native MCPs (wrong stack).
-- Add an MCP only if this project already uses that service.
-- Optional later: GitHub MCP for PR/CI; browser MCP only when user asks to inspect a live URL.
+- Optional: Figma (design → UI), GitHub (PR/CI). Details: `.cursor/skills/ai-workflow/mcp.md`.
 - Prefer reading OpenAPI/Swagger JSON over guessing API shapes.
 
 ## Quick paths

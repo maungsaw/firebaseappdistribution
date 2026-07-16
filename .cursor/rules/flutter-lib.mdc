@@ -42,3 +42,7 @@ After login success: emit success for routing, then **background** device regist
 ## Logging
 
 Use `AppTalker` (`lib/core/service/talker/`). Dio uses `TalkerDioLogger` in debug; BLoC uses `TalkerBlocObserver` in `main.dart`.
+
+## Android builds & sqlite3 hooks
+
+`sqflite_common_ffi` (dev) pulls `package:sqlite3`, which downloads GitHub native assets during Flutter builds. App DB still uses `sqflite_sqlcipher`. If build fails on `libsqlite3.*.android.so`, check reachability to `release-assets.githubusercontent.com`, retry, or temporarily remove `sqflite_common_ffi`.
