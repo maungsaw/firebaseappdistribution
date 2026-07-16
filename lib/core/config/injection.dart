@@ -1,10 +1,10 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 
-import 'core/core.dart';
-import 'data/data.dart';
-import 'domain/domain.dart';
-import 'presentation/presentation.dart';
+import '../core.dart';
+import '../../data/data.dart';
+import '../../domain/domain.dart';
+import '../../presentation/presentation.dart';
 
 abstract class Injection {
   static final sl = GetIt.instance;

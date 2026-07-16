@@ -1,7 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
-import 'core/core.dart';
+import '../core.dart';
 
 abstract class FirebaseInjection {
   static Future<void> initFirebaseServices() async {

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'injection.dart';
-import 'presentation/presentation.dart';
+import '../../presentation/presentation.dart';
 
-class AppDependencies extends StatelessWidget {
+class BlocDependencies extends StatelessWidget {
   final Widget child;
 
-  const AppDependencies({super.key, required this.child});
+  const BlocDependencies({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {

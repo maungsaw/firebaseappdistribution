@@ -1,5 +1,5 @@
 import 'package:firebaseappdistribution/data/data.dart';
-import 'package:firebaseappdistribution/injection.dart';
+import 'package:firebaseappdistribution/core/config/injection.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 import 'package:firebaseappdistribution/presentation/screen/tax/tax.dart';
 import 'package:flutter/foundation.dart';
@@ -17,14 +17,28 @@ class AppRouter {
     debugLogDiagnostics: kDebugMode,
     observers: [TalkerRouteObserver(AppTalker.instance)],
     refreshListenable: Injection.sl<AuthBloc>(),
-    redirect: (context, state) {
+    redirect: (context, state) async {
       final bloc = Injection.sl<AuthBloc>();
-      final currentState = bloc.state;
-      final isLoggedIn = currentState is AuthLoginSuccessState;
       final isGoingToLogin = state.matchedLocation == AppRoutes.login;
 
-      if (!isLoggedIn && !isGoingToLogin) return AppRoutes.login;
-      if (isLoggedIn && isGoingToLogin) return AppRoutes.home;
+      // 1. Await the token check to determine actual authentication status
+      final token = await LocalCacheService.read('access_token');
+      final bool hasToken = token != null && token.isNotEmpty;
+
+      // 2. Check Bloc state as a secondary source of truth
+      final bool isLoggedIn = bloc.state is AuthLoginSuccessState;
+
+      // 3. Determine if the user is effectively authenticated
+      final isAuthenticated = hasToken || isLoggedIn;
+
+      // 4. Redirect Logic
+      if (!isAuthenticated && !isGoingToLogin) {
+        return AppRoutes.login;
+      }
+
+      if (isAuthenticated && isGoingToLogin) {
+        return AppRoutes.home;
+      }
 
       return null;
     },
