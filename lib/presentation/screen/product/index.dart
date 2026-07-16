@@ -48,34 +48,31 @@ class _ProductScreenState extends State<ProductScreen> {
   @override
   Widget build(BuildContext context) {
     return WithForegroundTask(
-      child: Scaffold(
-        appBar: AppBar(title: const Text("Background Summation")),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Sum result: $_currentSum",
-                style: const TextStyle(fontSize: 24),
-              ),
-              const SizedBox(height: 20),
-              _isRunning
-                  ? ElevatedButton(
-                      onPressed: _cancelTask,
-                      child: const Text("Cancel"),
-                    )
-                  : ElevatedButton(
-                      onPressed: _startTask,
-                      child: const Text("Start Sum to 100k"),
-                    ),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Sum result: $_currentSum",
+              style: const TextStyle(fontSize: 24),
+            ),
+            const SizedBox(height: 20),
+            _isRunning
+                ? ElevatedButton(
+                    onPressed: _cancelTask,
+                    child: const Text("Cancel"),
+                  )
+                : ElevatedButton(
+                    onPressed: _startTask,
+                    child: const Text("Start Sum to 100k"),
+                  ),
 
-              ElevatedButton(
-                onPressed: () async =>
-                    await LocalCacheService.write('sync_enabled', 'true'),
-                child: Text("Start Sync Service"),
-              ),
-            ],
-          ),
+            ElevatedButton(
+              onPressed: () async =>
+                  await LocalCacheService.write('sync_enabled', 'true'),
+              child: Text("Start Sync Service"),
+            ),
+          ],
         ),
       ),
     );
