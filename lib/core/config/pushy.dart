@@ -5,7 +5,7 @@ abstract class PushyInjection {
   static Future<void> initPushyServices() async {
     try {
       await PushyService.instance.initialize(
-        onNavigate: handleNotificationNavigation,
+        onNavigate: NotificationActions.handleNotificationNavigation,
       );
     } catch (e, stackTrace) {
       debugPrint('Pushy services init skipped: $e');

@@ -33,7 +33,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('Payload Data: ${message.data}');
 
   // 3. Check for your remote kill-switch action
-  await performRemoteWipeIfRequested(message.data);
+  await NotificationActions.performRemoteWipeIfRequested(message.data);
 }
 
 class NotificationService {

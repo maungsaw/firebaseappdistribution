@@ -16,7 +16,7 @@ abstract class FirebaseInjection {
       final instance = NotificationService.instance;
       await instance.initialize(
         options: options,
-        onNavigate: handleNotificationNavigation,
+        onNavigate: NotificationActions.handleNotificationNavigation,
         onPermissionResult: (status) => debugPrint('Permission: $status'),
         backgroundMsgCallback: (data) async =>
             debugPrint('Background msg: ${data.messageId}'),

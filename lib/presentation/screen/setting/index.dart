@@ -1,4 +1,5 @@
 import 'package:firebaseappdistribution/core/core.dart';
+import 'package:firebaseappdistribution/data/data.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -230,6 +231,13 @@ class _SettingScreenState extends State<SettingScreen>
                 onTap: () => context.push(AppRoutes.talker),
               ),
           ],
+        ),
+        FilledButton(
+          onPressed: () {
+            LocalCacheService.clearAll();
+            context.go(AppRoutes.login);
+          },
+          child: Text('SignOut'),
         ),
       ],
     );

@@ -87,4 +87,19 @@ class DeviceInfoService {
 
     return 'unsupported';
   }
+
+  static Future<bool> isHuaweiDevice() async {
+    final deviceInfo = DeviceInfoPlugin();
+
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+
+      // Check both manufacturer and brand for 'huawei'
+      final manufacturer = androidInfo.manufacturer.toLowerCase();
+      final brand = androidInfo.brand.toLowerCase();
+
+      return manufacturer.contains('huawei') || brand.contains('huawei');
+    }
+    return false;
+  }
 }

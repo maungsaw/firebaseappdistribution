@@ -19,13 +19,8 @@ class _MaintenanceWrapperState extends State<MaintenanceWrapper>
   @override
   void initState() {
     super.initState();
-
-    // 1. Register lifecycle observer to handle foregrounding
     WidgetsBinding.instance.addObserver(this);
-
-    // 2. Setup Config
     _configureRemoteConfig();
-
     // 3. Listen to real-time changes
     _configSubscription = FirebaseRemoteConfig.instance.onConfigUpdated.listen((
       event,
