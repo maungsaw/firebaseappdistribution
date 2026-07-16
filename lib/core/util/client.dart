@@ -1,5 +1,5 @@
 abstract class ApiClient {
-  static String baseUrl = 'http://10.10.1.99:5132';
+  static String baseUrl = 'http://10.10.1.110:5132';
   static String clientVersion = '/api';
   static String prefix = '';
 }
@@ -9,6 +9,7 @@ abstract class ClientEndPoint {
   static String auth = '/auth';
   static String users = '/users';
   static String devices = '/devices';
+
   /// Relative segments (no leading slash) — joined via [joinPath].
   static String login = 'login';
   static String devicesRegister = 'devices-register';
@@ -21,4 +22,4 @@ abstract class ClientEndPoint {
     final right = segment.startsWith('/') ? segment.substring(1) : segment;
     return '$left/$right';
   }
-} 
+}

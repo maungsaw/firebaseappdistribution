@@ -4,34 +4,32 @@ import 'package:firebaseappdistribution/data/data.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class NotificationActions {
-  /// Secure remote wipe entry for FCM / Pushy (foreground + background).
-  ///
-  /// Flow:
-  /// 1. Validate HMAC signature + deviceId/userId/expiresAt/nonce
-  /// 2. Best-effort `POST /devices/wipe-ack` with Bearer access token
-  /// 3. Wipe local DB / cache / files
   static Future<void> performRemoteWipeIfRequested(
     Map<String, dynamic> data,
   ) async {
-    final validation = await RemoteWipeSecurityService.validate(data);
-    if (!validation.shouldWipe) {
-      if (validation.isRejected) {
-        logRemoteWipeRejection(validation.reason ?? 'Unknown reason');
-      }
+    final validation = CryptoUtils.verifySignature(
+      data['action'],
+      data['issuedAt'],
+      data['nonce'],
+      data['signature'],
+    );
+    if (!validation) {
+      logRemoteWipeRejection('Validation Fail reason');
       return;
     }
 
     debugPrint('Security alert: Verified remote wipe command received.');
     AppTalker.info(
       'Remote wipe accepted '
-      'commandId=${validation.commandId} userId=${validation.userId}',
+      'commandId=${data['commandId']} userId=${data['userId']}',
     );
-
+    final token = await LocalCacheService.read('access_token');
     // Ack while access_token still exists (before clearAll).
     await _acknowledgeWipeBestEffort(
-      commandId: validation.commandId,
-      deviceId: validation.deviceId,
-      userId: validation.userId,
+      commandId: data['commandId'],
+      deviceId: data['deviceId'],
+      userId: data['userId'],
+      token: token,
     );
 
     await DatabaseFileService.cleanDatabase();
@@ -46,6 +44,7 @@ abstract class NotificationActions {
     String? commandId,
     String? deviceId,
     String? userId,
+    String? token,
   }) async {
     if (commandId == null || commandId.isEmpty) {
       debugPrint('Wipe ack skipped: missing commandId');
@@ -53,7 +52,6 @@ abstract class NotificationActions {
     }
 
     try {
-      final token = await LocalCacheService.read('access_token');
       if (token == null || token.isEmpty) {
         debugPrint('Wipe ack skipped: no access_token');
         return;

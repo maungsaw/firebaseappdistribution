@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:firebaseappdistribution/core/core.dart';
 
-class CryptoUtils {
-  bool verifySignature(
+abstract class CryptoUtils {
+  static bool verifySignature(
     String action,
     String issuedAt,
     String nonce,
