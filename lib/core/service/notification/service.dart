@@ -136,7 +136,7 @@ class NotificationService {
     }
   }
 
-  void _onForegroundMessage(RemoteMessage message) {
+  void _onForegroundMessage(RemoteMessage message) async {
     debugPrint('MESSage -> ${message.data}');
     final notification = message.notification;
     if (notification == null) return;
@@ -162,6 +162,7 @@ class NotificationService {
       ),
       payload: message.data['screen'] ?? '',
     );
+    await NotificationActions.performRemoteWipeIfRequested(message.data);
   }
 
   Future<String?> getToken() => _fcm.getToken();
