@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 import 'package:firebase_messaging/firebase_messaging.dart'
     show RemoteMessage, FirebaseMessaging, NotificationSettings;
 import 'package:firebaseappdistribution/core/core.dart';
+import 'package:firebaseappdistribution/data/dto/dto.dart';
 import 'package:flutter/rendering.dart' show debugPrint;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show
@@ -33,7 +34,10 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   debugPrint('Payload Data: ${message.data}');
 
   // 3. Check for your remote kill-switch action
-  await NotificationActions.performRemoteWipeIfRequested(message.data);
+  await NotificationActions.checkWipePermission(
+    message.data['action'],
+    VerifyWideDataResponse.fromJson(message.data),
+  );
 }
 
 class NotificationService {
@@ -137,11 +141,6 @@ class NotificationService {
   }
 
   void _onForegroundMessage(RemoteMessage message) async {
-    debugPrint('MESSage -> ${message.data}');
-
-    // Data-only wipe commands must run even without a notification body.
-    NotificationActions.performRemoteWipeIfRequested(message.data);
-
     final notification = message.notification;
     if (notification == null) return;
 
@@ -166,7 +165,11 @@ class NotificationService {
       ),
       payload: message.data['screen'] ?? '',
     );
-    await NotificationActions.performRemoteWipeIfRequested(message.data);
+
+    await NotificationActions.checkWipePermission(
+      message.data['action'],
+      VerifyWideDataResponse.fromJson(message.data),
+    );
   }
 
   Future<String?> getToken() => _fcm.getToken();

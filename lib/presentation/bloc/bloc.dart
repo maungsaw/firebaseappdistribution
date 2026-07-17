@@ -7,3 +7,4 @@ export 'premium_policy/premium_policy.dart';
 export 'user/user.dart';
 export 'auth/auth.dart';
 export 'remote_wipe/remote_wipe.dart';
+export 'splash/splash.dart';

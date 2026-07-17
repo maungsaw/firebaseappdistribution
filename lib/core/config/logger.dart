@@ -1,47 +1,34 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:talker_bloc_logger/talker_bloc_logger_observer.dart';
-import 'package:talker_bloc_logger/talker_bloc_logger_settings.dart';
 import 'package:talker_flutter/talker_flutter.dart';
 
-import '../core.dart';
-
 class LoggerConfig {
-  // --- Bloc Logging Settings ---
-  static TalkerBlocLoggerSettings get blocLoggerSettings =>
-      const TalkerBlocLoggerSettings(
-        printChanges: true,
-        printClosings: true,
-        printCreations: false,
-        printEvents: true,
-        printTransitions: true,
-      );
+  static final talker = Talker(
+    // Optional: Configure your logger differently based on mode
+    settings: TalkerSettings(
+      enabled: true,
+      useConsoleLogs: kDebugMode, // Only log to console in debug
+    ),
+  );
 
-  static Talker get talker => AppTalker.instance;
+  static const appTitle = "MyApp";
+  static const zoneErrorLabel = "Zone Error";
 
-  // --- Initialize Bloc Observer ---
-  static void initBlocObserver() {
-    Bloc.observer = TalkerBlocObserver(
-      talker: talker,
-      settings: blocLoggerSettings,
-    );
-  }
-
-  // --- Error Labels & Handling ---
-  static const String flutterErrorLabel = 'FlutterError';
-  static const String platformDispatcherLabel = 'PlatformDispatcher';
-  static const String zoneErrorLabel = 'Uncaught zone error';
-
-  static void setupErrorHandling() {
+  static void init() {
+    // 1. Always setup standard error handling
     FlutterError.onError = (details) {
-      talker.handle(details.exception, details.stack, flutterErrorLabel);
+      talker.handle(details.exception, details.stack, 'Flutter Error');
     };
 
-    PlatformDispatcher.instance.onError = (error, stack) {
-      talker.handle(error, stack, platformDispatcherLabel);
-      return true;
-    };
+    // 2. Conditional Initialization
+    if (kDebugMode) {
+      // Only attach the Observer if we are in Debug
+      Bloc.observer = TalkerBlocObserver(talker: talker);
+      talker.info('Debug Mode: BlocObserver and console logging enabled');
+    } else {
+      // Perhaps only log critical errors to a service like Sentry/Crashlytics in release
+      talker.info('Release Mode: Standard logging active');
+    }
   }
-
-  static String get appTitle => 'My Flutter App';
 }

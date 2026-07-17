@@ -42,4 +42,9 @@ class AuthRepositoryImpl implements AuthRepository {
     final token = await LocalCacheService.read('access_token');
     return token != null && token.isNotEmpty;
   }
+
+  @override
+  Future<void> logout() {
+    throw UnimplementedError();
+  }
 }

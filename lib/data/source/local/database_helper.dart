@@ -11,11 +11,12 @@ class DatabaseHelper {
   final _version = Schema.databaseVersion;
 
   bool get isOpen => _database != null;
+
   String get encryptionKey => Schema.databasePwd;
+  Future<Database> get db async => await open();
 
   Future<Database> open() async {
     if (_database != null) return _database!;
-
     await DatabaseFileService.ensureDatabaseFile();
     final path = await DatabaseFileService.getDatabasePath();
     final password = Schema.databasePwd;

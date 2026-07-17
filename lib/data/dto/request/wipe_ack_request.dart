@@ -1,4 +1,3 @@
-/// OpenAPI `WipeAckRequest` — body of `POST /api/devices/wipe-ack`.
 class WipeAckRequestDto {
   final String commandId;
   final String deviceId;
@@ -8,12 +7,12 @@ class WipeAckRequestDto {
     required String commandId,
     required String deviceId,
     this.success = true,
-  })  : commandId = commandId.trim(),
-        deviceId = deviceId.trim();
+  }) : commandId = commandId.trim(),
+       deviceId = deviceId.trim();
 
   Map<String, dynamic> toMap() => {
-        'command_id': commandId,
-        'device_id': deviceId,
-        'success': success,
-      };
+    'command_id': commandId,
+    'device_id': deviceId,
+    'success': success,
+  };
 }

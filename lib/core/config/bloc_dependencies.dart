@@ -22,6 +22,7 @@ class BlocDependencies extends StatelessWidget {
         BlocProvider.value(value: Injection.sl<UserBloc>()),
         BlocProvider.value(value: Injection.sl<AuthBloc>()),
         BlocProvider(create: (_) => Injection.sl<RemoteWipeBloc>()),
+        BlocProvider(create: (_) => Injection.sl<SplashBloc>()),
       ],
       child: child,
     );

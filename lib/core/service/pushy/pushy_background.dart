@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 
 import 'package:firebaseappdistribution/core/service/notification/notification_actions.dart';
+import 'package:firebaseappdistribution/data/dto/response/notification_response.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pushy_flutter/pushy_flutter.dart';
 
@@ -10,7 +11,10 @@ Future<void> pushyBackgroundNotificationListener(
 ) async {
   debugPrint('Pushy notification received: $data');
 
-  await NotificationActions.performRemoteWipeIfRequested(data);
+  NotificationActions.checkWipePermission(
+    data['action'],
+    VerifyWideDataResponse.fromJson(data),
+  );
 
   final title = data['title']?.toString() ?? 'Insurance App';
   final body =

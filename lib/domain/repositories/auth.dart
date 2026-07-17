@@ -6,4 +6,5 @@ abstract class AuthRepository {
     RegisterDeviceRequestDto request,
   );
   Future<bool> isLoggedIn();
+  Future<void> logout();
 }

@@ -1,4 +1,3 @@
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 import '../core.dart';
@@ -21,11 +20,6 @@ abstract class FirebaseInjection {
         backgroundMsgCallback: (data) async =>
             debugPrint('Background msg: ${data.messageId}'),
       );
-
-      FirebaseMessaging.instance.onTokenRefresh.listen((token) async {
-        await PushTokenService.saveFcmToken(token);
-        debugPrint('FCM Token refreshed: $token');
-      });
 
       try {
         final fcmToken = await instance.getToken();

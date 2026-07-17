@@ -21,7 +21,6 @@ class _MaintenanceWrapperState extends State<MaintenanceWrapper>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _configureRemoteConfig();
-    // 3. Listen to real-time changes
     _configSubscription = FirebaseRemoteConfig.instance.onConfigUpdated.listen((
       event,
     ) async {
@@ -44,7 +43,6 @@ class _MaintenanceWrapperState extends State<MaintenanceWrapper>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    // When the app returns from background, fetch latest state
     if (state == AppLifecycleState.resumed) {
       FirebaseRemoteConfig.instance.fetchAndActivate().then((_) {
         _checkMaintenance();

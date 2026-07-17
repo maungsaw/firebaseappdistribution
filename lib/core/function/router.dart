@@ -1,7 +1,6 @@
 import 'package:firebaseappdistribution/data/data.dart';
 import 'package:firebaseappdistribution/core/config/injection.dart';
 import 'package:firebaseappdistribution/presentation/presentation.dart';
-import 'package:firebaseappdistribution/presentation/screen/tax/tax.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,12 +12,13 @@ import '../util/util.dart';
 class AppRouter {
   static final GoRouter router = GoRouter(
     navigatorKey: RootNavigation.rootKey,
-    initialLocation: AppRoutes.login,
+    initialLocation: AppRoutes.splash,
     debugLogDiagnostics: kDebugMode,
     observers: [TalkerRouteObserver(AppTalker.instance)],
     refreshListenable: Injection.sl<AuthBloc>(),
     redirect: (context, state) async {
       final bloc = Injection.sl<AuthBloc>();
+      debugPrint("state.matchedLocation  ${state.matchedLocation}");
       final isGoingToLogin = state.matchedLocation == AppRoutes.login;
 
       // 1. Await the token check to determine actual authentication status
@@ -46,6 +46,13 @@ class AppRouter {
         Scaffold(body: GlobalWidget.errorView('Page not found')),
 
     routes: <RouteBase>[
+      GoRoute(
+        path: AppRoutes.splash,
+        name: AppRoutes.splash,
+        builder: (BuildContext context, GoRouterState state) {
+          return SplashScreen();
+        },
+      ),
       GoRoute(
         path: AppRoutes.home,
         name: AppRoutes.home,

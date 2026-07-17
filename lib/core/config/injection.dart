@@ -1,3 +1,4 @@
+import 'package:firebaseappdistribution/domain/usecase/auth/logout_use_case.dart';
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 
@@ -10,6 +11,7 @@ abstract class Injection {
   static final sl = GetIt.instance;
 
   static void initInjector() {
+    sl.registerLazySingleton(() => NotificationService.instance);
     DAOInjection.init();
     NetworkInjeciton.init();
     RespositoryInjection.init();
@@ -79,6 +81,7 @@ extension UseCaseInjection on Injection {
     Injection.sl.registerLazySingleton(
       () => RegisterDeviceUseCase(Injection.sl()),
     );
+    Injection.sl.registerLazySingleton(() => LogoutUseCase(Injection.sl()));
     Injection.sl.registerLazySingleton(() => WipeUserUseCase(Injection.sl()));
     Injection.sl.registerLazySingleton(() => WipeAckUseCase(Injection.sl()));
     Injection.sl.registerLazySingleton(
@@ -127,6 +130,7 @@ extension BlocInjection on Injection {
       () => AuthBloc(
         loginUseCase: Injection.sl(),
         registerDeviceUseCase: Injection.sl(),
+        logoutUseCase: Injection.sl(),
       ),
     );
     Injection.sl.registerFactory(
@@ -135,5 +139,6 @@ extension BlocInjection on Injection {
         wipeAckUseCase: Injection.sl(),
       ),
     );
+    Injection.sl.registerFactory(() => SplashBloc());
   }
 }
