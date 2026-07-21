@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core.dart';
+import 'security.dart';
 
 class AppBootstrap {
   static Future<void> run(FutureOr<Widget> Function() builder) async {
@@ -10,6 +11,7 @@ class AppBootstrap {
         WidgetsFlutterBinding.ensureInitialized();
 
         Injection.initInjector();
+        await SecurityService.initializeSecurity();
         await DeviceInfoService.isHuaweiDevice()
             ? await PushyInjection.initPushyServices()
             : await FirebaseInjection.initFirebaseServices();

@@ -19,6 +19,7 @@ class AppRouter {
     redirect: (context, state) async {
       final bloc = Injection.sl<AuthBloc>();
       debugPrint("state.matchedLocation  ${state.matchedLocation}");
+      if (state.matchedLocation == AppRoutes.home) return AppRoutes.home;
       final isGoingToLogin = state.matchedLocation == AppRoutes.login;
 
       // 1. Await the token check to determine actual authentication status
