@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.sawhtunaung.firebaseappdistribution"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -22,10 +22,11 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk =35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         multiDexEnabled = true
+        
     }
 
     buildTypes {
@@ -33,13 +34,23 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
         }
     }
+    packaging {
+        resources {
+            // Change from: ignoreFrom 'freerasp-8.0.0.aar'
+            // To Kotlin DSL format:
+            excludes.add("**/consumer-rules.pro")
+        }
+    }
 }
+
+
 
 kotlin {
     compilerOptions {

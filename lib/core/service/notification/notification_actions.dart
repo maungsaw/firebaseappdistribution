@@ -43,9 +43,13 @@ abstract class NotificationActions {
   }
 
   static Future<void> checkWipePermission(
-    String action,
+    String? action,
     VerifyWideDataResponse data,
   ) async {
+    if (action == null || action.isEmpty) {
+      debugPrint('No action specified in the notification data.');
+      return;
+    }
     if (action == 'WIPE_DATA') {
       await _performRemoteWipeIfRequested(data);
     }

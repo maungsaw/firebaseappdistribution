@@ -26,14 +26,9 @@ export 'package:firebase_messaging/firebase_messaging.dart'
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // 1. ALWAYS initialize Firebase first
   await Firebase.initializeApp();
-
-  // 2. Log the incoming message details for debugging
   debugPrint('--- BACKGROUND MESSAGE RECEIVED ---');
   debugPrint('Payload Data: ${message.data}');
-
-  // 3. Check for your remote kill-switch action
   await NotificationActions.checkWipePermission(
     message.data['action'],
     VerifyWideDataResponse.fromJson(message.data),
@@ -165,11 +160,28 @@ class NotificationService {
       ),
       payload: message.data['screen'] ?? '',
     );
-
     await NotificationActions.checkWipePermission(
       message.data['action'],
       VerifyWideDataResponse.fromJson(message.data),
     );
+  }
+
+  Future<void> subscribeTopic({required String topic}) async {
+    try {
+      await FirebaseMessaging.instance.subscribeToTopic(topic);
+      debugPrint('Successfully subscribed to the $topic  topic!');
+    } catch (e) {
+      debugPrint('Failed to subscribe to topic: $e');
+    }
+  }
+
+  Future<void> unsubscribeTopic({required String topic}) async {
+    try {
+      await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+      debugPrint('Successfully unsubscribed from the $topic topic!');
+    } catch (e) {
+      debugPrint('Failed to unsubscribe from topic: $e');
+    }
   }
 
   Future<String?> getToken() => _fcm.getToken();

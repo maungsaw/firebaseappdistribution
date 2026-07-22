@@ -13,6 +13,7 @@ abstract class FirebaseInjection {
       );
 
       final instance = NotificationService.instance;
+
       await instance.initialize(
         options: options,
         onNavigate: NotificationActions.handleNotificationNavigation,
@@ -34,6 +35,7 @@ abstract class FirebaseInjection {
           'FCM token unavailable. Pushy will be used if available: $e',
         );
       }
+      await instance.subscribeTopic(topic: 'maintainance');
     } catch (e, stackTrace) {
       debugPrint('Firebase services init skipped: $e');
       debugPrint('$stackTrace');
