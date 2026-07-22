@@ -34,6 +34,10 @@ jobs:
       # 4. Get Flutter Dependencies
       - name: Install dependencies
         run: flutter pub get
+      # 4.1 Patch freerasp consumer-rules.pro
+      - name: Patch freerasp consumer-rules.pro
+        run: |
+          find /home/runner/.pub-cache/hosted/pub.dev/freerasp-*/android/consumer-rules.pro -type f -exec sed -i 's/-flattenpackagehierarchy//g' {} +
 
       # 5. Run Linter / Code Analysis (Optional but recommended)
       - name: Analyze code
