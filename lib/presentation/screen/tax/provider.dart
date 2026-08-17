@@ -22,6 +22,7 @@ class WorkflowController extends ChangeNotifier {
 
   int currentStep = 0;
   DateTime? _lastStepEndTime;
+
   WorkflowController({required List<StepData> initialSteps}) {
     stepsNotifier = ValueNotifier(initialSteps);
 
@@ -65,7 +66,41 @@ class WorkflowController extends ChangeNotifier {
     steps[currentStep].status = StepStatus.inProgress;
     _lastStepEndTime = now;
 
-    // Trigger the UI to rebuild
+    // Trigger UI rebuild
     stepsNotifier.notifyListeners();
+  }
+
+  void previousStep() {
+    if (currentStep <= 0) return;
+
+    final steps = stepsNotifier.value;
+
+    // Reset current step back to draft
+    steps[currentStep].status = StepStatus.draft;
+    steps[currentStep].startTime = null;
+    steps[currentStep].endTime = null;
+    steps[currentStep].gapTime = null;
+
+    // Move index backward
+    currentStep--;
+
+    // Re-open previous step to inProgress status
+    steps[currentStep].status = StepStatus.inProgress;
+    steps[currentStep].endTime = null;
+
+    // Trigger UI rebuild
+    stepsNotifier.notifyListeners();
+  }
+
+  void goToStep(int targetIndex) {
+    final steps = stepsNotifier.value;
+    if (targetIndex < 0 || targetIndex >= steps.length) return;
+
+    // Only allow jumping back to completed or current steps
+    if (targetIndex < currentStep) {
+      while (currentStep > targetIndex) {
+        previousStep();
+      }
+    }
   }
 }

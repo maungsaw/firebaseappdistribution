@@ -16,11 +16,15 @@ class _TaxScreenState extends State<TaxScreen> {
     super.initState();
     _controller = WorkflowController(
       initialSteps: [
+        StepData(
+          title: "Custom Init Step",
+          description: "Init step description",
+        ),
         StepData(title: "Custom Step 1", description: "First step description"),
         StepData(
           title: "Custom Step 2",
           description:
-              "Second step description\nThis card is now taller but the line will adapt perfectly!",
+              "Second step description\nThis takes up the full page content area now!",
         ),
         StepData(title: "Custom Step 3", description: "Third step description"),
         StepData(
@@ -41,7 +45,7 @@ class _TaxScreenState extends State<TaxScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
           "Policy Workflow",
@@ -55,22 +59,76 @@ class _TaxScreenState extends State<TaxScreen> {
         listenable: _controller.stepsNotifier,
         builder: (context, child) {
           final steps = _controller.stepsNotifier.value;
+          final currentIndex = _controller.currentStep;
+          final currentStep = steps[currentIndex];
 
-          return ListView.builder(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-            itemCount: steps.length,
-            itemBuilder: (context, index) {
-              final step = steps[index];
-              final isDone = step.status == StepStatus.approved;
-              final isActive = index == _controller.currentStep;
+          return Column(
+            children: [
+              // 1. Top Horizontal Timeline Stepper
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
+                color: const Color(0xFFF8FAFC),
+                child: Row(
+                  children: List.generate(steps.length, (index) {
+                    final isDone = steps[index].status == StepStatus.approved;
+                    final isActive = index == currentIndex;
+                    final isLast = index == steps.length - 1;
 
-              return _buildStepCard(
-                step,
-                isDone,
-                isActive,
-                index == steps.length - 1,
-              );
-            },
+                    return Expanded(
+                      flex: isLast ? 0 : 1,
+                      child: Row(
+                        children: [
+                          // Dot Indicator
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: isDone
+                                  ? Colors.green
+                                  : (isActive
+                                        ? Colors.indigo
+                                        : Colors.grey.shade300),
+                            ),
+                            child: Icon(
+                              isDone ? Icons.check : Icons.circle,
+                              color: Colors.white,
+                              size: 12,
+                            ),
+                          ),
+                          // Connecting Horizontal Line
+                          if (!isLast)
+                            Expanded(
+                              child: Container(
+                                height: 2,
+                                color: isDone
+                                    ? Colors.green
+                                    : Colors.grey.shade300,
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  }),
+                ),
+              ),
+
+              // 2. Full Page Step Body (Replaced PageView with AnimatedSwitcher)
+              Expanded(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: _buildFullPageStep(
+                    key: ValueKey(
+                      currentIndex,
+                    ), // Triggers animation on index change
+                    step: currentStep,
+                    isDone: currentStep.status == StepStatus.approved,
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),
@@ -84,25 +142,57 @@ class _TaxScreenState extends State<TaxScreen> {
               steps.last.status == StepStatus.approved;
 
           return Container(
-            padding: const EdgeInsets.all(20),
-            decoration: const BoxDecoration(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
               color: Colors.white,
-              boxShadow: [BoxShadow(blurRadius: 10, color: Colors.black12)],
-            ),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: isComplete ? Colors.green : Colors.indigo,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              onPressed: isComplete ? null : _controller.advanceStep,
-              child: Text(
-                isComplete ? "Workflow Complete" : "Proceed to Next Stage",
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.shade300,
+                  blurRadius: 4,
+                  offset: const Offset(0, -2),
                 ),
-              ),
+              ],
+            ),
+            child: Row(
+              mainAxisAlignment: .spaceEvenly,
+              spacing: 8.0,
+              children: [
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 16,
+                    ),
+                  ),
+                  onPressed: isComplete ? null : _controller.previousStep,
+                  child: Text(
+                    "Prev Stage",
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isComplete ? Colors.green : Colors.indigo,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 10,
+                      horizontal: 16,
+                    ),
+                  ),
+                  onPressed: isComplete ? null : _controller.advanceStep,
+                  child: Text(
+                    isComplete ? "Workflow Complete" : "Next Stage",
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
           );
         },
@@ -110,136 +200,93 @@ class _TaxScreenState extends State<TaxScreen> {
     );
   }
 
-  Widget _buildStepCard(
-    StepData step,
-    bool isDone,
-    bool isActive,
-    bool isLast,
-  ) {
-    // 1. Wrap the Row in IntrinsicHeight so it matches the tallest child (the card)
-    return IntrinsicHeight(
-      child: Row(
-        // 2. Stretch the children vertically
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget _buildFullPageStep({
+    required Key key,
+    required StepData step,
+    required bool isDone,
+  }) {
+    return Container(
+      key: key,
+      width: double.infinity,
+      height: double.infinity,
+      padding: const EdgeInsets.all(32.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Visual Timeline Indicator
-          Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: isDone
-                      ? Colors.green
-                      : (isActive ? Colors.indigo : Colors.grey.shade300),
-                  boxShadow: isActive
-                      ? [
-                          BoxShadow(
-                            color: Colors.indigo.withValues(alpha: .3),
-                            blurRadius: 8,
-                          ),
-                        ]
-                      : [],
-                ),
-                child: Icon(
-                  isDone ? Icons.check : Icons.circle,
-                  color: Colors.white,
-                  size: 16,
-                ),
-              ),
-              if (!isLast)
-                // 3. Replace fixed height with Expanded so the line stretches to the bottom
-                Expanded(
-                  child: Container(
-                    width: 2,
-                    color: isDone ? Colors.green : Colors.grey.shade300,
-                  ),
-                ),
-            ],
+          Text(
+            step.title,
+            style: const TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(height: 16),
+          Text(
+            step.description,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey.shade700,
+              height: 1.5,
+            ),
+          ),
+          const Spacer(),
 
-          // Content Card
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 30),
-              padding: const EdgeInsets.all(20),
+          // Status & Metadata Badges
+          if (step.gapTime != null && step.status != StepStatus.draft)
+            Container(
+              margin: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: isActive
-                    ? Border.all(color: Colors.indigo, width: 2)
-                    : Border.all(color: Colors.transparent),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: .04),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
+                  const Icon(
+                    Icons.hourglass_empty,
+                    size: 16,
+                    color: Colors.orange,
+                  ),
+                  const SizedBox(width: 8),
                   Text(
-                    step.title,
+                    "Wait time: ${_controller.formatDuration(step.gapTime!)}",
                     style: const TextStyle(
+                      color: Colors.orange,
                       fontWeight: FontWeight.bold,
-                      fontSize: 16,
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    step.description,
-                    style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
-                  ),
-                  const SizedBox(height: 12),
-
-                  if (step.gapTime != null && step.status != StepStatus.draft)
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.hourglass_empty,
-                          size: 14,
-                          color: Colors.orange,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          "Wait time: ${_controller.formatDuration(step.gapTime!)}",
-                          style: const TextStyle(
-                            color: Colors.orange,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-
-                  if (step.gapTime != null && isDone) const SizedBox(height: 4),
-
-                  if (isDone && step.startTime != null && step.endTime != null)
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.timer_outlined,
-                          size: 14,
-                          color: Colors.green,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          "Completed in: ${_controller.formatDuration(step.endTime!.difference(step.startTime!))}",
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
                 ],
               ),
             ),
-          ),
+
+          if (isDone && step.startTime != null && step.endTime != null)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.timer_outlined,
+                    size: 16,
+                    color: Colors.green,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    "Completed in: ${_controller.formatDuration(step.endTime!.difference(step.startTime!))}",
+                    style: const TextStyle(
+                      color: Colors.green,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

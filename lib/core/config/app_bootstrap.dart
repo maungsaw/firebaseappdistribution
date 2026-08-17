@@ -9,9 +9,8 @@ class AppBootstrap {
     await runZonedGuarded(
       () async {
         WidgetsFlutterBinding.ensureInitialized();
-
+        //  await SecurityService.initializeSecurity();
         Injection.initInjector();
-        await SecurityService.initializeSecurity();
         await DeviceInfoService.isHuaweiDevice()
             ? await PushyInjection.initPushyServices()
             : await FirebaseInjection.initFirebaseServices();

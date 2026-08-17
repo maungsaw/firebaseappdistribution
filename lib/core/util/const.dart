@@ -15,7 +15,7 @@ abstract class AppRoutes {
   static const String splash = '/splash';
 }
 
-abstract class RootNavigation {
+abstract class AppRoot {
   static final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
   static final navigationIcons = [
     Icons.home_max,

@@ -29,9 +29,7 @@ abstract class GlobalWidget {
       builder: (context, state) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(RootNavigation.navigationIcons.length, (
-            index,
-          ) {
+          children: List.generate(AppRoot.navigationIcons.length, (index) {
             // Access the index from the state
             final bool isSelected = state.currentIndex == index;
 
@@ -53,7 +51,7 @@ abstract class GlobalWidget {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Icon(
-                  RootNavigation.navigationIcons[index],
+                  AppRoot.navigationIcons[index],
                   color: isSelected ? Colors.lightBlue : Colors.grey,
                 ),
               ),

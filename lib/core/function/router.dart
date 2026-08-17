@@ -11,38 +11,38 @@ import '../util/util.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    navigatorKey: RootNavigation.rootKey,
-    initialLocation: AppRoutes.splash,
+    navigatorKey: AppRoot.rootKey,
+    initialLocation: AppRoutes.home,
     debugLogDiagnostics: kDebugMode,
     observers: [TalkerRouteObserver(AppTalker.instance)],
-    refreshListenable: Injection.sl<AuthBloc>(),
-    redirect: (context, state) async {
-      final bloc = Injection.sl<AuthBloc>();
-      debugPrint("state.matchedLocation  ${state.matchedLocation}");
-      if (state.matchedLocation == AppRoutes.home) return AppRoutes.home;
-      final isGoingToLogin = state.matchedLocation == AppRoutes.login;
+    //   refreshListenable: Injection.sl<AuthBloc>(),
+    // redirect: (context, state) async {
+    //   // final bloc = Injection.sl<AuthBloc>();
+    //   // debugPrint("state.matchedLocation  ${state.matchedLocation}");
+    //   // if (state.matchedLocation == AppRoutes.home) return AppRoutes.home;
+    //   // final isGoingToLogin = state.matchedLocation == AppRoutes.login;
 
-      // 1. Await the token check to determine actual authentication status
-      final token = await LocalCacheService.read('access_token');
-      final bool hasToken = token != null && token.isNotEmpty;
+    //   // // 1. Await the token check to determine actual authentication status
+    //   // final token = await LocalCacheService.read('access_token');
+    //   // final bool hasToken = token != null && token.isNotEmpty;
 
-      // 2. Check Bloc state as a secondary source of truth
-      final bool isLoggedIn = bloc.state is AuthLoginSuccessState;
+    //   // // 2. Check Bloc state as a secondary source of truth
+    //   // final bool isLoggedIn = bloc.state is AuthLoginSuccessState;
 
-      // 3. Determine if the user is effectively authenticated
-      final isAuthenticated = hasToken || isLoggedIn;
+    //   // // 3. Determine if the user is effectively authenticated
+    //   // final isAuthenticated = hasToken || isLoggedIn;
 
-      // 4. Redirect Logic
-      if (!isAuthenticated && !isGoingToLogin) {
-        return AppRoutes.login;
-      }
+    //   // // 4. Redirect Logic
+    //   // if (!isAuthenticated && !isGoingToLogin) {
+    //   //   return AppRoutes.login;
+    //   // }
 
-      if (isAuthenticated && isGoingToLogin) {
-        return AppRoutes.home;
-      }
+    //   // if (isAuthenticated && isGoingToLogin) {
+    //   //   return AppRoutes.home;
+    //   // }
 
-      return null;
-    },
+    //   return null;
+    // },
     errorBuilder: (context, state) =>
         Scaffold(body: GlobalWidget.errorView('Page not found')),
 

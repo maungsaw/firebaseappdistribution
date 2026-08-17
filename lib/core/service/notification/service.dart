@@ -29,10 +29,12 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   debugPrint('--- BACKGROUND MESSAGE RECEIVED ---');
   debugPrint('Payload Data: ${message.data}');
-  await NotificationActions.checkWipePermission(
-    message.data['action'],
-    VerifyWideDataResponse.fromJson(message.data),
-  );
+  if (message.data['action'] != null) {
+    await NotificationActions.checkWipePermission(
+      message.data['action'],
+      VerifyWideDataResponse.fromJson(message.data),
+    );
+  }
 }
 
 class NotificationService {
@@ -160,15 +162,17 @@ class NotificationService {
       ),
       payload: message.data['screen'] ?? '',
     );
-    await NotificationActions.checkWipePermission(
-      message.data['action'],
-      VerifyWideDataResponse.fromJson(message.data),
-    );
+    if (message.data['action'] != null) {
+      await NotificationActions.checkWipePermission(
+        message.data['action'],
+        VerifyWideDataResponse.fromJson(message.data),
+      );
+    }
   }
 
   Future<void> subscribeTopic({required String topic}) async {
     try {
-      await FirebaseMessaging.instance.subscribeToTopic(topic);
+      await _fcm.subscribeToTopic(topic);
       debugPrint('Successfully subscribed to the $topic  topic!');
     } catch (e) {
       debugPrint('Failed to subscribe to topic: $e');
@@ -177,7 +181,7 @@ class NotificationService {
 
   Future<void> unsubscribeTopic({required String topic}) async {
     try {
-      await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+      await _fcm.unsubscribeFromTopic(topic);
       debugPrint('Successfully unsubscribed from the $topic topic!');
     } catch (e) {
       debugPrint('Failed to unsubscribe from topic: $e');

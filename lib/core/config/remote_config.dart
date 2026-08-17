@@ -54,7 +54,7 @@ class _MaintenanceWrapperState extends State<MaintenanceWrapper>
     final isMaintenance = FirebaseRemoteConfig.instance.getBool(
       'is_maintenance_mode',
     );
-    final context = RootNavigation.rootKey.currentContext;
+    final context = AppRoot.rootKey.currentContext;
 
     if (context == null) return;
 
